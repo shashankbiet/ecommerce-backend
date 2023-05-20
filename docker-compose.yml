@@ -1,0 +1,22 @@
+version: "3.9"
+services:
+    user-service:
+        build: ./user-service
+        container_name: user-service
+        ports:
+            - 3002:3002
+        environment:
+            - APP_NAME=user-service
+            - PORT=3002
+            - MONGODB_URL=mongodb://mongodb/userService
+            - ADMIN_VERIFICATION_TOKEN_SECRET=1234567890
+        depends_on:
+            - mongodb
+    mongodb:
+        image: mongo:4.0.28
+        container_name: mongodb
+        restart: always
+        ports:
+            - 27017:27017
+        volumes:
+            - ./bind-mount/db/mongodb:/data/db
