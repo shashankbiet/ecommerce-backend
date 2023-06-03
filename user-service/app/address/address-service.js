@@ -1,7 +1,6 @@
 const addressService = {};
 const userModel = require("../shared/models/user-model");
 const mongoose = require("mongoose");
-require("dotenv").config();
 
 addressService.add = async (userId, body) => {
     try {

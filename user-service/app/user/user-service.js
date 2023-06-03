@@ -2,11 +2,11 @@ const userModel = require("../shared/models/user-model");
 const mongoError = require("../shared/constants/mongo-error");
 const sequencing = require("../../util/sequencing");
 const hashing = require("../../util/hashing");
-require("dotenv").config();
+const config = require("../../config");
 const userService = {};
 
 userService.isAdmin = (token) => {
-    return token == process.env.ADMIN_VERIFICATION_TOKEN_SECRET;
+    return token == config.adminVerificationToken;
 };
 
 userService.register = async (body) => {

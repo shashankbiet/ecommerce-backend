@@ -1,8 +1,9 @@
 const express = require("express");
-const router = require("./config/router");
+const router = require("./handler/router");
 const apiErrorHandler = require("./middleware/api-error-handler");
 const notFoundHandler = require("./middleware/not-found-handler");
-const mongodb = require("./config/mongodb");
+const mongodb = require("./handler/mongodb");
+const addApiLog = require("./middleware/add-api-log");
 const app = express();
 
 app.use(express.urlencoded({ extended: true }));
@@ -40,6 +41,9 @@ app.use(function (req, res, next) {
     res.header("Referrer-Policy", "same-origin");
     next();
 });
+
+//Add Api Log
+app.use(addApiLog);
 
 //Routes
 router(app);

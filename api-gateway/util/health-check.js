@@ -1,4 +1,3 @@
-const router = require("express").Router();
 const status = require("../app/shared/constants/api-status");
 const moment = require("moment");
 
@@ -12,6 +11,4 @@ function healthCheck(req, res) {
     });
 }
 
-router.get("/", healthCheck);
-
-module.exports = router;
+module.exports = healthCheck;

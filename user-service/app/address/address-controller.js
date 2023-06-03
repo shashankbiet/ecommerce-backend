@@ -1,12 +1,13 @@
 const addressService = require("./address-service");
 const apiStatus = require("../shared/constants/api-status");
 const ApiError = require("../shared/models/api-error");
+const { getUserId } = require("../../util/request-header");
 const addressController = {};
 
 addressController.add = async (req, res, next) => {
     try {
         let result = await addressService.add(
-            parseInt(req.params.userId),
+            parseInt(getUserId(req)),
             req.body
         );
         if (result) {
@@ -21,7 +22,7 @@ addressController.add = async (req, res, next) => {
 addressController.getById = async (req, res, next) => {
     try {
         let result = await addressService.get(
-            parseInt(req.params.userId),
+            parseInt(getUserId(req)),
             req.params.addressId
         );
         if (result) {
@@ -35,7 +36,7 @@ addressController.getById = async (req, res, next) => {
 
 addressController.get = async (req, res, next) => {
     try {
-        let result = await addressService.get(parseInt(req.params.userId));
+        let result = await addressService.get(parseInt(getUserId(req)));
         if (result) {
             return res.status(apiStatus.OK.status).send(result);
         }
@@ -48,7 +49,7 @@ addressController.get = async (req, res, next) => {
 addressController.update = async (req, res, next) => {
     try {
         let result = await addressService.update(
-            parseInt(req.params.userId),
+            parseInt(getUserId(req)),
             req.params.addressId,
             req.body
         );
@@ -64,7 +65,7 @@ addressController.update = async (req, res, next) => {
 addressController.delete = async (req, res, next) => {
     try {
         let result = await addressService.delete(
-            parseInt(req.params.userId),
+            parseInt(getUserId(req)),
             req.params.addressId
         );
         if (result) {

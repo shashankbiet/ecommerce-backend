@@ -1,4 +1,4 @@
-const { body, param } = require("express-validator");
+const { body, param, check } = require("express-validator");
 const addressTypes = require("../shared/constants/address-types");
 const addressValidator = {};
 
@@ -17,16 +17,11 @@ addressValidator.add = () => {
             .isInt()
             .isLength({ max: 6, min: 6 })
             .withMessage("Pincode must be 6 digits long"),
-        param("userId").isInt(),
     ];
 };
 
-addressValidator.get = () => {
-    return [param("userId").isInt()];
-};
-
 addressValidator.getById = () => {
-    return [param("userId").isInt(), param("addressId").isMongoId()];
+    return [param("addressId").isMongoId()];
 };
 
 addressValidator.update = () => {
@@ -41,16 +36,12 @@ addressValidator.update = () => {
         body("district").notEmpty().withMessage("Empty district"),
         body("landmark").notEmpty().withMessage("Empty landmark"),
         body("state").notEmpty().withMessage("Empty state"),
-        body("pincode")
-            .isInt()
-            .isLength({ max: 6, min: 6 })
-            .withMessage("Pincode must be 6 digits long"),
-        param("userId").isInt(),
+        body("pincode").isInt().isLength({ max: 6, min: 6 }),
     ];
 };
 
 addressValidator.delete = () => {
-    return [param("userId").isInt(), param("addressId").isMongoId()];
+    return [param("addressId").isMongoId()];
 };
 
 module.exports = addressValidator;

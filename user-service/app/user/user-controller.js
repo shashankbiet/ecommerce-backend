@@ -2,6 +2,7 @@ const userService = require("./user-service");
 const apiStatus = require("../shared/constants/api-status");
 const ApiError = require("../shared/models/api-error");
 const userRoles = require("../shared/constants/user-roles");
+const { getUserId } = require("../../util/request-header");
 const userController = {};
 
 userController.register = async (req, res, next) => {
@@ -24,7 +25,7 @@ userController.register = async (req, res, next) => {
 
 userController.get = async (req, res, next) => {
     try {
-        let result = await userService.get(parseInt(req.params.userId));
+        let result = await userService.get(parseInt(getUserId(req)));
         if (result) {
             return res.status(apiStatus.OK.status).send(result);
         }
@@ -37,7 +38,7 @@ userController.get = async (req, res, next) => {
 userController.update = async (req, res, next) => {
     try {
         let result = await userService.update(
-            parseInt(req.params.userId),
+            parseInt(getUserId(req)),
             req.body
         );
         if (result === true) {
@@ -51,7 +52,7 @@ userController.update = async (req, res, next) => {
 
 userController.delete = async (req, res, next) => {
     try {
-        let result = await userService.delete(parseInt(req.params.userId));
+        let result = await userService.delete(parseInt(getUserId(req)));
         if (result === true) {
             return res.status(apiStatus.OK.status).send();
         }
@@ -71,7 +72,7 @@ userController.updatePassword = async (req, res, next) => {
             });
         }
         let result = await userService.updatePassword(
-            parseInt(req.params.userId),
+            parseInt(getUserId(req)),
             req.body.currentPassword,
             req.body.newPassword
         );

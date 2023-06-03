@@ -1,15 +1,25 @@
 version: "3.9"
 services:
+    api-gateway:
+        container_name: api-gateway
+        build: ./api-gateway
+        ports:
+            - 3001:3001
+        environment:
+            - APP_NAME=api-gateway
+            - PORT=3001
+            - ACCESS_TOKEN_SECRET=9876543210
+            - USER_SERVICE_TARGET=http://user-service:3002
+        depends_on:
+            - user-service
     user-service:
         build: ./user-service
         container_name: user-service
-        ports:
-            - 3002:3002
         environment:
             - APP_NAME=user-service
             - PORT=3002
             - MONGODB_URL=mongodb://mongodb/userService
-            - ADMIN_VERIFICATION_TOKEN_SECRET=1234567890
+            - ADMIN_VERIFICATION_TOKEN=1234567890
         depends_on:
             - mongodb
     mongodb:

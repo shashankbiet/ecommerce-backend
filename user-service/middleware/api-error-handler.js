@@ -1,5 +1,6 @@
 const apiStatus = require("../app/shared/constants/api-status");
 const ApiError = require("../app/shared/models/api-error");
+const { getCorrelationId } = require("../util/request-header");
 
 let apiErrorHandler = (err, req, res, next) => {
     let status = apiStatus.INTERNAL_SERVER_ERROR.status,
@@ -9,11 +10,15 @@ let apiErrorHandler = (err, req, res, next) => {
         result = err.result;
         if (err.message || err.stack) {
             console.error(
-                `CorrelationId: ${req.correlationId},\nstatus: ${err.status},\nmessage: ${err.message},\nstack: ${err.stack}`
+                `CorrelationId: ${getCorrelationId(req)},\nstatus: ${
+                    err.status
+                },\nmessage: ${err.message},\nstack: ${err.stack}`
             );
         }
     } else {
-        console.error(`CorrelationId: ${req.correlationId},\nerror: ${err}`);
+        console.error(
+            `CorrelationId: ${getCorrelationId(req)},\nerror: ${err}`
+        );
     }
 
     return res.status(status).send({

@@ -10,19 +10,14 @@ router.post(
     userController.register
 );
 
-router.get("/:userId", userValidator.get(), validate, userController.get);
+router.get("/", userController.get);
 
-router.put("/:userId", userValidator.update(), validate, userController.update);
+router.put("/", userValidator.update(), validate, userController.update);
 
-router.delete(
-    "/:userId",
-    userValidator.delete(),
-    validate,
-    userController.delete
-);
+router.delete("/", userController.delete);
 
 router.put(
-    "/password/:userId",
+    "/password",
     userValidator.updatePassword(),
     validate,
     userController.updatePassword

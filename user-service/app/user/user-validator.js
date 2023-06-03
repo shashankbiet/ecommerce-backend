@@ -1,4 +1,4 @@
-const { body, param } = require("express-validator");
+const { body } = require("express-validator");
 const userRoles = require("../shared/constants/user-roles");
 const userValidator = {};
 
@@ -26,20 +26,11 @@ userValidator.register = () => {
     ];
 };
 
-userValidator.get = () => {
-    return [param("userId").isInt()];
-};
-
 userValidator.update = () => {
     return [
         body("firstName").notEmpty().withMessage("Empty first name"),
         body("lastName").notEmpty().withMessage("Empty last name"),
-        param("userId").isInt(),
     ];
-};
-
-userValidator.delete = () => {
-    return [param("userId").isInt()];
 };
 
 userValidator.updatePassword = () => {
@@ -54,7 +45,6 @@ userValidator.updatePassword = () => {
             .withMessage("New Password should be string")
             .isLength({ min: 5 })
             .withMessage("New Password should be at least 5 characters"),
-        param("userId").isInt(),
     ];
 };
 
