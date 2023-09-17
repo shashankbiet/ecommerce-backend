@@ -1,5 +1,6 @@
 const apiStatus = require("../app/shared/constants/api-status");
 const ApiError = require("../app/shared/models/api-error");
+const logger = require("../handler/logger");
 const { getCorrelationId } = require("../util/request-header");
 
 let apiErrorHandler = (err, req, res, next) => {
@@ -9,16 +10,14 @@ let apiErrorHandler = (err, req, res, next) => {
         status = err.status;
         result = err.result;
         if (err.message || err.stack) {
-            console.error(
+            logger.error(
                 `CorrelationId: ${getCorrelationId(req)},\nstatus: ${
                     err.status
                 },\nmessage: ${err.message},\nstack: ${err.stack}`
             );
         }
     } else {
-        console.error(
-            `CorrelationId: ${getCorrelationId(req)},\nerror: ${err}`
-        );
+        logger.error(`CorrelationId: ${getCorrelationId(req)},\nerror: ${err}`);
     }
 
     return res.status(status).send({

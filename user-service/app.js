@@ -4,6 +4,7 @@ const apiErrorHandler = require("./middleware/api-error-handler");
 const notFoundHandler = require("./middleware/not-found-handler");
 const mongodb = require("./handler/mongodb");
 const addApiLog = require("./middleware/add-api-log");
+const { registerRestApiResponseTime } = require("./middleware/api-metrics");
 const app = express();
 
 app.use(express.urlencoded({ extended: true }));
@@ -44,6 +45,9 @@ app.use(function (req, res, next) {
 
 //Add Api Log
 app.use(addApiLog);
+
+//Register Rest API Response Time
+app.use(registerRestApiResponseTime);
 
 //Routes
 router(app);

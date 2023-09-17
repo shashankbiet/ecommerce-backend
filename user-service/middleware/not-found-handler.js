@@ -1,8 +1,9 @@
 const apiStatus = require("../app/shared/constants/api-status");
+const logger = require("../handler/logger");
 const { getCorrelationId } = require("../util/request-header");
 
 let notFoundHandler = async (req, res, next) => {
-    console.error(
+    logger.error(
         `CorrelationId: ${getCorrelationId(req)}, Method: ${req.method}, Url: ${
             req.originalUrl
         },  Message: Url not found`

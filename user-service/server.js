@@ -1,5 +1,5 @@
 const app = require("./app");
-const config = require("./config");
+const { port = 3002 } = require("./config");
+const logger = require("./handler/logger");
 //Setting up server
-const port = config.port || 3002;
-app.listen(port, () => console.log(`User Service running on port ${port}`));
+app.listen(port, () => logger.info(`User Service running on port ${port}`));

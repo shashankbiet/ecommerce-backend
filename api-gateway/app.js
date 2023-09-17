@@ -13,6 +13,7 @@ const {
     getUserRole,
 } = require("./util/request-header");
 const { isPublicUrl } = require("./util/request-url");
+const logger = require("./handler/logger");
 const app = express();
 
 //Add Correlation Id
@@ -39,7 +40,7 @@ app.use(
         changeOrigin: true,
         proxyTimeout: 1000,
         onError(err, req, res) {
-            console.error(
+            logger.error(
                 `CorrelationId: ${getCorrelationId(req)},\nstatus: ${
                     apiStatus.INTERNAL_SERVER_ERROR.status
                 },\nmessage: ${err.message},\nstack: ${err.stack}`

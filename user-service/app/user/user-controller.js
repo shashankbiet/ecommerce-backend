@@ -3,9 +3,14 @@ const apiStatus = require("../shared/constants/api-status");
 const ApiError = require("../shared/models/api-error");
 const userRoles = require("../shared/constants/user-roles");
 const { getUserId } = require("../../util/request-header");
+const {
+    createUserReqCounter,
+    getUserReqCounter,
+} = require("../../util/metrics");
 const userController = {};
 
 userController.register = async (req, res, next) => {
+    createUserReqCounter.inc();
     try {
         if (
             req.body.role == userRoles.ADMIN &&
@@ -24,6 +29,7 @@ userController.register = async (req, res, next) => {
 };
 
 userController.get = async (req, res, next) => {
+    getUserReqCounter.inc();
     try {
         let result = await userService.get(parseInt(getUserId(req)));
         if (result) {

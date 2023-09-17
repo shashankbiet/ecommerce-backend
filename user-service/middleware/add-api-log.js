@@ -1,14 +1,17 @@
+const { disableUrlLogging } = require("../config");
+const logger = require("../handler/logger");
 const { getCorrelationId } = require("../util/request-header");
 const addApiLog = (req, res, next) => {
     try {
-        console.log(
-            `CorrelationId: ${getCorrelationId(req)}, Method: ${
-                req.method
-            }, URL: ${req.originalUrl}}`
-        );
+        if (!disableUrlLogging.includes(req.originalUrl))
+            logger.info(
+                `CorrelationId: ${getCorrelationId(req)}, Method: ${
+                    req.method
+                }, URL: ${req.originalUrl}`
+            );
         next();
     } catch (err) {
-        console.error(`Error in adding request log, err: ${err}`);
+        logger.error(`Error in adding request log, err: ${err}`);
         let status = apiStatus.INTERNAL_SERVER_ERROR.status,
             result = apiStatus.INTERNAL_SERVER_ERROR.result;
         return res.status(status).send({

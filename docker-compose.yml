@@ -1,15 +1,15 @@
 version: "3.9"
 services:
     api-gateway:
-        container_name: api-gateway
         build: ./api-gateway
-        ports:
-            - 3001:3001
+        container_name: api-gateway
         environment:
             - APP_NAME=api-gateway
             - PORT=3001
             - ACCESS_TOKEN_SECRET=9876543210
             - USER_SERVICE_TARGET=http://user-service:3002
+        ports:
+            - 3001:3001
         depends_on:
             - user-service
     user-service:
@@ -26,7 +26,83 @@ services:
         image: mongo:4.0.28
         container_name: mongodb
         restart: always
-        ports:
-            - 27017:27017
         volumes:
             - ./bind-mount/db/mongodb:/data/db
+        ports:
+            - 27017:27017
+    prometheus:
+        image: prom/prometheus
+        container_name: prometheus
+        restart: always
+        volumes:
+            - ./prometheus.yml:/etc/prometheus/prometheus.yml
+            - ./bind-mount/prometheus:/prometheus
+        command: 
+            - --config.file=/etc/prometheus/prometheus.yml
+        ports:
+            - 9090:9090
+    grafana:
+        image: grafana/grafana-oss
+        container_name: grafana
+        restart: unless-stopped
+        volumes:
+            - ./bind-mount/grafana:/var/lib/grafana
+        environment:
+            - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+            - GF_AUTH_ANONYMOUS_ENABLED=true
+            - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+        entrypoint:
+            - sh
+            - -euc
+            - |
+                mkdir -p /etc/grafana/provisioning/datasources
+                cat <<EOF > /etc/grafana/provisioning/datasources/ds.yaml
+                apiVersion: 1
+                datasources:
+                - name: Loki
+                type: loki
+                access: proxy
+                orgId: 1
+                url: http://loki:3100
+                basicAuth: false
+                isDefault: true
+                version: 1
+                editable: false
+                EOF
+                /run.sh
+        ports:
+            - 3000:3000
+        depends_on:
+            - prometheus
+    loki:
+        image: grafana/loki:2.9.0
+        container_name: loki
+        restart: unless-stopped
+        volumes:
+            - ./loki-config.yaml:/mnt/config/loki-config.yaml:ro
+            - ./bind-mount/loki:/tmp/loki
+        command:
+            - --config.file=/mnt/config/loki-config.yaml
+        ports:
+            - 3100:3100
+    promtail:
+        image: grafana/promtail:2.9.0
+        container_name: promtail
+        restart: unless-stopped
+        volumes:
+            - ./promtail-config.yaml:/etc/promtail/promtail-config.yaml:ro
+            - /var/log:/var/log
+        command: 
+            - --config.file=/etc/promtail/promtail-config.yaml
+        depends_on:
+            - loki
+    cadvisor:
+        image: gcr.io/cadvisor/cadvisor:v0.46.0
+        container_name: cadvisor
+        volumes:
+            - /:/rootfs:ro
+            - /var/run/docker.sock:/var/run/docker.sock:rw
+            - /sys:/sys:ro
+            - /var/lib/docker/:/var/lib/docker:ro
+        ports:
+            - 8080:8080

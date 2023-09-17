@@ -1,0 +1,13 @@
+global:
+    scrape_interval: 4s
+
+scrape_configs:
+  - job_name: "user-service-prometheus"
+    metrics_path: "/api/user/metrics"
+    static_configs:
+      - targets: ["user-service:3002"]
+        labels:
+          group: "user-service"
+  - job_name: "cAdvisor"
+    static_configs:
+      - targets: ["cadvisor:8080"]

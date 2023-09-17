@@ -8,6 +8,7 @@ const env = process.env.NODE_ENV || "dev";
  * port: number,
  * mongodbUrl: string,
  * adminVerificationToken: string
+ * disableUrlLogging: []
  * }}
  * */
 let config;

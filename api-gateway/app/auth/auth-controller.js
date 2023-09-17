@@ -3,6 +3,7 @@ const apiStatus = require("../shared/constants/api-status");
 const axios = require("axios");
 const config = require("../../config");
 const { getCorrelationId } = require("../../util/request-header");
+const logger = require("../../handler/logger");
 const authController = {};
 
 authController.login = async (req, res, next) => {
@@ -28,7 +29,7 @@ authController.login = async (req, res, next) => {
             return res.status(apiStatus.UNAUTHORIZED.status).send();
         }
 
-        console.error(
+        logger.error(
             `CorrelationId: ${getCorrelationId(req)},\nstatus: ${
                 apiStatus.INTERNAL_SERVER_ERROR.status
             },\nmessage: ${err.message},\nstack: ${err.stack}`
