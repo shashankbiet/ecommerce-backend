@@ -109,3 +109,6 @@ dist
 .DS_Store
 package-lock.json
 .vscode
+.bin
+go.work
+go.work.sum

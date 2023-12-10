@@ -1,0 +1,13 @@
+ENVIRONMENT: "local"
+APP_NAME: "inventory-service"
+SQL_CONFIG:
+    USERNAME: "testuser"
+    PASSWORD: "testpassword"
+    HOST: "localhost"
+    PORT: "4306"
+    DATABASE: "testdb"
+    MAX_LIFE_TIME: 3
+    MAX_OPEN_CONNS: 10
+    MAX_IDLE_CONNS: 10
+HTTP_SERVER:
+    PORT: 3003
