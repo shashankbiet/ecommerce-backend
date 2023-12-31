@@ -1,7 +1,7 @@
-package intf
+package request
 
 import "net/http"
 
-type ValidateRequest interface {
+type IValidateRequest interface {
 	Validate(r *http.Request) (interface{}, error)
 }

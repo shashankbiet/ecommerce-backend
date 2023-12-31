@@ -36,19 +36,19 @@ func easyjson6f8bf452DecodeInventoryServiceAppModels(in *jlexer.Lexer, out *Inve
 			continue
 		}
 		switch key {
-		case "ProductId":
-			out.ProductId = int(in.Int())
-		case "SKU":
-			out.SKU = int(in.Int())
-		case "Price":
-			out.Price = int(in.Int())
-		case "SalePrice":
-			out.SalePrice = int(in.Int())
-		case "CreatedAt":
+		case "productId":
+			out.ProductId = int64(in.Int64())
+		case "sku":
+			out.SKU = int32(in.Int32())
+		case "purchasePrice":
+			out.PurchasePrice = int32(in.Int32())
+		case "salePrice":
+			out.SalePrice = int32(in.Int32())
+		case "createdAt":
 			if data := in.Raw(); in.Ok() {
 				in.AddError((out.CreatedAt).UnmarshalJSON(data))
 			}
-		case "UpdatedAt":
+		case "updatedAt":
 			if data := in.Raw(); in.Ok() {
 				in.AddError((out.UpdatedAt).UnmarshalJSON(data))
 			}
@@ -67,32 +67,32 @@ func easyjson6f8bf452EncodeInventoryServiceAppModels(out *jwriter.Writer, in Inv
 	first := true
 	_ = first
 	{
-		const prefix string = ",\"ProductId\":"
+		const prefix string = ",\"productId\":"
 		out.RawString(prefix[1:])
-		out.Int(int(in.ProductId))
+		out.Int64(int64(in.ProductId))
 	}
 	{
-		const prefix string = ",\"SKU\":"
+		const prefix string = ",\"sku\":"
 		out.RawString(prefix)
-		out.Int(int(in.SKU))
+		out.Int32(int32(in.SKU))
 	}
 	{
-		const prefix string = ",\"Price\":"
+		const prefix string = ",\"purchasePrice\":"
 		out.RawString(prefix)
-		out.Int(int(in.Price))
+		out.Int32(int32(in.PurchasePrice))
 	}
 	{
-		const prefix string = ",\"SalePrice\":"
+		const prefix string = ",\"salePrice\":"
 		out.RawString(prefix)
-		out.Int(int(in.SalePrice))
+		out.Int32(int32(in.SalePrice))
 	}
 	{
-		const prefix string = ",\"CreatedAt\":"
+		const prefix string = ",\"createdAt\":"
 		out.RawString(prefix)
 		out.Raw((in.CreatedAt).MarshalJSON())
 	}
 	{
-		const prefix string = ",\"UpdatedAt\":"
+		const prefix string = ",\"updatedAt\":"
 		out.RawString(prefix)
 		out.Raw((in.UpdatedAt).MarshalJSON())
 	}

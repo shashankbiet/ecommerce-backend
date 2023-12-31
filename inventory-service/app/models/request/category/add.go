@@ -21,7 +21,7 @@ func (c AddRequest) Validate(r *http.Request) (interface{}, error) {
 	}
 
 	if request.Category.Name == "" {
-		errors = append(errors, "Invalid name")
+		errors = append(errors, "Invalid Category Name")
 	}
 
 	if len(errors) > 0 {

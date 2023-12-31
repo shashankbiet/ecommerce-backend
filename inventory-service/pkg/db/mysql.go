@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"inventory-service/app/config"
+	"inventory-service/pkg/logger"
 	"sync"
 	"time"
 
@@ -44,7 +45,7 @@ func initSqlConnection() error {
 
 	// Set the global DB variable to the opened database connection
 	singletonSqlDb = db
-	fmt.Println("Connected to the mysql database!")
+	logger.Log.Info("connected to the mysql database!")
 
 	return nil
 }

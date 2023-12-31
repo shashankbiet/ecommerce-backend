@@ -3,11 +3,13 @@ package initializer
 import (
 	"fmt"
 	"inventory-service/app/config"
-	"inventory-service/app/datastore"
 	"inventory-service/app/handler"
-	"inventory-service/app/service"
+	"inventory-service/app/utils"
 	"inventory-service/pkg/db"
+	"inventory-service/pkg/logger"
 	"net/http"
+
+	consoleLog "inventory-service/pkg/logger/console"
 
 	"github.com/gorilla/mux"
 )
@@ -17,25 +19,28 @@ func InitializeConfig() {
 	fmt.Printf("config:%+v\n", config)
 }
 
+func InitializeLogger() {
+	logLevel := utils.GetLogLevel()
+	log := consoleLog.GetConsoleLog()
+	logger.InitLogger(log, logLevel)
+	logger.Log.Info("logger setup done")
+}
+
 func InitializeDb() {
 	db.GetSqlConnection()
 }
 
 func InitializeHttp() {
-	mySqlCategoryStore := datastore.GetMySqlCategoryStore()
-	categoryService := service.NewCategoryService(mySqlCategoryStore)
-	categoryHandler := handler.NewCategoryHandler(categoryService)
-
 	router := mux.NewRouter()
-	router.HandleFunc("/health-check", handler.HealthCheckHandler).Methods(http.MethodGet)
-	router.HandleFunc("/api/category", categoryHandler.Add).Methods(http.MethodPost)
-	router.HandleFunc("/api/category/{id}", categoryHandler.GetById).Methods(http.MethodGet)
-	router.HandleFunc("/api/category", categoryHandler.GetAll).Methods(http.MethodGet)
+	router.HandleFunc("/health", handler.HealthCheckHandler).Methods(http.MethodGet)
+	registerCategoryRoutes(router)
+	registerSubCategoryHandler(router)
+	registerProductHandler(router)
+	registerInventoryHandler(router)
 
 	config := config.GetConfig()
 	port := fmt.Sprintf(":%d", config.HttpServer.Port)
 	if err := http.ListenAndServe(port, router); err != nil {
-		fmt.Println("HTTP server error: ", err)
+		logger.Log.Info("http server error", "error", err)
 	}
-
 }

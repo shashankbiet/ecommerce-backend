@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"os"
 	"strings"
 	"sync"
 
@@ -17,10 +18,10 @@ func GetConfig() *Configuration {
 }
 
 func initConfig() {
-	viper.SetConfigName("default")                   // name of config file (without extension)
-	viper.SetConfigType("yaml")                      // REQUIRED if the config file does not have the extension in the name
-	viper.AddConfigPath("../inventory-service/conf") // path to look for the config file in
-	viper.AutomaticEnv()                             // Viper will check for an environment variable any time a viper.Get request is made
+	viper.SetConfigName(getEnvironment()) // name of config file (without extension)
+	viper.SetConfigType("yaml")           // REQUIRED if the config file does not have the extension in the name
+	viper.AddConfigPath("./conf")         // path to look for the config file in
+	viper.AutomaticEnv()                  // Viper will check for an environment variable any time a viper.Get request is made
 
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 
@@ -29,8 +30,16 @@ func initConfig() {
 		panic(fmt.Errorf("error in reading config file: %w", err))
 	}
 
-	// Viper unmarshals the loaded env varialbes into the struct
+	// Viper unmarshal the loaded env variables into the struct
 	if err := viper.Unmarshal(&singletonConfig); err != nil {
 		panic(fmt.Errorf("error in config unmarshal: %w", err))
 	}
+}
+
+func getEnvironment() string {
+	env := os.Getenv("ENVIRONMENT")
+	if len(env) == 0 {
+		return "default"
+	}
+	return env
 }

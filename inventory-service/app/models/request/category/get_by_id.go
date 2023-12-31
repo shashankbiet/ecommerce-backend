@@ -14,17 +14,17 @@ const (
 )
 
 type GetByIdRequest struct {
-	Id int64
+	Id int16
 }
 
 func (c GetByIdRequest) Validate(r *http.Request) (interface{}, error) {
 	var request GetByIdRequest
 	errors := make([]string, 0)
-	id, err := strconv.ParseInt(mux.Vars(r)[ID], 10, 64)
+	id, err := strconv.ParseInt(mux.Vars(r)[ID], 10, 16)
 	if err != nil {
 		return request, err
 	}
-	request.Id = id
+	request.Id = int16(id)
 
 	if request.Id <= 0 {
 		errors = append(errors, "Invalid Id")

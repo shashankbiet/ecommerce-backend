@@ -37,10 +37,10 @@ func easyjson6a91a67cDecodeInventoryServiceAppModels(in *jlexer.Lexer, out *Cate
 		}
 		switch key {
 		case "id":
-			out.Id = int(in.Int())
+			out.Id = int16(in.Int16())
 		case "name":
 			out.Name = string(in.String())
-		case "created_at":
+		case "createdAt":
 			if data := in.Raw(); in.Ok() {
 				in.AddError((out.CreatedAt).UnmarshalJSON(data))
 			}
@@ -61,7 +61,7 @@ func easyjson6a91a67cEncodeInventoryServiceAppModels(out *jwriter.Writer, in Cat
 	{
 		const prefix string = ",\"id\":"
 		out.RawString(prefix[1:])
-		out.Int(int(in.Id))
+		out.Int16(int16(in.Id))
 	}
 	{
 		const prefix string = ",\"name\":"
@@ -69,7 +69,7 @@ func easyjson6a91a67cEncodeInventoryServiceAppModels(out *jwriter.Writer, in Cat
 		out.String(string(in.Name))
 	}
 	{
-		const prefix string = ",\"created_at\":"
+		const prefix string = ",\"createdAt\":"
 		out.RawString(prefix)
 		out.Raw((in.CreatedAt).MarshalJSON())
 	}

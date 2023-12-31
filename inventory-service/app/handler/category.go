@@ -3,26 +3,28 @@ package handler
 import (
 	"encoding/json"
 	"inventory-service/app/constants"
-	intf "inventory-service/app/interface"
+	"inventory-service/app/models/request"
 	categoryRequest "inventory-service/app/models/request/category"
+	"inventory-service/app/service"
 	"net/http"
 )
 
 type CategoryHandler struct {
-	service intf.CategoryService
+	service service.ICategoryService
 }
 
-func NewCategoryHandler(service intf.CategoryService) *CategoryHandler {
+func NewCategoryHandler(service service.ICategoryService) *CategoryHandler {
 	return &CategoryHandler{
 		service: service,
 	}
 }
 
 func (c CategoryHandler) Add(w http.ResponseWriter, r *http.Request) {
-	var validateRequest intf.ValidateRequest = &categoryRequest.AddRequest{}
+	var validateRequest request.IValidateRequest = &categoryRequest.AddRequest{}
 	val, err := validateRequest.Validate(r)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
 		return
 	}
 	request := val.(*categoryRequest.AddRequest)
@@ -41,15 +43,16 @@ func (c CategoryHandler) Add(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c CategoryHandler) GetById(w http.ResponseWriter, r *http.Request) {
-	var validateRequest intf.ValidateRequest = &categoryRequest.GetByIdRequest{}
+	var validateRequest request.IValidateRequest = &categoryRequest.GetByIdRequest{}
 	val, err := validateRequest.Validate(r)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
 		return
 	}
 	request := val.(*categoryRequest.GetByIdRequest)
 
-	categories, err := c.service.GetById(request)
+	category, err := c.service.GetById(request)
 	if err != nil {
 		if err.Error() == constants.NOT_FOUND_ERROR_MESSAGE {
 			w.WriteHeader(http.StatusBadRequest)
@@ -60,7 +63,7 @@ func (c CategoryHandler) GetById(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	jsonBytes, err := json.Marshal(categories)
+	jsonBytes, err := json.Marshal(category)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -70,10 +73,11 @@ func (c CategoryHandler) GetById(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c CategoryHandler) GetAll(w http.ResponseWriter, r *http.Request) {
-	var validateRequest intf.ValidateRequest = &categoryRequest.GetAllRequest{}
+	var validateRequest request.IValidateRequest = &categoryRequest.GetAllRequest{}
 	val, err := validateRequest.Validate(r)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
 		return
 	}
 	request := val.(*categoryRequest.GetAllRequest)

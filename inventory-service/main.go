@@ -6,6 +6,7 @@ import (
 
 func main() {
 	initializer.InitializeConfig()
+	initializer.InitializeLogger()
 	initializer.InitializeDb()
 	initializer.InitializeHttp()
 }

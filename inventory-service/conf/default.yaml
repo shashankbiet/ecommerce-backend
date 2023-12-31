@@ -1,10 +1,12 @@
 ENVIRONMENT: "local"
 APP_NAME: "inventory-service"
+LOG_LEVEL: "DEBUG"
+DEFAULT_LOG_LEVEL: "DEBUG"
 SQL_CONFIG:
     USERNAME: "testuser"
     PASSWORD: "testpassword"
     HOST: "localhost"
-    PORT: "4306"
+    PORT: "3306"
     DATABASE: "testdb"
     MAX_LIFE_TIME: 3
     MAX_OPEN_CONNS: 10
