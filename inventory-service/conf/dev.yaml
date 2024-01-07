@@ -1,7 +1,5 @@
 ENVIRONMENT: "dev"
 APP_NAME: "inventory-service"
-LOG_LEVEL: "INFO"
-DEFAULT_LOG_LEVEL: "INFO"
 SQL_CONFIG:
     USERNAME: "testuser"
     PASSWORD: "testpassword"

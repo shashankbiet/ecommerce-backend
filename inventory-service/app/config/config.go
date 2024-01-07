@@ -2,12 +2,10 @@ package config
 
 // Viper uses the mapstructure package under the hood for unmarshaling values, so we use the mapstructure tags to specify the name of each config field.
 type Configuration struct {
-	Environment     string           `mapstructure:"ENVIRONMENT"`
-	AppName         string           `mapstructure:"APP_NAME"`
-	LogLevel        string           `mapstructure:"LOG_LEVEL"`
-	DefaultLogLevel string           `mapstructure:"DEFAULT_LOG_LEVEL"`
-	SqlConfig       SqlConfig        `mapstructure:"SQL_CONFIG"`
-	HttpServer      HttpServerConfig `mapstructure:"HTTP_SERVER"`
+	Environment string           `mapstructure:"ENVIRONMENT"`
+	AppName     string           `mapstructure:"APP_NAME"`
+	SqlConfig   SqlConfig        `mapstructure:"SQL_CONFIG"`
+	HttpServer  HttpServerConfig `mapstructure:"HTTP_SERVER"`
 	// ProductUpdateTopic KafkaTopicConfig `mapstructure:"PRODUCT_UPDATE_TOPIC"`
 }
 

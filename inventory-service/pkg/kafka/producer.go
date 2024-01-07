@@ -1,7 +1,7 @@
 package kafka
 
 import (
-	"search-service/pkg/logger"
+	"inventory-service/pkg/logger"
 	"sync"
 
 	"github.com/confluentinc/confluent-kafka-go/v2/kafka"

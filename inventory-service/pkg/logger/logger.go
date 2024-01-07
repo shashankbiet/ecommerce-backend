@@ -1,52 +1,36 @@
 package logger
 
-import "sync"
+import (
+	"sync"
 
-var (
-	Log  *LogWrapper
-	once sync.Once
+	"github.com/shashankbiet/go-common/logger"
 )
 
-type LogWrapper struct {
-	logger   ILogger
-	logLevel LogLevel
-}
+var (
+	once sync.Once
+	Log  *LogWrapper
+)
 
-func InitLogger(logger ILogger, logLevel LogLevel) {
+type LogWrapper struct{}
+
+func InitLogger() {
 	once.Do(func() {
-		Log = &LogWrapper{
-			logger:   logger,
-			logLevel: logLevel,
-		}
+		logger.InitDefaultLogger(logger.LogTypeZap, logger.LogLevelDebug)
 	})
 }
 
 func (lw *LogWrapper) Debug(message string, keyValues ...interface{}) {
-	if lw.logLevel <= LogLevelDebug {
-		lw.logger.Debug(message, keyValues...)
-	}
+	logger.Debug(message, keyValues...)
 }
 
 func (lw *LogWrapper) Info(message string, keyValues ...interface{}) {
-	if lw.logLevel <= LogLevelInfo {
-		lw.logger.Info(message, keyValues...)
-	}
+	logger.Info(message, keyValues...)
 }
 
 func (lw *LogWrapper) Warn(message string, keyValues ...interface{}) {
-	if lw.logLevel <= LogLevelWarn {
-		lw.logger.Warn(message, keyValues...)
-	}
+	logger.Warn(message, keyValues...)
 }
 
 func (lw *LogWrapper) Error(message string, keyValues ...interface{}) {
-	if lw.logLevel <= LogLevelError {
-		lw.logger.Error(message, keyValues...)
-	}
-}
-
-func (lw *LogWrapper) Fatal(message string, keyValues ...interface{}) {
-	if lw.logLevel <= LogLevelDebug {
-		lw.logger.Fatal(message, keyValues...)
-	}
+	logger.Error(message, keyValues...)
 }

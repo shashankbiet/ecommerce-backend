@@ -1,7 +1,5 @@
 ENVIRONMENT: "local"
 APP_NAME: "inventory-service"
-LOG_LEVEL: "DEBUG"
-DEFAULT_LOG_LEVEL: "DEBUG"
 SQL_CONFIG:
     USERNAME: "testuser"
     PASSWORD: "testpassword"
