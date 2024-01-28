@@ -63,7 +63,7 @@ func (p *ProductService) GetAll(request *productRequest.GetAllRequest) ([]*model
 func (p *ProductService) publishProductMessage(product *model.Product) {
 	arr, err := json.Marshal(product)
 	if err != nil {
-		logger.Log.Error("unable to marshal product struct into []byte")
+		logger.Error("unable to marshal product struct into []byte")
 	}
 	p.producer.Publish(arr)
 }

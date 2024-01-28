@@ -1,7 +1,7 @@
 package kafka
 
 import (
-	"fmt"
+	"inventory-service/pkg/logger"
 
 	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 )
@@ -13,9 +13,9 @@ func DeliveryReportHandler(producer *kafka.Producer) {
 			switch ev := e.(type) {
 			case *kafka.Message:
 				if ev.TopicPartition.Error != nil {
-					fmt.Printf("Delivery failed: %v\n", ev.TopicPartition)
+					logger.Info("Delivery failed", "topic", ev.TopicPartition, "error", ev.TopicPartition.Error)
 				} else {
-					fmt.Printf("Delivered message to %v\n", ev.TopicPartition)
+					logger.Info("Message delivered", "topic", ev.TopicPartition)
 				}
 			}
 		}

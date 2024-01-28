@@ -39,7 +39,7 @@ func initMySqlProductStore(db *sql.DB) {
 
 func (c MySqlProductStore) Add(product *model.Product) (int64, error) {
 	if c.sqlDb == nil {
-		logger.Log.Error(DB_CONNECTION_FAILED)
+		logger.Error(DB_CONNECTION_FAILED)
 	}
 
 	ctx, cancelFunc := context.WithTimeout(context.Background(), MYSQL_TIMEOUT*time.Second)
@@ -65,7 +65,7 @@ func (c MySqlProductStore) Add(product *model.Product) (int64, error) {
 
 func (c MySqlProductStore) Update(product *model.Product) (bool, error) {
 	if c.sqlDb == nil {
-		logger.Log.Error(DB_CONNECTION_FAILED)
+		logger.Error(DB_CONNECTION_FAILED)
 	}
 
 	ctx, cancelFunc := context.WithTimeout(context.Background(), MYSQL_TIMEOUT*time.Second)
@@ -91,7 +91,7 @@ func (c MySqlProductStore) Update(product *model.Product) (bool, error) {
 
 func (c MySqlProductStore) GetById(id int64) (*model.Product, error) {
 	if c.sqlDb == nil {
-		logger.Log.Error(DB_CONNECTION_FAILED)
+		logger.Error(DB_CONNECTION_FAILED)
 	}
 
 	var product model.Product
@@ -102,13 +102,13 @@ func (c MySqlProductStore) GetById(id int64) (*model.Product, error) {
 
 func (c MySqlProductStore) GetAll() ([]*model.Product, error) {
 	if c.sqlDb == nil {
-		logger.Log.Error(DB_CONNECTION_FAILED)
+		logger.Error(DB_CONNECTION_FAILED)
 		return nil, fmt.Errorf(DB_CONNECTION_FAILED)
 	}
 
 	rows, err := c.sqlDb.Query(PRODUCT_GET_QUERY)
 	if err != nil {
-		logger.Log.Error(err.Error())
+		logger.Error(err.Error())
 		return nil, err
 	}
 	defer rows.Close()
@@ -118,7 +118,7 @@ func (c MySqlProductStore) GetAll() ([]*model.Product, error) {
 		var product model.Product
 		err := rows.Scan(&product.Id, &product.Name, &product.Description, &product.Brand, &product.Category, &product.SubCategory, &product.ImageId, &product.Weight, &product.CreatedAt, &product.UpdatedAt)
 		if err != nil {
-			logger.Log.Error(err.Error())
+			logger.Error(err.Error())
 		}
 		products = append(products, &product)
 	}

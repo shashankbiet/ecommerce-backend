@@ -1,4 +1,4 @@
-package initializer
+package httpserver
 
 import (
 	mysqlDao "inventory-service/app/dao/mysql"

@@ -39,7 +39,7 @@ func initMySqlCategoryStore(db *sql.DB) {
 
 func (c MySqlCategoryStore) Add(category *model.Category) (int16, error) {
 	if c.sqlDb == nil {
-		logger.Log.Error(DB_CONNECTION_FAILED)
+		logger.Error(DB_CONNECTION_FAILED)
 	}
 
 	ctx, cancelFunc := context.WithTimeout(context.Background(), MYSQL_TIMEOUT*time.Second)
@@ -63,7 +63,7 @@ func (c MySqlCategoryStore) Add(category *model.Category) (int16, error) {
 
 func (c MySqlCategoryStore) GetById(id int16) (*model.Category, error) {
 	if c.sqlDb == nil {
-		logger.Log.Error(DB_CONNECTION_FAILED)
+		logger.Error(DB_CONNECTION_FAILED)
 	}
 
 	var category model.Category
@@ -74,13 +74,13 @@ func (c MySqlCategoryStore) GetById(id int16) (*model.Category, error) {
 
 func (c MySqlCategoryStore) GetAll() (map[string]*model.Category, error) {
 	if c.sqlDb == nil {
-		logger.Log.Error(DB_CONNECTION_FAILED)
+		logger.Error(DB_CONNECTION_FAILED)
 		return nil, fmt.Errorf(DB_CONNECTION_FAILED)
 	}
 
 	rows, err := c.sqlDb.Query(CATEGORY_GET_QUERY)
 	if err != nil {
-		logger.Log.Error(err.Error())
+		logger.Error(err.Error())
 		return nil, err
 	}
 	defer rows.Close()
@@ -90,7 +90,7 @@ func (c MySqlCategoryStore) GetAll() (map[string]*model.Category, error) {
 		var category model.Category
 		err := rows.Scan(&category.Id, &category.Name, &category.CreatedAt)
 		if err != nil {
-			logger.Log.Error(err.Error())
+			logger.Error(err.Error())
 		}
 		categories[category.Name] = &category
 	}

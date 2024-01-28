@@ -1,9 +1,9 @@
 module inventory-service
 
-go 1.19
+go 1.21.4
 
 require (
-	github.com/confluentinc/confluent-kafka-go/v2 v2.3.0
+	github.com/confluentinc/confluent-kafka-go/v2 v2.1.1
 	github.com/go-sql-driver/mysql v1.7.1
 	github.com/gorilla/mux v1.8.1
 	github.com/mailru/easyjson v0.7.7
@@ -28,7 +28,6 @@ require (
 	go.uber.org/zap v1.26.0 // indirect
 	golang.org/x/sys v0.15.0 // indirect
 	golang.org/x/text v0.9.0 // indirect
-	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

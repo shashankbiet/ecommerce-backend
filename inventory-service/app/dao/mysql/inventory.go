@@ -39,7 +39,7 @@ func initMySqlInventoryStore(db *sql.DB) {
 
 func (c MySqlInventoryStore) Add(inventory *model.Inventory) (int64, error) {
 	if c.sqlDb == nil {
-		logger.Log.Error(DB_CONNECTION_FAILED)
+		logger.Error(DB_CONNECTION_FAILED)
 	}
 
 	ctx, cancelFunc := context.WithTimeout(context.Background(), MYSQL_TIMEOUT*time.Second)
@@ -65,7 +65,7 @@ func (c MySqlInventoryStore) Add(inventory *model.Inventory) (int64, error) {
 
 func (c MySqlInventoryStore) Update(inventory *model.Inventory) (bool, error) {
 	if c.sqlDb == nil {
-		logger.Log.Error(DB_CONNECTION_FAILED)
+		logger.Error(DB_CONNECTION_FAILED)
 	}
 
 	ctx, cancelFunc := context.WithTimeout(context.Background(), MYSQL_TIMEOUT*time.Second)
@@ -91,7 +91,7 @@ func (c MySqlInventoryStore) Update(inventory *model.Inventory) (bool, error) {
 
 func (c MySqlInventoryStore) GetByProductId(productId int64) (*model.Inventory, error) {
 	if c.sqlDb == nil {
-		logger.Log.Error(DB_CONNECTION_FAILED)
+		logger.Error(DB_CONNECTION_FAILED)
 	}
 
 	var inventory model.Inventory
@@ -102,13 +102,13 @@ func (c MySqlInventoryStore) GetByProductId(productId int64) (*model.Inventory, 
 
 func (c MySqlInventoryStore) GetAll() ([]*model.Inventory, error) {
 	if c.sqlDb == nil {
-		logger.Log.Error(DB_CONNECTION_FAILED)
+		logger.Error(DB_CONNECTION_FAILED)
 		return nil, fmt.Errorf(DB_CONNECTION_FAILED)
 	}
 
 	rows, err := c.sqlDb.Query(INVENTORY_GET_QUERY)
 	if err != nil {
-		logger.Log.Error(err.Error())
+		logger.Error(err.Error())
 		return nil, err
 	}
 	defer rows.Close()
@@ -118,7 +118,7 @@ func (c MySqlInventoryStore) GetAll() ([]*model.Inventory, error) {
 		var inventory model.Inventory
 		err := rows.Scan(&inventory.ProductId, &inventory.SKU, &inventory.PurchasePrice, &inventory.SalePrice, &inventory.CreatedAt, &inventory.UpdatedAt)
 		if err != nil {
-			logger.Log.Error(err.Error())
+			logger.Error(err.Error())
 		}
 		inventoryList = append(inventoryList, &inventory)
 	}

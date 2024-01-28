@@ -1,14 +1,16 @@
 package initializer
 
 import (
+	"context"
 	"fmt"
-	"inventory-service/app/config"
-	"inventory-service/app/handler"
+	httpserver "inventory-service/app/server/http"
+	"inventory-service/pkg/config"
 	"inventory-service/pkg/db"
 	"inventory-service/pkg/logger"
 	"net/http"
-
-	"github.com/gorilla/mux"
+	"os"
+	"os/signal"
+	"syscall"
 )
 
 func InitializeConfig() {
@@ -18,24 +20,27 @@ func InitializeConfig() {
 
 func InitializeLogger() {
 	logger.InitLogger()
-	logger.Log.Info("logger setup done")
+	logger.Info("logger setup done")
 }
 
 func InitializeDb() {
 	db.GetSqlConnection()
 }
 
-func InitializeHttp() {
-	router := mux.NewRouter()
-	router.HandleFunc("/health", handler.HealthCheckHandler).Methods(http.MethodGet)
-	registerCategoryRoutes(router)
-	registerSubCategoryHandler(router)
-	registerProductHandler(router)
-	registerInventoryHandler(router)
+func InitializeServer(ctx context.Context) {
 
-	config := config.GetConfig()
-	port := fmt.Sprintf(":%d", config.HttpServer.Port)
-	if err := http.ListenAndServe(port, router); err != nil {
-		logger.Log.Info("http server error", "error", err)
+	httpServer, err := httpserver.InitHttpServer()
+	if err != nil {
+		logger.Error("error in starting http server", "error", err)
+	}
+	handleGracefulShutdown(ctx, httpServer)
+}
+
+func handleGracefulShutdown(ctx context.Context, httpServer *http.Server) {
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, syscall.SIGQUIT, syscall.SIGTERM, syscall.SIGINT)
+	<-stop
+	if err := httpServer.Shutdown(ctx); err != nil {
+		logger.Error("error in shutting down http server", "error", err)
 	}
 }

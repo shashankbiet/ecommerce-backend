@@ -21,7 +21,7 @@ func initKafkaProducer() {
 	kafkaConfigMap := getKafkaConfigMap()
 	producer, err := kafka.NewProducer(kafkaConfigMap)
 	if err != nil {
-		logger.Log.Error("failed to create producer", "error", err)
+		logger.Error("failed to create producer", "error", err)
 		panic(err)
 	}
 	kafkaProducer = producer

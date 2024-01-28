@@ -2,11 +2,12 @@ package config
 
 // Viper uses the mapstructure package under the hood for unmarshaling values, so we use the mapstructure tags to specify the name of each config field.
 type Configuration struct {
-	Environment string           `mapstructure:"ENVIRONMENT"`
-	AppName     string           `mapstructure:"APP_NAME"`
-	SqlConfig   SqlConfig        `mapstructure:"SQL_CONFIG"`
-	HttpServer  HttpServerConfig `mapstructure:"HTTP_SERVER"`
-	// ProductUpdateTopic KafkaTopicConfig `mapstructure:"PRODUCT_UPDATE_TOPIC"`
+	Environment          string           `mapstructure:"ENVIRONMENT"`
+	AppName              string           `mapstructure:"APP_NAME"`
+	SqlConfig            SqlConfig        `mapstructure:"SQL_CONFIG"`
+	HttpServer           HttpServerConfig `mapstructure:"HTTP_SERVER"`
+	ProductUpdateTopic   KafkaTopicConfig `mapstructure:"PRODUCT_UPDATE_TOPIC"`
+	InventoryUpdateTopic KafkaTopicConfig `mapstructure:"INVENTORY_UPDATE_TOPIC"`
 }
 
 // Config struct holds the mysql database configuration
@@ -29,9 +30,9 @@ type HttpServerConfig struct {
 	KeepAliveTimeoutMs int `mapstructure:"KEEP_ALIVE_TIMEOUT_MS"`
 }
 
-// type KafkaTopicConfig struct {
-// 	TopicName       string `mapstructure:"NAME"`
-// 	ClientId        string `mapstructure:"CLIENT_ID"`
-// 	GroupId         string `mapstructure:"GROUP_ID"`
-// 	AutoOffsetReset string `mapstructure:"AUTO_OFFSET_RESET"`
-// }
+type KafkaTopicConfig struct {
+	Name            string `mapstructure:"NAME"`
+	ClientId        string `mapstructure:"CLIENT_ID"`
+	GroupId         string `mapstructure:"GROUP_ID"`
+	AutoOffsetReset string `mapstructure:"AUTO_OFFSET_RESET"`
+}

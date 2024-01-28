@@ -11,3 +11,7 @@ SQL_CONFIG:
     MAX_IDLE_CONNS: 10
 HTTP_SERVER:
     PORT: 3003
+PRODUCT_UPDATE_TOPIC:
+    NAME: "product_update"
+INVENTORY_UPDATE_TOPIC:
+    NAME: "inventory_update"

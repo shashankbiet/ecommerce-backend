@@ -60,7 +60,7 @@ func (p *InventoryService) GetAll(request *inventoryRequest.GetAllRequest) ([]*m
 func (p *InventoryService) publishInventoryMessage(inventory *model.Inventory) {
 	arr, err := json.Marshal(inventory)
 	if err != nil {
-		logger.Log.Error("unable to marshal inventory struct into []byte")
+		logger.Error("unable to marshal inventory struct into []byte")
 	}
 	p.producer.Publish(arr)
 }

@@ -1,20 +1,21 @@
-FROM golang:1.19 AS build-stage
+FROM golang:1.21-alpine AS build-stage
+RUN apk add --no-progress --no-cache gcc musl-dev
 
-WORKDIR /inventory-service
+WORKDIR /build
 
 COPY go.mod go.sum ./
 RUN go mod download
 
 COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux go build -o /inventory-service/bin/app
+RUN go build -tags musl -ldflags '-extldflags "-static"' -o /build/bin/app
 
 # Deploy the application binary into a lean image
 FROM gcr.io/distroless/base-debian11 AS build-release-stage
 
-WORKDIR /inventory-service
+WORKDIR /src
 
-COPY --from=build-stage /inventory-service/bin/app /inventory-service/app
-COPY --from=build-stage /inventory-service/conf /inventory-service/conf
+COPY --from=build-stage /build/bin/app /src/app
+COPY --from=build-stage /build/conf /src/conf
 
-ENTRYPOINT ["/inventory-service/app"]
+ENTRYPOINT ["/src/app"]

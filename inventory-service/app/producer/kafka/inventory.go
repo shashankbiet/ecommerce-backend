@@ -1,6 +1,7 @@
 package kafka
 
 import (
+	"inventory-service/pkg/config"
 	"inventory-service/pkg/kafka"
 	"inventory-service/pkg/logger"
 	"sync"
@@ -23,15 +24,15 @@ func initKafkaInventoryProducer() {
 }
 
 func (*KafkaInventoryProducer) Publish(value []byte) {
-	topic := "inventory_update"
+	topic := config.GetConfig().InventoryUpdateTopic.Name
 	producer := kafka.GetKafkaProducer()
 	kafka.DeliveryReportHandler(producer)
 	message := kafka.GetMessage(topic, value)
 	err := producer.Produce(message, nil)
 	if err != nil {
-		logger.Log.Error("error in publishing inventory message", "error", err)
+		logger.Error("error in publishing inventory message", "error", err)
 	} else {
-		logger.Log.Info("successfully published inventory message")
+		logger.Info("successfully published inventory message")
 	}
 	producer.Flush(15 * 1000)
 }

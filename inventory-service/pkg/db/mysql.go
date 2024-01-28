@@ -3,7 +3,7 @@ package db
 import (
 	"database/sql"
 	"fmt"
-	"inventory-service/app/config"
+	"inventory-service/pkg/config"
 	"inventory-service/pkg/logger"
 	"sync"
 	"time"
@@ -24,9 +24,8 @@ func GetSqlConnection() *sql.DB {
 }
 
 func initSqlConnection() error {
-	config := config.GetConfig()
 	// Build the DSN (Data Source Name) for the MySQL connection
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", config.SqlConfig.Username, config.SqlConfig.Password, config.SqlConfig.Host, config.SqlConfig.Port, config.SqlConfig.Database)
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", config.GetConfig().SqlConfig.Username, config.GetConfig().SqlConfig.Password, config.GetConfig().SqlConfig.Host, config.GetConfig().SqlConfig.Port, config.GetConfig().SqlConfig.Database)
 
 	// Open a connection to the MySQL database
 	db, err := sql.Open("mysql", dsn)
@@ -34,9 +33,9 @@ func initSqlConnection() error {
 		return err
 	}
 
-	db.SetConnMaxLifetime(time.Minute * time.Duration(config.SqlConfig.MaxLifetime))
-	db.SetMaxOpenConns(config.SqlConfig.MaxOpenConns)
-	db.SetMaxIdleConns(config.SqlConfig.MaxIdleConns)
+	db.SetConnMaxLifetime(time.Minute * time.Duration(config.GetConfig().SqlConfig.MaxLifetime))
+	db.SetMaxOpenConns(config.GetConfig().SqlConfig.MaxOpenConns)
+	db.SetMaxIdleConns(config.GetConfig().SqlConfig.MaxIdleConns)
 
 	// Test the connection
 	if err := db.Ping(); err != nil {
@@ -45,7 +44,7 @@ func initSqlConnection() error {
 
 	// Set the global DB variable to the opened database connection
 	singletonSqlDb = db
-	logger.Log.Info("connected to the mysql database!")
+	logger.Info("connected to the mysql database!")
 
 	return nil
 }

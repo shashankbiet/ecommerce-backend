@@ -52,7 +52,14 @@ services:
             MYSQL_ROOT_PASSWORD: testrootpassword
             MYSQL_DATABASE: testdb
         healthcheck:
-            test: ["CMD", "mysqladmin" ,"ping", "-h", "docker.for.mac.localhost"]
+            test:
+                [
+                    "CMD",
+                    "mysqladmin",
+                    "ping",
+                    "-h",
+                    "docker.for.mac.localhost"
+                ]
             start_period: 0s
             timeout: 10s
             interval: 1s
@@ -61,6 +68,32 @@ services:
             - ./bind-mount/db/mysql:/var/lib/mysql
         ports:
             - "3306:3306"
+    zookeper:
+        image: confluentinc/cp-zookeeper:7.3.0
+        hostname: zookeeper
+        container_name: zookeper
+        restart: always
+        environment:
+            - ZOOKEEPER_CLIENT_PORT=2181
+            - ZOO_TICK_TIME=2000
+    kafka:
+        image: confluentinc/cp-kafka:7.3.0
+        container_name: kafka
+        restart: always
+        ports:
+            - 9092:9092
+        environment:
+            - KAFKA_BROKER_ID=1
+            - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+            - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
+            - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://kafka:29092
+            - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+            - KAFKA_TRANSACTION_STATE_LOG_MIN_ISR=1
+            - KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=1
+        healthcheck:
+            test: [ "CMD", "nc", "-vz", "localhost", "9092" ]
+        depends_on:
+            - zookeper
     prometheus:
         image: prom/prometheus
         container_name: prometheus
@@ -68,7 +101,7 @@ services:
         volumes:
             - ./prometheus.yml:/etc/prometheus/prometheus.yml
             - ./bind-mount/prometheus:/prometheus
-        command: 
+        command:
             - --config.file=/etc/prometheus/prometheus.yml
         ports:
             - 9090:9090
@@ -86,21 +119,21 @@ services:
             - sh
             - -euc
             - |
-                mkdir -p /etc/grafana/provisioning/datasources
-                cat <<EOF > /etc/grafana/provisioning/datasources/ds.yaml
-                apiVersion: 1
-                datasources:
-                - name: Loki
-                type: loki
-                access: proxy
-                orgId: 1
-                url: http://loki:3100
-                basicAuth: false
-                isDefault: true
-                version: 1
-                editable: false
-                EOF
-                /run.sh
+              mkdir -p /etc/grafana/provisioning/datasources
+              cat <<EOF > /etc/grafana/provisioning/datasources/ds.yaml
+              apiVersion: 1
+              datasources:
+              - name: Loki
+              type: loki
+              access: proxy
+              orgId: 1
+              url: http://loki:3100
+              basicAuth: false
+              isDefault: true
+              version: 1
+              editable: false
+              EOF
+              /run.sh
         ports:
             - 3000:3000
         depends_on:
@@ -123,7 +156,7 @@ services:
         volumes:
             - ./promtail-config.yaml:/etc/promtail/promtail-config.yaml:ro
             - /var/log:/var/log
-        command: 
+        command:
             - --config.file=/etc/promtail/promtail-config.yaml
         depends_on:
             - loki

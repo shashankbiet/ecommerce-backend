@@ -39,7 +39,7 @@ func initMySqlSubCategoryStore(db *sql.DB) {
 
 func (c MySqlSubCategoryStore) Add(subcategory *model.SubCategory) (int16, error) {
 	if c.sqlDb == nil {
-		logger.Log.Error(DB_CONNECTION_FAILED)
+		logger.Error(DB_CONNECTION_FAILED)
 	}
 
 	ctx, cancelFunc := context.WithTimeout(context.Background(), MYSQL_TIMEOUT*time.Second)
@@ -65,7 +65,7 @@ func (c MySqlSubCategoryStore) Add(subcategory *model.SubCategory) (int16, error
 
 func (c MySqlSubCategoryStore) GetById(id int16) (*model.SubCategory, error) {
 	if c.sqlDb == nil {
-		logger.Log.Error(DB_CONNECTION_FAILED)
+		logger.Error(DB_CONNECTION_FAILED)
 	}
 
 	var subcategory model.SubCategory
@@ -76,13 +76,13 @@ func (c MySqlSubCategoryStore) GetById(id int16) (*model.SubCategory, error) {
 
 func (c MySqlSubCategoryStore) GetAll() (map[string]*model.SubCategory, error) {
 	if c.sqlDb == nil {
-		logger.Log.Error(DB_CONNECTION_FAILED)
+		logger.Error(DB_CONNECTION_FAILED)
 		return nil, fmt.Errorf(DB_CONNECTION_FAILED)
 	}
 
 	rows, err := c.sqlDb.Query(SUB_CATEGORY_GET_QUERY)
 	if err != nil {
-		logger.Log.Error(err.Error())
+		logger.Error(err.Error())
 		return nil, err
 	}
 	defer rows.Close()
@@ -92,7 +92,7 @@ func (c MySqlSubCategoryStore) GetAll() (map[string]*model.SubCategory, error) {
 		var subcategory model.SubCategory
 		err := rows.Scan(&subcategory.Id, &subcategory.Name, &subcategory.Category, &subcategory.CreatedAt)
 		if err != nil {
-			logger.Log.Error(err.Error())
+			logger.Error(err.Error())
 		}
 		subcategories[subcategory.Name] = &subcategory
 	}
