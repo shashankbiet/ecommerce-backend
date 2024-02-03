@@ -6,6 +6,7 @@ type Configuration struct {
 	AppName              string           `mapstructure:"APP_NAME"`
 	SqlConfig            SqlConfig        `mapstructure:"SQL_CONFIG"`
 	HttpServer           HttpServerConfig `mapstructure:"HTTP_SERVER"`
+	KafkaConfig          KafkaConfig      `mapstructure:"KAFKA_CONFIG"`
 	ProductUpdateTopic   KafkaTopicConfig `mapstructure:"PRODUCT_UPDATE_TOPIC"`
 	InventoryUpdateTopic KafkaTopicConfig `mapstructure:"INVENTORY_UPDATE_TOPIC"`
 }
@@ -28,6 +29,10 @@ type HttpServerConfig struct {
 	WriteTimeoutMs     int `mapstructure:"WRITE_TIMEOUT_MS"`
 	IdleTimeoutMs      int `mapstructure:"IDLE_TIMEOUT_MS"`
 	KeepAliveTimeoutMs int `mapstructure:"KEEP_ALIVE_TIMEOUT_MS"`
+}
+
+type KafkaConfig struct {
+	BootstrapServers string `mapstructure:"BOOTSTRAP_SERVERS"`
 }
 
 type KafkaTopicConfig struct {

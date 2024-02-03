@@ -68,32 +68,41 @@ services:
             - ./bind-mount/db/mysql:/var/lib/mysql
         ports:
             - "3306:3306"
-    zookeper:
+    zookeeper:
         image: confluentinc/cp-zookeeper:7.3.0
         hostname: zookeeper
-        container_name: zookeper
+        container_name: zookeeper
         restart: always
         environment:
             - ZOOKEEPER_CLIENT_PORT=2181
             - ZOO_TICK_TIME=2000
     kafka:
         image: confluentinc/cp-kafka:7.3.0
+        hostname: kafka
         container_name: kafka
         restart: always
         ports:
-            - 9092:9092
+            - "9092:9092"
+            - "29092:29092"
+            - "9999:9999"
         environment:
-            - KAFKA_BROKER_ID=1
+            - KAFKA_ADVERTISED_LISTENERS=INTERNAL://kafka:19092,EXTERNAL://localhost:9092,DOCKER://host.docker.internal:29092
+            - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,DOCKER:PLAINTEXT
+            - KAFKA_INTER_BROKER_LISTENER_NAME=INTERNAL
             - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
-            - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
-            - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://kafka:29092
+            - KAFKA_BROKER_ID=1
+            - KAFKA_LOG4J_LOGGERS=kafka.controller=INFO,kafka.producer.async.DefaultEventHandler=INFO,state.change.logger=INFO
             - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
-            - KAFKA_TRANSACTION_STATE_LOG_MIN_ISR=1
             - KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=1
+            - KAFKA_TRANSACTION_STATE_LOG_MIN_ISR=1
+            - KAFKA_JMX_PORT=9999
+            - KAFKA_JMX_HOSTNAME=127.0.0.1
+            - KAFKA_AUTHORIZER_CLASS_NAME=kafka.security.authorizer.AclAuthorizer
+            - KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND=true
         healthcheck:
             test: [ "CMD", "nc", "-vz", "localhost", "9092" ]
         depends_on:
-            - zookeper
+            - zookeeper
     prometheus:
         image: prom/prometheus
         container_name: prometheus
