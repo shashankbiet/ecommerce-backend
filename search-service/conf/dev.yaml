@@ -1,0 +1,11 @@
+ENVIRONMENT: "dev"
+APP_NAME: "search-service"
+GRPC_SERVER:
+    PORT: 9004
+ELASTIC_SEARCH_CONFIG:
+    ADDRESS: http://elasticsearch:9200
+KAFKA_CONFIG:
+    SERVERS: "localhost:9092"
+    GROUP_ID: "inventory"
+PRODUCT_UPDATE_TOPIC:
+    NAME: "product_update"
