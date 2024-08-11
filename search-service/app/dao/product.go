@@ -48,12 +48,7 @@ func (es *ProductDataStore) FilterProduct(req *searchpb.ProductSearchRequest) (*
 	query := map[string]interface{}{
 		"query": map[string]interface{}{
 			"bool": map[string]interface{}{
-				"must": []map[string]interface{}{
-					{
-						"match": map[string]interface{}{
-							"keywords": req.Keywords,
-						},
-					},
+				"filter": []map[string]interface{}{
 					{
 						"match": map[string]interface{}{
 							"category": req.Category,
@@ -61,12 +56,14 @@ func (es *ProductDataStore) FilterProduct(req *searchpb.ProductSearchRequest) (*
 					},
 					{
 						"match": map[string]interface{}{
-							"sub_category": req.SubCategory,
+							"subCategory": req.SubCategory,
 						},
 					},
+				},
+				"must": []map[string]interface{}{
 					{
-						"term": map[string]interface{}{
-							"city_id": req.CityId,
+						"wildcard": map[string]interface{}{
+							"name": "*" + req.Keywords + "*",
 						},
 					},
 				},
@@ -114,60 +111,45 @@ func (es *ProductDataStore) FilterProduct(req *searchpb.ProductSearchRequest) (*
 	// Construct the ProductSearchResponse
 	var response searchpb.ProductSearchResponse
 	for _, hit := range searchResponse.Hits.Hits {
-		response.Products = append(response.Products, &hit.Source)
+		product := hit.Source
+		response.Products = append(response.Products, &product)
 	}
 	response.TotalResults = uint32(searchResponse.Hits.Total.Value)
+	response.Keywords = req.Keywords
+	response.Category = req.Category
+	response.SubCategory = req.SubCategory
 
 	return &response, nil
 }
 
-func (es *ProductDataStore) AddProduct(product *searchpb.Product) error {
-	body, err := json.Marshal(product)
+func (es *ProductDataStore) UpsertProduct(productId int, product *searchpb.Product) error {
+	// Serialize the product as JSON
+	body, err := json.Marshal(map[string]interface{}{
+		"doc":           product, // Document to update
+		"doc_as_upsert": true,    // Create if the document doesn't exist
+	})
 	if err != nil {
 		return err
 	}
 
-	req := esapi.IndexRequest{
-		Index:      es.index,
-		DocumentID: strconv.Itoa(int(product.Id)),
-		Body:       bytes.NewReader(body),
-		Refresh:    "true",
-	}
-
-	res, err := req.Do(context.Background(), es.client)
-	if err != nil {
-		return err
-	}
-	defer res.Body.Close()
-
-	if res.IsError() {
-		return fmt.Errorf("error adding product: %s", res.String())
-	}
-
-	return nil
-}
-
-func (es *ProductDataStore) UpdateProduct(productId int, product *searchpb.Product) error {
-	body, err := json.Marshal(product)
-	if err != nil {
-		return err
-	}
-
+	// Create the update request
 	req := esapi.UpdateRequest{
 		Index:      es.index,
-		DocumentID: strconv.Itoa(productId),
+		DocumentID: strconv.Itoa(productId), // Ensure this matches the document ID in Elasticsearch
 		Body:       bytes.NewReader(body),
-		Refresh:    "true",
+		Refresh:    "true", // Optionally set to "true" to immediately refresh the index
 	}
 
+	// Execute the update request
 	res, err := req.Do(context.Background(), es.client)
 	if err != nil {
 		return err
 	}
 	defer res.Body.Close()
 
+	// Check for errors in the response
 	if res.IsError() {
-		return fmt.Errorf("error updating product: %s", res.String())
+		return fmt.Errorf("error upserting product: %s", res.String())
 	}
 
 	return nil

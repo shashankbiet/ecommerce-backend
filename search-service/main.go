@@ -10,6 +10,8 @@ func main() {
 	initializer.InitializerConfig()
 	initializer.InitializeLogger()
 	initializer.InitializeDb()
-	initializer.InitializeProductConsumer()
+	go func() {
+		initializer.InitializeProductConsumer()
+	}()
 	initializer.InitializeServer(context.Background(), ps)
 }

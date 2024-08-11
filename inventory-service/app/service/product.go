@@ -35,6 +35,8 @@ func (p *ProductService) Add(request *productRequest.AddRequest) (int64, error) 
 }
 
 func (p *ProductService) Update(request *productRequest.UpdateRequest) (bool, error) {
+	setCategory(&request.Product.Category)
+	setSubCategory(&request.Product.SubCategory)
 	_, err := p.datastore.Update(request.Product)
 	if err != nil {
 		return false, err

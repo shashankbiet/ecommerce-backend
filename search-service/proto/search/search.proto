@@ -13,16 +13,14 @@ message  ProductSearchRequest {
     string keywords = 1;
     string category = 2;
     string sub_category = 3;
-    int32 city_id = 4;
 }
 
 message ProductSearchResponse {
     string keywords = 1;
     string category = 2;
     string sub_category = 3;
-    int32 city_id = 4;
-    uint32 total_results = 5;
-    repeated Product products = 6;
+    uint32 total_results = 4;
+    repeated Product products = 5;
 }
 
 message Product{

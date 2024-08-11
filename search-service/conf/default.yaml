@@ -2,10 +2,11 @@ ENVIRONMENT: "local"
 APP_NAME: "search-service"
 GRPC_SERVER:
     PORT: 9004
-ELASTIC_SEARCH_CONFIG:
-    ADDRESS: http://elasticsearch:9200
+ELASTIC_SEARCH:
+    ADDRESS: http://localhost:9200
+    INDEX_NAME: searchindex
 KAFKA_CONFIG:
     SERVERS: "localhost:9092"
-    GROUP_ID: "inventory"
+    GROUP_ID: "inventory_service"
 PRODUCT_UPDATE_TOPIC:
     NAME: "product_update"

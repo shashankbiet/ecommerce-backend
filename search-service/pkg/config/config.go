@@ -4,7 +4,7 @@ package config
 type Configuration struct {
 	Environment        string              `mapstructure:"ENVIRONMENT"`
 	AppName            string              `mapstructure:"APP_NAME"`
-	ElasticSearch      ElasticSearchConfig `mapstructure:"ELASTIC_SEARCH_CONFIG"`
+	ElasticSearch      ElasticSearchConfig `mapstructure:"ELASTIC_SEARCH"`
 	GrpcServer         GrpcServerConfig    `mapstructure:"GRPC_SERVER"`
 	KafkaConfig        KafkaConfig         `mapstructure:"KAFKA_CONFIG"`
 	ProductUpdateTopic KafkaTopicConfig    `mapstructure:"PRODUCT_UPDATE_TOPIC"`

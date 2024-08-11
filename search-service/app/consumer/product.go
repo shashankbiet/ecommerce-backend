@@ -1,23 +1,37 @@
 package consumer
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"os/signal"
+	"search-service/app/dao"
+	model "search-service/app/models"
 	"search-service/pkg/config"
+	"search-service/pkg/db"
+	searchpb "search-service/proto/search"
 	"syscall"
 
 	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 )
 
 type ProductConsumer struct {
+	datastore dao.IProductDataStore
 }
 
 func NewProductConsumer() *ProductConsumer {
-	return &ProductConsumer{}
+	elasticSearchClient := db.GetElasticSearchConnection()
+	indexName := config.GetConfig().ElasticSearch.IndexName
+	if indexName == "" {
+		panic("ElasticSearch index name is not set")
+	}
+	datastore := dao.NewProductDataStore(elasticSearchClient, indexName)
+	return &ProductConsumer{
+		datastore: datastore,
+	}
 }
 
-func (p *ProductConsumer) Consume() {
+func (pc *ProductConsumer) Consume() {
 	c, err := kafka.NewConsumer(&kafka.ConfigMap{
 		"bootstrap.servers": config.GetConfig().KafkaConfig.Servers,
 		"group.id":          config.GetConfig().KafkaConfig.GroupId,
@@ -50,6 +64,7 @@ func (p *ProductConsumer) Consume() {
 			switch e := ev.(type) {
 			case *kafka.Message:
 				fmt.Printf("Message on %s: %s\n", e.TopicPartition, string(e.Value))
+				pc.updateProduct(e.Value)
 				if e.Headers != nil {
 					fmt.Printf("Headers: %v\n", e.Headers)
 				}
@@ -66,4 +81,24 @@ func (p *ProductConsumer) Consume() {
 	}
 
 	fmt.Printf("Closing product consumer\n")
+}
+
+func (pc *ProductConsumer) updateProduct(data []byte) {
+	var product model.Product
+	err := json.Unmarshal(data, &product)
+	if err != nil {
+		fmt.Println("Error unmarshalling product data: ", err)
+		return
+	}
+
+	productPb := &searchpb.Product{
+		Id:          int32(product.Id),
+		Name:        product.Name,
+		Description: product.Description,
+		Brand:       product.Brand,
+		Category:    product.Category,
+		SubCategory: product.SubCategory,
+	}
+
+	pc.datastore.UpsertProduct(int(product.Id), productPb)
 }

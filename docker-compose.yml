@@ -34,6 +34,8 @@ services:
         depends_on:
             mysql:
                 condition: service_healthy
+            kafka:
+                condition: service_healthy
     search-service:
         build: ./search-service
         container_name: search-service
@@ -43,6 +45,11 @@ services:
             - GRPC_SERVER_PORT=9004
         ports:
             - 9004:9004
+        depends_on:
+            kafka:
+                condition: service_healthy
+            elasticsearch:
+                condition: service_healthy
     mongodb:
         image: mongo:4.0.28
         container_name: mongodb
@@ -89,6 +96,11 @@ services:
         ports:
             - "9200:9200"
             - "9300:9300"
+        healthcheck:
+            test: ["CMD", "curl", "-f", "http://localhost:9200"]
+            interval: 30s
+            timeout: 10s
+            retries: 3
     zookeeper:
         image: confluentinc/cp-zookeeper:7.3.0
         hostname: zookeeper
