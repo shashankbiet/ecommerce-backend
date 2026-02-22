@@ -91,8 +91,6 @@ services:
             - bootstrap.memory_lock=true
             - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
             - discovery.type=single-node
-        volumes:
-            - ./bind-mount/db/elasticsearch:/usr/share/elasticsearch/data
         ports:
             - "9200:9200"
             - "9300:9300"
@@ -142,7 +140,6 @@ services:
         restart: always
         volumes:
             - ./prometheus.yml:/etc/prometheus/prometheus.yml
-            - ./bind-mount/prometheus:/prometheus
         command:
             - --config.file=/etc/prometheus/prometheus.yml
         ports:
@@ -151,8 +148,6 @@ services:
         image: grafana/grafana-oss
         container_name: grafana
         restart: unless-stopped
-        volumes:
-            - ./bind-mount/grafana:/var/lib/grafana
         environment:
             - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
             - GF_AUTH_ANONYMOUS_ENABLED=true
@@ -186,7 +181,6 @@ services:
         restart: unless-stopped
         volumes:
             - ./loki-config.yaml:/mnt/config/loki-config.yaml:ro
-            - ./bind-mount/loki:/tmp/loki
         command:
             - --config.file=/mnt/config/loki-config.yaml
         ports:
@@ -202,13 +196,3 @@ services:
             - --config.file=/etc/promtail/promtail-config.yaml
         depends_on:
             - loki
-    cadvisor:
-        image: gcr.io/cadvisor/cadvisor:v0.46.0
-        container_name: cadvisor
-        volumes:
-            - /:/rootfs:ro
-            - /var/run/docker.sock:/var/run/docker.sock:rw
-            - /sys:/sys:ro
-            - /var/lib/docker/:/var/lib/docker:ro
-        ports:
-            - 8080:8080
