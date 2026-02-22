@@ -3,8 +3,7 @@ let hashing = {};
 
 hashing.encrypt = async (password) => {
     const saltRounds = 10;
-    let salt = await bcrypt.genSalt(saltRounds);
-    let hashPass = await bcrypt.hash(password, salt);
+    let hashPass = await bcrypt.hash(password, saltRounds);
     return hashPass;
 };
 

@@ -3,7 +3,7 @@ APP_NAME: "inventory-service"
 SQL_CONFIG:
     USERNAME: "testuser"
     PASSWORD: "testpassword"
-    HOST: "docker.for.mac.localhost"
+    HOST: "mysql"
     PORT: "3306"
     DATABASE: "testdb"
     MAX_LIFE_TIME: 3
