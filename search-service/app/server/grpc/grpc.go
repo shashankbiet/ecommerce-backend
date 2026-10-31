@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net"
+	"net/http"
 	"search-service/app/dao"
 	producthandler "search-service/app/handler/product"
 	"search-service/app/service"
@@ -14,6 +15,7 @@ import (
 	searchpb "search-service/proto/search"
 
 	middleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	"google.golang.org/grpc"
 )
@@ -31,6 +33,7 @@ func InitGrpcServer(ctx context.Context, ps *metric.PrometheusServer) (*grpc.Ser
 		grpc.UnaryInterceptor(middleware.ChainUnaryServer(unaryServerInterceptor...)),
 		grpc.StreamInterceptor(middleware.ChainStreamServer(streamServerInterceptor...)),
 	)
+	grpcMetrics.InitializeMetrics(grpcServer)
 
 	registerServices(ctx, grpcServer)
 
@@ -39,6 +42,20 @@ func InitGrpcServer(ctx context.Context, ps *metric.PrometheusServer) (*grpc.Ser
 	if err != nil {
 		return nil, err
 	}
+
+	metricsListener, err := net.Listen("tcp", ":9104")
+	if err != nil {
+		lis.Close()
+		return nil, fmt.Errorf("listen for Prometheus metrics: %w", err)
+	}
+	metricsServer := &http.Server{
+		Handler: promhttp.HandlerFor(ps.Registry, promhttp.HandlerOpts{}),
+	}
+	go func() {
+		if err := metricsServer.Serve(metricsListener); err != nil && err != http.ErrServerClosed {
+			logger.Error("failed to start metrics server", "error", err)
+		}
+	}()
 
 	go func() {
 		if err := grpcServer.Serve(lis); err != nil {

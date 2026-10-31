@@ -1,0 +1,210 @@
+{"index":{"_index":"searchindex","_id":"1"}}
+{"id":1,"name":"Wireless Noise-Cancelling Headphones","description":"Wireless Noise-Cancelling Headphones, a demo audio item from Electronics.","brand":"Northstar","category":"Electronics","subCategory":"Audio","imageId":"demo-product-001","weight":0.35,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"2"}}
+{"id":2,"name":"Bluetooth Portable Speaker","description":"Bluetooth Portable Speaker, a demo mobile item from Electronics.","brand":"Northstar","category":"Electronics","subCategory":"Mobile","imageId":"demo-product-002","weight":0.5,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"3"}}
+{"id":3,"name":"USB-C GaN Charger","description":"USB-C GaN Charger, a demo computers item from Electronics.","brand":"Northstar","category":"Electronics","subCategory":"Computers","imageId":"demo-product-003","weight":0.65,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"4"}}
+{"id":4,"name":"Mechanical Keyboard","description":"Mechanical Keyboard, a demo accessories item from Electronics.","brand":"Northstar","category":"Electronics","subCategory":"Accessories","imageId":"demo-product-004","weight":0.8,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"5"}}
+{"id":5,"name":"1080p Streaming Webcam","description":"1080p Streaming Webcam, a demo audio item from Electronics.","brand":"Northstar","category":"Electronics","subCategory":"Audio","imageId":"demo-product-005","weight":0.95,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"6"}}
+{"id":6,"name":"Portable SSD 1TB","description":"Portable SSD 1TB, a demo mobile item from Electronics.","brand":"Northstar","category":"Electronics","subCategory":"Mobile","imageId":"demo-product-006","weight":1.1,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"7"}}
+{"id":7,"name":"Smartphone Stand","description":"Smartphone Stand, a demo computers item from Electronics.","brand":"Northstar","category":"Electronics","subCategory":"Computers","imageId":"demo-product-007","weight":1.25,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"8"}}
+{"id":8,"name":"Stainless Steel Cookware Set","description":"Stainless Steel Cookware Set, a demo cookware item from Home Kitchen.","brand":"Oakline","category":"Home Kitchen","subCategory":"Cookware","imageId":"demo-product-008","weight":1.4,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"9"}}
+{"id":9,"name":"Airtight Food Storage Containers","description":"Airtight Food Storage Containers, a demo storage item from Home Kitchen.","brand":"Oakline","category":"Home Kitchen","subCategory":"Storage","imageId":"demo-product-009","weight":1.55,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"10"}}
+{"id":10,"name":"Cotton Sheet Set","description":"Cotton Sheet Set, a demo bedding item from Home Kitchen.","brand":"Oakline","category":"Home Kitchen","subCategory":"Bedding","imageId":"demo-product-010","weight":1.7,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"11"}}
+{"id":11,"name":"Dimmable LED Desk Lamp","description":"Dimmable LED Desk Lamp, a demo lighting item from Home Kitchen.","brand":"Oakline","category":"Home Kitchen","subCategory":"Lighting","imageId":"demo-product-011","weight":1.85,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"12"}}
+{"id":12,"name":"Ceramic Nonstick Frying Pan","description":"Ceramic Nonstick Frying Pan, a demo cookware item from Home Kitchen.","brand":"Oakline","category":"Home Kitchen","subCategory":"Cookware","imageId":"demo-product-012","weight":2,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"13"}}
+{"id":13,"name":"Bamboo Cutting Board","description":"Bamboo Cutting Board, a demo storage item from Home Kitchen.","brand":"Oakline","category":"Home Kitchen","subCategory":"Storage","imageId":"demo-product-013","weight":2.15,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"14"}}
+{"id":14,"name":"Compact Air Fryer","description":"Compact Air Fryer, a demo bedding item from Home Kitchen.","brand":"Oakline","category":"Home Kitchen","subCategory":"Bedding","imageId":"demo-product-014","weight":2.3,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"15"}}
+{"id":15,"name":"Classic Cotton T-Shirt","description":"Classic Cotton T-Shirt, a demo apparel item from Fashion.","brand":"Threadwell","category":"Fashion","subCategory":"Apparel","imageId":"demo-product-015","weight":2.45,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"16"}}
+{"id":16,"name":"Stretch Denim Jeans","description":"Stretch Denim Jeans, a demo footwear item from Fashion.","brand":"Threadwell","category":"Fashion","subCategory":"Footwear","imageId":"demo-product-016","weight":2.6,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"17"}}
+{"id":17,"name":"Lightweight Running Shoes","description":"Lightweight Running Shoes, a demo bags item from Fashion.","brand":"Threadwell","category":"Fashion","subCategory":"Bags","imageId":"demo-product-017","weight":2.75,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"18"}}
+{"id":18,"name":"Leather Crossbody Bag","description":"Leather Crossbody Bag, a demo accessories item from Fashion.","brand":"Threadwell","category":"Fashion","subCategory":"Accessories","imageId":"demo-product-018","weight":2.9,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"19"}}
+{"id":19,"name":"Knit Winter Scarf","description":"Knit Winter Scarf, a demo apparel item from Fashion.","brand":"Threadwell","category":"Fashion","subCategory":"Apparel","imageId":"demo-product-019","weight":3.05,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"20"}}
+{"id":20,"name":"Everyday Canvas Backpack","description":"Everyday Canvas Backpack, a demo footwear item from Fashion.","brand":"Threadwell","category":"Fashion","subCategory":"Footwear","imageId":"demo-product-020","weight":3.2,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"21"}}
+{"id":21,"name":"Waterproof Trail Sneakers","description":"Waterproof Trail Sneakers, a demo bags item from Fashion.","brand":"Threadwell","category":"Fashion","subCategory":"Bags","imageId":"demo-product-021","weight":3.35,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"22"}}
+{"id":22,"name":"Adjustable Dumbbell Set","description":"Adjustable Dumbbell Set, a demo fitness item from Sports Outdoors.","brand":"Summit Trail","category":"Sports Outdoors","subCategory":"Fitness","imageId":"demo-product-022","weight":3.5,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"23"}}
+{"id":23,"name":"Non-Slip Yoga Mat","description":"Non-Slip Yoga Mat, a demo camping item from Sports Outdoors.","brand":"Summit Trail","category":"Sports Outdoors","subCategory":"Camping","imageId":"demo-product-023","weight":3.65,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"24"}}
+{"id":24,"name":"Four-Person Camping Tent","description":"Four-Person Camping Tent, a demo cycling item from Sports Outdoors.","brand":"Summit Trail","category":"Sports Outdoors","subCategory":"Cycling","imageId":"demo-product-024","weight":3.8,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"25"}}
+{"id":25,"name":"Insulated Hiking Bottle","description":"Insulated Hiking Bottle, a demo team sports item from Sports Outdoors.","brand":"Summit Trail","category":"Sports Outdoors","subCategory":"Team Sports","imageId":"demo-product-025","weight":0.2,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"26"}}
+{"id":26,"name":"Aluminum Road Bike Helmet","description":"Aluminum Road Bike Helmet, a demo fitness item from Sports Outdoors.","brand":"Summit Trail","category":"Sports Outdoors","subCategory":"Fitness","imageId":"demo-product-026","weight":0.35,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"27"}}
+{"id":27,"name":"Resistance Band Set","description":"Resistance Band Set, a demo camping item from Sports Outdoors.","brand":"Summit Trail","category":"Sports Outdoors","subCategory":"Camping","imageId":"demo-product-027","weight":0.5,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"28"}}
+{"id":28,"name":"Training Soccer Ball","description":"Training Soccer Ball, a demo cycling item from Sports Outdoors.","brand":"Summit Trail","category":"Sports Outdoors","subCategory":"Cycling","imageId":"demo-product-028","weight":0.65,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"29"}}
+{"id":29,"name":"Vitamin C Face Serum","description":"Vitamin C Face Serum, a demo skincare item from Beauty Personal Care.","brand":"Pure Harbor","category":"Beauty Personal Care","subCategory":"Skincare","imageId":"demo-product-029","weight":0.8,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"30"}}
+{"id":30,"name":"Hydrating Daily Moisturizer","description":"Hydrating Daily Moisturizer, a demo haircare item from Beauty Personal Care.","brand":"Pure Harbor","category":"Beauty Personal Care","subCategory":"Haircare","imageId":"demo-product-030","weight":0.95,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"31"}}
+{"id":31,"name":"Repairing Shampoo","description":"Repairing Shampoo, a demo makeup item from Beauty Personal Care.","brand":"Pure Harbor","category":"Beauty Personal Care","subCategory":"Makeup","imageId":"demo-product-031","weight":1.1,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"32"}}
+{"id":32,"name":"Ceramic Hair Dryer Brush","description":"Ceramic Hair Dryer Brush, a demo fragrance item from Beauty Personal Care.","brand":"Pure Harbor","category":"Beauty Personal Care","subCategory":"Fragrance","imageId":"demo-product-032","weight":1.25,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"33"}}
+{"id":33,"name":"Matte Lipstick Set","description":"Matte Lipstick Set, a demo skincare item from Beauty Personal Care.","brand":"Pure Harbor","category":"Beauty Personal Care","subCategory":"Skincare","imageId":"demo-product-033","weight":1.4,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"34"}}
+{"id":34,"name":"Mineral Sunscreen SPF 50","description":"Mineral Sunscreen SPF 50, a demo haircare item from Beauty Personal Care.","brand":"Pure Harbor","category":"Beauty Personal Care","subCategory":"Haircare","imageId":"demo-product-034","weight":1.55,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"35"}}
+{"id":35,"name":"Eau de Parfum 50ml","description":"Eau de Parfum 50ml, a demo makeup item from Beauty Personal Care.","brand":"Pure Harbor","category":"Beauty Personal Care","subCategory":"Makeup","imageId":"demo-product-035","weight":1.7,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"36"}}
+{"id":36,"name":"Mystery at Cedar House","description":"Mystery at Cedar House, a demo fiction item from Books Media.","brand":"Bright Page","category":"Books Media","subCategory":"Fiction","imageId":"demo-product-036","weight":1.85,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"37"}}
+{"id":37,"name":"The Science of Everyday Life","description":"The Science of Everyday Life, a demo nonfiction item from Books Media.","brand":"Bright Page","category":"Books Media","subCategory":"Nonfiction","imageId":"demo-product-037","weight":2,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"38"}}
+{"id":38,"name":"Modern Python Workbook","description":"Modern Python Workbook, a demo education item from Books Media.","brand":"Bright Page","category":"Books Media","subCategory":"Education","imageId":"demo-product-038","weight":2.15,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"39"}}
+{"id":39,"name":"World Atlas for Young Readers","description":"World Atlas for Young Readers, a demo kids item from Books Media.","brand":"Bright Page","category":"Books Media","subCategory":"Kids","imageId":"demo-product-039","weight":2.3,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"40"}}
+{"id":40,"name":"Personal Finance Basics","description":"Personal Finance Basics, a demo fiction item from Books Media.","brand":"Bright Page","category":"Books Media","subCategory":"Fiction","imageId":"demo-product-040","weight":2.45,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"41"}}
+{"id":41,"name":"Short Stories from the Coast","description":"Short Stories from the Coast, a demo nonfiction item from Books Media.","brand":"Bright Page","category":"Books Media","subCategory":"Nonfiction","imageId":"demo-product-041","weight":2.6,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"42"}}
+{"id":42,"name":"Beginner Astronomy Guide","description":"Beginner Astronomy Guide, a demo education item from Books Media.","brand":"Bright Page","category":"Books Media","subCategory":"Education","imageId":"demo-product-042","weight":2.75,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"43"}}
+{"id":43,"name":"Magnetic Building Tiles 100-Piece","description":"Magnetic Building Tiles 100-Piece, a demo building sets item from Toys Games.","brand":"Playforge","category":"Toys Games","subCategory":"Building Sets","imageId":"demo-product-043","weight":2.9,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"44"}}
+{"id":44,"name":"Family Strategy Board Game","description":"Family Strategy Board Game, a demo board games item from Toys Games.","brand":"Playforge","category":"Toys Games","subCategory":"Board Games","imageId":"demo-product-044","weight":3.05,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"45"}}
+{"id":45,"name":"Mountain Landscape Puzzle 1000-Piece","description":"Mountain Landscape Puzzle 1000-Piece, a demo puzzles item from Toys Games.","brand":"Playforge","category":"Toys Games","subCategory":"Puzzles","imageId":"demo-product-045","weight":3.2,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"46"}}
+{"id":46,"name":"Remote Control Car","description":"Remote Control Car, a demo outdoor toys item from Toys Games.","brand":"Playforge","category":"Toys Games","subCategory":"Outdoor Toys","imageId":"demo-product-046","weight":3.35,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"47"}}
+{"id":47,"name":"Wooden Block Set","description":"Wooden Block Set, a demo building sets item from Toys Games.","brand":"Playforge","category":"Toys Games","subCategory":"Building Sets","imageId":"demo-product-047","weight":3.5,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"48"}}
+{"id":48,"name":"Cooperative Card Game","description":"Cooperative Card Game, a demo board games item from Toys Games.","brand":"Playforge","category":"Toys Games","subCategory":"Board Games","imageId":"demo-product-048","weight":3.65,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"49"}}
+{"id":49,"name":"Outdoor Ring Toss Set","description":"Outdoor Ring Toss Set, a demo puzzles item from Toys Games.","brand":"Playforge","category":"Toys Games","subCategory":"Puzzles","imageId":"demo-product-049","weight":3.8,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"50"}}
+{"id":50,"name":"Roasted Almond Snack Pack","description":"Roasted Almond Snack Pack, a demo snacks item from Grocery Pantry.","brand":"Good Basket","category":"Grocery Pantry","subCategory":"Snacks","imageId":"demo-product-050","weight":0.2,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"51"}}
+{"id":51,"name":"Sparkling Mineral Water 12-Pack","description":"Sparkling Mineral Water 12-Pack, a demo beverages item from Grocery Pantry.","brand":"Good Basket","category":"Grocery Pantry","subCategory":"Beverages","imageId":"demo-product-051","weight":0.35,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"52"}}
+{"id":52,"name":"Organic Rolled Oats","description":"Organic Rolled Oats, a demo baking item from Grocery Pantry.","brand":"Good Basket","category":"Grocery Pantry","subCategory":"Baking","imageId":"demo-product-052","weight":0.5,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"53"}}
+{"id":53,"name":"Whole Grain Pasta","description":"Whole Grain Pasta, a demo pantry item from Grocery Pantry.","brand":"Good Basket","category":"Grocery Pantry","subCategory":"Pantry","imageId":"demo-product-053","weight":0.65,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"54"}}
+{"id":54,"name":"Dark Chocolate Squares","description":"Dark Chocolate Squares, a demo snacks item from Grocery Pantry.","brand":"Good Basket","category":"Grocery Pantry","subCategory":"Snacks","imageId":"demo-product-054","weight":0.8,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"55"}}
+{"id":55,"name":"Cold Brew Coffee Concentrate","description":"Cold Brew Coffee Concentrate, a demo beverages item from Grocery Pantry.","brand":"Good Basket","category":"Grocery Pantry","subCategory":"Beverages","imageId":"demo-product-055","weight":0.95,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"56"}}
+{"id":56,"name":"Extra Virgin Olive Oil","description":"Extra Virgin Olive Oil, a demo baking item from Grocery Pantry.","brand":"Good Basket","category":"Grocery Pantry","subCategory":"Baking","imageId":"demo-product-056","weight":1.1,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"57"}}
+{"id":57,"name":"pH-Neutral Car Wash Kit","description":"pH-Neutral Car Wash Kit, a demo car care item from Automotive.","brand":"Roadstead","category":"Automotive","subCategory":"Car Care","imageId":"demo-product-057","weight":1.25,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"58"}}
+{"id":58,"name":"All-Weather Floor Mats","description":"All-Weather Floor Mats, a demo interior item from Automotive.","brand":"Roadstead","category":"Automotive","subCategory":"Interior","imageId":"demo-product-058","weight":1.4,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"59"}}
+{"id":59,"name":"46-Piece Socket Tool Set","description":"46-Piece Socket Tool Set, a demo tools item from Automotive.","brand":"Roadstead","category":"Automotive","subCategory":"Tools","imageId":"demo-product-059","weight":1.55,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"60"}}
+{"id":60,"name":"Dual USB Car Charger","description":"Dual USB Car Charger, a demo electronics item from Automotive.","brand":"Roadstead","category":"Automotive","subCategory":"Electronics","imageId":"demo-product-060","weight":1.7,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"61"}}
+{"id":61,"name":"Microfiber Detailing Towels","description":"Microfiber Detailing Towels, a demo car care item from Automotive.","brand":"Roadstead","category":"Automotive","subCategory":"Car Care","imageId":"demo-product-061","weight":1.85,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"62"}}
+{"id":62,"name":"Compact Tire Inflator","description":"Compact Tire Inflator, a demo interior item from Automotive.","brand":"Roadstead","category":"Automotive","subCategory":"Interior","imageId":"demo-product-062","weight":2,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"63"}}
+{"id":63,"name":"Magnetic Phone Mount","description":"Magnetic Phone Mount, a demo tools item from Automotive.","brand":"Roadstead","category":"Automotive","subCategory":"Tools","imageId":"demo-product-063","weight":2.15,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"64"}}
+{"id":64,"name":"Recycled Notebook 3-Pack","description":"Recycled Notebook 3-Pack, a demo stationery item from Office School.","brand":"Paper Harbor","category":"Office School","subCategory":"Stationery","imageId":"demo-product-064","weight":2.3,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"65"}}
+{"id":65,"name":"Ergonomic Office Chair","description":"Ergonomic Office Chair, a demo furniture item from Office School.","brand":"Paper Harbor","category":"Office School","subCategory":"Furniture","imageId":"demo-product-065","weight":2.45,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"66"}}
+{"id":66,"name":"USB-C Docking Station","description":"USB-C Docking Station, a demo peripherals item from Office School.","brand":"Paper Harbor","category":"Office School","subCategory":"Peripherals","imageId":"demo-product-066","weight":2.6,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"67"}}
+{"id":67,"name":"Desktop File Organizer","description":"Desktop File Organizer, a demo organization item from Office School.","brand":"Paper Harbor","category":"Office School","subCategory":"Organization","imageId":"demo-product-067","weight":2.75,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"68"}}
+{"id":68,"name":"Wireless Mouse","description":"Wireless Mouse, a demo stationery item from Office School.","brand":"Paper Harbor","category":"Office School","subCategory":"Stationery","imageId":"demo-product-068","weight":2.9,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"69"}}
+{"id":69,"name":"Adjustable Laptop Stand","description":"Adjustable Laptop Stand, a demo furniture item from Office School.","brand":"Paper Harbor","category":"Office School","subCategory":"Furniture","imageId":"demo-product-069","weight":3.05,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"70"}}
+{"id":70,"name":"Gel Pen Set","description":"Gel Pen Set, a demo peripherals item from Office School.","brand":"Paper Harbor","category":"Office School","subCategory":"Peripherals","imageId":"demo-product-070","weight":3.2,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"71"}}
+{"id":71,"name":"Adult Dog Food 10kg","description":"Adult Dog Food 10kg, a demo food item from Pet Supplies.","brand":"Paw & Pine","category":"Pet Supplies","subCategory":"Food","imageId":"demo-product-071","weight":3.35,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"72"}}
+{"id":72,"name":"Interactive Cat Wand Toy","description":"Interactive Cat Wand Toy, a demo toys item from Pet Supplies.","brand":"Paw & Pine","category":"Pet Supplies","subCategory":"Toys","imageId":"demo-product-072","weight":3.5,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"73"}}
+{"id":73,"name":"Slicker Grooming Brush","description":"Slicker Grooming Brush, a demo grooming item from Pet Supplies.","brand":"Paw & Pine","category":"Pet Supplies","subCategory":"Grooming","imageId":"demo-product-073","weight":3.65,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"74"}}
+{"id":74,"name":"Portable Pet Carrier","description":"Portable Pet Carrier, a demo travel item from Pet Supplies.","brand":"Paw & Pine","category":"Pet Supplies","subCategory":"Travel","imageId":"demo-product-074","weight":3.8,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"75"}}
+{"id":75,"name":"Stainless Steel Food Bowl","description":"Stainless Steel Food Bowl, a demo food item from Pet Supplies.","brand":"Paw & Pine","category":"Pet Supplies","subCategory":"Food","imageId":"demo-product-075","weight":0.2,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"76"}}
+{"id":76,"name":"Odor-Control Cat Litter","description":"Odor-Control Cat Litter, a demo toys item from Pet Supplies.","brand":"Paw & Pine","category":"Pet Supplies","subCategory":"Toys","imageId":"demo-product-076","weight":0.35,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"77"}}
+{"id":77,"name":"Reflective Dog Leash","description":"Reflective Dog Leash, a demo grooming item from Pet Supplies.","brand":"Paw & Pine","category":"Pet Supplies","subCategory":"Grooming","imageId":"demo-product-077","weight":0.5,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"78"}}
+{"id":78,"name":"Cordless Pruning Shears","description":"Cordless Pruning Shears, a demo tools item from Garden Outdoor.","brand":"Greenstead","category":"Garden Outdoor","subCategory":"Tools","imageId":"demo-product-078","weight":0.65,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"79"}}
+{"id":79,"name":"Self-Watering Planter Set","description":"Self-Watering Planter Set, a demo planters item from Garden Outdoor.","brand":"Greenstead","category":"Garden Outdoor","subCategory":"Planters","imageId":"demo-product-079","weight":0.8,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"80"}}
+{"id":80,"name":"Drip Irrigation Starter Kit","description":"Drip Irrigation Starter Kit, a demo irrigation item from Garden Outdoor.","brand":"Greenstead","category":"Garden Outdoor","subCategory":"Irrigation","imageId":"demo-product-080","weight":0.95,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"81"}}
+{"id":81,"name":"Foldable Patio Chair","description":"Foldable Patio Chair, a demo patio item from Garden Outdoor.","brand":"Greenstead","category":"Garden Outdoor","subCategory":"Patio","imageId":"demo-product-081","weight":1.1,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"82"}}
+{"id":82,"name":"Garden Hand Tool Set","description":"Garden Hand Tool Set, a demo tools item from Garden Outdoor.","brand":"Greenstead","category":"Garden Outdoor","subCategory":"Tools","imageId":"demo-product-082","weight":1.25,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"83"}}
+{"id":83,"name":"Raised Bed Garden Kit","description":"Raised Bed Garden Kit, a demo planters item from Garden Outdoor.","brand":"Greenstead","category":"Garden Outdoor","subCategory":"Planters","imageId":"demo-product-083","weight":1.4,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"84"}}
+{"id":84,"name":"Solar Pathway Lights","description":"Solar Pathway Lights, a demo irrigation item from Garden Outdoor.","brand":"Greenstead","category":"Garden Outdoor","subCategory":"Irrigation","imageId":"demo-product-084","weight":1.55,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"85"}}
+{"id":85,"name":"Daily Multivitamin 60 Count","description":"Daily Multivitamin 60 Count, a demo supplements item from Health Wellness.","brand":"Wellpath","category":"Health Wellness","subCategory":"Supplements","imageId":"demo-product-085","weight":1.7,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"86"}}
+{"id":86,"name":"Foam Roller 45cm","description":"Foam Roller 45cm, a demo fitness item from Health Wellness.","brand":"Wellpath","category":"Health Wellness","subCategory":"Fitness","imageId":"demo-product-086","weight":1.85,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"87"}}
+{"id":87,"name":"Digital Thermometer","description":"Digital Thermometer, a demo personal care item from Health Wellness.","brand":"Wellpath","category":"Health Wellness","subCategory":"Personal Care","imageId":"demo-product-087","weight":2,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"88"}}
+{"id":88,"name":"Electric Toothbrush","description":"Electric Toothbrush, a demo recovery item from Health Wellness.","brand":"Wellpath","category":"Health Wellness","subCategory":"Recovery","imageId":"demo-product-088","weight":2.15,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"89"}}
+{"id":89,"name":"Reusable Hot Cold Pack","description":"Reusable Hot Cold Pack, a demo supplements item from Health Wellness.","brand":"Wellpath","category":"Health Wellness","subCategory":"Supplements","imageId":"demo-product-089","weight":2.3,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"90"}}
+{"id":90,"name":"Vanilla Protein Powder","description":"Vanilla Protein Powder, a demo fitness item from Health Wellness.","brand":"Wellpath","category":"Health Wellness","subCategory":"Fitness","imageId":"demo-product-090","weight":2.45,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"91"}}
+{"id":91,"name":"Contoured Sleep Mask","description":"Contoured Sleep Mask, a demo personal care item from Health Wellness.","brand":"Wellpath","category":"Health Wellness","subCategory":"Personal Care","imageId":"demo-product-091","weight":2.6,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"92"}}
+{"id":92,"name":"Stainless Steel Watch","description":"Stainless Steel Watch, a demo watches item from Jewelry Watches.","brand":"Silver Fern","category":"Jewelry Watches","subCategory":"Watches","imageId":"demo-product-092","weight":2.75,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"93"}}
+{"id":93,"name":"Sterling Silver Pendant Necklace","description":"Sterling Silver Pendant Necklace, a demo necklaces item from Jewelry Watches.","brand":"Silver Fern","category":"Jewelry Watches","subCategory":"Necklaces","imageId":"demo-product-093","weight":2.9,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"94"}}
+{"id":94,"name":"Classic Hoop Earring Set","description":"Classic Hoop Earring Set, a demo earrings item from Jewelry Watches.","brand":"Silver Fern","category":"Jewelry Watches","subCategory":"Earrings","imageId":"demo-product-094","weight":3.05,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"95"}}
+{"id":95,"name":"Woven Bracelet Set","description":"Woven Bracelet Set, a demo bracelets item from Jewelry Watches.","brand":"Silver Fern","category":"Jewelry Watches","subCategory":"Bracelets","imageId":"demo-product-095","weight":3.2,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"96"}}
+{"id":96,"name":"Minimalist Leather Watch","description":"Minimalist Leather Watch, a demo watches item from Jewelry Watches.","brand":"Silver Fern","category":"Jewelry Watches","subCategory":"Watches","imageId":"demo-product-096","weight":3.35,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"97"}}
+{"id":97,"name":"Birthstone Stud Earrings","description":"Birthstone Stud Earrings, a demo necklaces item from Jewelry Watches.","brand":"Silver Fern","category":"Jewelry Watches","subCategory":"Necklaces","imageId":"demo-product-097","weight":3.5,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"98"}}
+{"id":98,"name":"Fitness Watch Band","description":"Fitness Watch Band, a demo earrings item from Jewelry Watches.","brand":"Silver Fern","category":"Jewelry Watches","subCategory":"Earrings","imageId":"demo-product-098","weight":3.65,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"99"}}
+{"id":99,"name":"Silicone Feeding Bowl Set","description":"Silicone Feeding Bowl Set, a demo feeding item from Baby Kids.","brand":"Little Grove","category":"Baby Kids","subCategory":"Feeding","imageId":"demo-product-099","weight":3.8,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"100"}}
+{"id":100,"name":"Convertible Crib Sheet","description":"Convertible Crib Sheet, a demo nursery item from Baby Kids.","brand":"Little Grove","category":"Baby Kids","subCategory":"Nursery","imageId":"demo-product-100","weight":0.2,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"101"}}
+{"id":101,"name":"Organic Cotton Onesie 3-Pack","description":"Organic Cotton Onesie 3-Pack, a demo clothing item from Baby Kids.","brand":"Little Grove","category":"Baby Kids","subCategory":"Clothing","imageId":"demo-product-101","weight":0.35,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"102"}}
+{"id":102,"name":"Retractable Baby Safety Gate","description":"Retractable Baby Safety Gate, a demo safety item from Baby Kids.","brand":"Little Grove","category":"Baby Kids","subCategory":"Safety","imageId":"demo-product-102","weight":0.5,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"103"}}
+{"id":103,"name":"Insulated Bottle Warmer","description":"Insulated Bottle Warmer, a demo feeding item from Baby Kids.","brand":"Little Grove","category":"Baby Kids","subCategory":"Feeding","imageId":"demo-product-103","weight":0.65,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"104"}}
+{"id":104,"name":"Soft Play Mat","description":"Soft Play Mat, a demo nursery item from Baby Kids.","brand":"Little Grove","category":"Baby Kids","subCategory":"Nursery","imageId":"demo-product-104","weight":0.8,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}
+{"index":{"_index":"searchindex","_id":"105"}}
+{"id":105,"name":"Adjustable High Chair","description":"Adjustable High Chair, a demo clothing item from Baby Kids.","brand":"Little Grove","category":"Baby Kids","subCategory":"Clothing","imageId":"demo-product-105","weight":0.95,"createdAt":"2026-01-01T00:00:00Z","updatedAt":"2026-01-01T00:00:00Z"}

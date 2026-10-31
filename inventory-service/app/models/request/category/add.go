@@ -19,13 +19,16 @@ func (c AddRequest) Validate(r *http.Request) (interface{}, error) {
 	if err := json.NewDecoder(r.Body).Decode(&request.Category); err != nil {
 		return nil, err
 	}
+	if request.Category == nil {
+		return nil, fmt.Errorf("request body cannot be empty")
+	}
 
 	if request.Category.Name == "" {
 		errors = append(errors, "Invalid Category Name")
 	}
 
 	if len(errors) > 0 {
-		return nil, fmt.Errorf(strings.Join(errors, ","))
+		return nil, fmt.Errorf("%s", strings.Join(errors, ","))
 	}
 	return &request, nil
 }

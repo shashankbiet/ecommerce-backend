@@ -8,7 +8,8 @@ RUN go mod download
 
 COPY . .
 
-RUN go build -tags musl -ldflags '-extldflags "-static"' -o /build/bin/app
+RUN --mount=type=cache,id=search-go-build,target=/root/.cache/go-build \
+    GOMAXPROCS=1 go build -p=1 -tags musl -ldflags '-extldflags "-static"' -o /build/bin/app
 
 # Deploy the application binary into a lean image
 FROM gcr.io/distroless/base-debian11 AS build-release-stage

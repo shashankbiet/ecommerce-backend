@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "NODE_ENV=prod node server.js",
-    "dev": "NODE_ENV=dev nodemon DEBUG=* server.js"
+    "dev": "NODE_ENV=dev DEBUG=* nodemon server.js"
   },
   "keywords": [
     "ecommerce",
@@ -21,7 +21,6 @@
     "axios": "^1.13.5",
     "dotenv": "^16.6.1",
     "express": "^4.22.1",
-    "express-rate-limit": "^6.11.2",
     "express-validator": "^7.3.1",
     "http-proxy-middleware": "^2.0.9",
     "jsonwebtoken": "^9.0.3",

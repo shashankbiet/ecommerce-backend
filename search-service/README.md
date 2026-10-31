@@ -112,7 +112,11 @@ grpcurl \
 
 ## Metrics
 
-Expose Prometheus metrics via gRPC endpoint or HTTP. Ensure metrics endpoint is not publicly exposed in production without access control.
+Prometheus metrics are exposed over HTTP at port `9104` on the service network.
+This includes gRPC server, Go runtime, and process metrics. In the local
+Compose setup, Prometheus scrapes this endpoint when the `monitoring` profile
+is enabled. Keep the endpoint on a trusted network and do not expose it
+publicly without access control.
 
 
 ## License

@@ -2,7 +2,6 @@ package service
 
 import (
 	"encoding/json"
-	"fmt"
 	"inventory-service/app/dao"
 	model "inventory-service/app/models"
 	productRequest "inventory-service/app/models/request/product"
@@ -23,23 +22,28 @@ func NewProductService(datastore dao.IProductDataStore, producer producer.IProdu
 }
 
 func (p *ProductService) Add(request *productRequest.AddRequest) (int64, error) {
-	setCategory(&request.Product.Category)
-	setSubCategory(&request.Product.SubCategory)
+	normalizeName(&request.Product.Category)
+	normalizeName(&request.Product.SubCategory)
 	id, err := p.datastore.Add(request.Product)
 	if err != nil {
 		return 0, err
 	}
 
+	// The search-service indexes by product id, so it must be set before publishing.
+	request.Product.Id = id
 	p.publishProductMessage(request.Product)
 	return id, nil
 }
 
 func (p *ProductService) Update(request *productRequest.UpdateRequest) (bool, error) {
-	setCategory(&request.Product.Category)
-	setSubCategory(&request.Product.SubCategory)
-	_, err := p.datastore.Update(request.Product)
+	normalizeName(&request.Product.Category)
+	normalizeName(&request.Product.SubCategory)
+	updated, err := p.datastore.Update(request.Product)
 	if err != nil {
 		return false, err
+	}
+	if !updated {
+		return false, nil
 	}
 	p.publishProductMessage(request.Product)
 	return true, nil
@@ -48,7 +52,7 @@ func (p *ProductService) Update(request *productRequest.UpdateRequest) (bool, er
 func (p *ProductService) GetById(request *productRequest.GetByIdRequest) (*model.Product, error) {
 	product, err := p.datastore.GetById(request.Id)
 	if err != nil {
-		return nil, fmt.Errorf(err.Error())
+		return nil, err
 	}
 
 	return product, nil
@@ -57,7 +61,7 @@ func (p *ProductService) GetById(request *productRequest.GetByIdRequest) (*model
 func (p *ProductService) GetAll(request *productRequest.GetAllRequest) ([]*model.Product, error) {
 	products, err := p.datastore.GetAll()
 	if err != nil {
-		return nil, fmt.Errorf("")
+		return nil, err
 	}
 	return products, nil
 }
@@ -65,7 +69,8 @@ func (p *ProductService) GetAll(request *productRequest.GetAllRequest) ([]*model
 func (p *ProductService) publishProductMessage(product *model.Product) {
 	arr, err := json.Marshal(product)
 	if err != nil {
-		logger.Error("unable to marshal product struct into []byte")
+		logger.Error("unable to marshal product struct into []byte", "error", err)
+		return
 	}
 	p.producer.Publish(arr)
 }

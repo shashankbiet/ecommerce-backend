@@ -19,6 +19,9 @@ func (c AddRequest) Validate(r *http.Request) (interface{}, error) {
 	if err := json.NewDecoder(r.Body).Decode(&request.SubCategory); err != nil {
 		return nil, err
 	}
+	if request.SubCategory == nil {
+		return nil, fmt.Errorf("request body cannot be empty")
+	}
 
 	if request.SubCategory.Name == "" {
 		errors = append(errors, "Invalid SubCategory Name")
@@ -29,7 +32,7 @@ func (c AddRequest) Validate(r *http.Request) (interface{}, error) {
 	}
 
 	if len(errors) > 0 {
-		return nil, fmt.Errorf(strings.Join(errors, ","))
+		return nil, fmt.Errorf("%s", strings.Join(errors, ","))
 	}
 	return &request, nil
 }

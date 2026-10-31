@@ -10,21 +10,31 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func InitHttpServer() (*http.Server, error) {
 	router := mux.NewRouter()
 	router.HandleFunc("/health", handler.HealthCheckHandler).Methods(http.MethodGet)
+	router.Handle("/metrics", promhttp.Handler()).Methods(http.MethodGet)
 	router.Handle("/debug/pprof/", http.HandlerFunc(pprof.Index))
 	router.Handle("/debug/pprof/cmdline", http.HandlerFunc(pprof.Cmdline))
 	router.Handle("/debug/pprof/profile", http.HandlerFunc(pprof.Profile))
 	router.Handle("/debug/pprof/symbol", http.HandlerFunc(pprof.Symbol))
 	router.Handle("/debug/pprof/trace", http.HandlerFunc(pprof.Trace))
 	router.Handle("/debug/pprof/{cmd}", http.HandlerFunc(pprof.Index))
-	registerCategoryRoutes(router)
-	registerSubCategoryHandler(router)
-	registerProductHandler(router)
-	registerInventoryHandler(router)
+	if err := registerCategoryRoutes(router); err != nil {
+		return nil, err
+	}
+	if err := registerSubCategoryHandler(router); err != nil {
+		return nil, err
+	}
+	if err := registerProductHandler(router); err != nil {
+		return nil, err
+	}
+	if err := registerInventoryHandler(router); err != nil {
+		return nil, err
+	}
 
 	port := fmt.Sprintf(":%d", config.GetConfig().HttpServer.Port)
 	httpServer := &http.Server{
@@ -35,7 +45,7 @@ func InitHttpServer() (*http.Server, error) {
 	}
 
 	go func() {
-		if err := httpServer.ListenAndServe(); err != nil {
+		if err := httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			logger.Error("failed to start http server", "error", err)
 			panic(err)
 		}

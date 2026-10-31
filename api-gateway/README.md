@@ -123,7 +123,8 @@ Similarly, you can access other user service APIs as documented in the [user-ser
 
 ## Metrics
 
-Expose Prometheus metrics at /metrics (configure METRICS_PATH). Ensure METRICS_PATH is not publicly exposed in production without access control.
+The gateway currently exposes a health endpoint at `/health`; it does not
+currently expose a Prometheus metrics endpoint.
 
 
 ## License

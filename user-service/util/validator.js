@@ -6,8 +6,9 @@ const validate = (req, res, next) => {
     if (errors.isEmpty()) {
         return next();
     }
-    const extractedErrors = [];
-    errors.array().map((err) => extractedErrors.push({ [err.param]: err.msg }));
+    const extractedErrors = errors
+        .array()
+        .map((err) => ({ [err.path || err.param || "field"]: err.msg }));
 
     return res.status(status.BAD_REQUEST.status).json({
         errors: extractedErrors,

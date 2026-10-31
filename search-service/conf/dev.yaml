@@ -3,7 +3,7 @@ APP_NAME: "search-service"
 GRPC_SERVER:
     PORT: 9004
 ELASTIC_SEARCH:
-    ADDRESS: http://elasticsearch:9200
+    ADDRESS: http://search-es:9200
     INDEX_NAME: searchindex
 KAFKA_CONFIG:
     SERVERS: "kafka:19092"

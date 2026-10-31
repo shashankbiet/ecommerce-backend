@@ -5,6 +5,7 @@ import (
 	"sync"
 
 	elasticsearch "github.com/elastic/go-elasticsearch/v8"
+	"search-service/pkg/logger"
 )
 
 var (
@@ -27,7 +28,8 @@ func initElasticSearchConnection() {
 	}
 	elasticsearchClient, err := elasticsearch.NewClient(cfg)
 	if err != nil {
-		panic("error in initializing elasticsearch")
+		logger.Error("failed to initialize Elasticsearch client", "error", err)
+		panic(err)
 	}
 	singletonElasticsearchClient = elasticsearchClient
 }

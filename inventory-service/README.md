@@ -1,6 +1,6 @@
 # Inventory Service
 
-Go microservice providing product inventory management, category management, and stock tracking. Designed for the ecommerce backend with MySQL persistence and Kafka integration.
+Go microservice providing product inventory management, category management, and stock tracking. Designed for the ecommerce backend with PostgreSQL persistence and Kafka integration.
 
 HTTP-based inventory service for product management, category organization, inventory tracking, and real-time updates via Kafka with comprehensive logging and Prometheus metrics.
 
@@ -12,7 +12,7 @@ HTTP-based inventory service for product management, category organization, inve
 - HTTP REST API endpoints
 - Request/response logging with Zap
 - Prometheus metrics collection
-- MySQL persistence
+- PostgreSQL persistence
 - Database health checks
 - Transactional operations
 
@@ -20,7 +20,7 @@ HTTP-based inventory service for product management, category organization, inve
 ## Tech Stack
 - Runtime: Go 1.25+
 - Framework: HTTP REST
-- Database: MySQL 8.0
+- Database: PostgreSQL 16
 - Message Queue: Kafka
 - Logging: Zap
 - Metrics: Prometheus client
@@ -42,8 +42,8 @@ APP_NAME: "inventory-service"
 SQL_CONFIG:
     USERNAME: "testuser"
     PASSWORD: "testpassword"
-    HOST: "mysql"
-    PORT: "3306"
+    HOST: "postgres"
+    PORT: "5432"
     DATABASE: "testdb"
     MAX_LIFE_TIME: 3
     MAX_OPEN_CONNS: 10
@@ -315,63 +315,55 @@ curl --location --request PUT 'http://localhost:3003/api/inventory' \
 
 ### Products Table
 ```sql
-CREATE TABLE `Products` (
-  `Id` bigint NOT NULL AUTO_INCREMENT,
-  `Name` varchar(255) NOT NULL,
-  `Description` text,
-  `Brand` varchar(255) NOT NULL,
-  `Category` varchar(255) DEFAULT NULL,
-  `SubCategory` varchar(255) DEFAULT NULL,
-  `ImageId` varchar(255) DEFAULT NULL,
-  `Weight` float DEFAULT NULL,
-  `CreatedAt` datetime DEFAULT NULL,
-  `UpdatedAt` datetime DEFAULT NULL,
-  PRIMARY KEY (`Id`),
-  UNIQUE KEY `UniqueId` (`Name`,`Category`,`SubCategory`),
-  KEY `Category` (`Category`),
-  KEY `SubCategory` (`SubCategory`),
-  CONSTRAINT `products_ibfk_1` FOREIGN KEY (`Category`) REFERENCES `Categories` (`Name`),
-  CONSTRAINT `products_ibfk_2` FOREIGN KEY (`SubCategory`) REFERENCES `SubCategories` (`Name`)
+CREATE TABLE Products (
+  Id BIGSERIAL PRIMARY KEY,
+  Name VARCHAR(255) NOT NULL,
+  Description TEXT,
+  Brand VARCHAR(255) NOT NULL,
+  Category VARCHAR(255),
+  SubCategory VARCHAR(255),
+  ImageId VARCHAR(255),
+  Weight FLOAT,
+  CreatedAt TIMESTAMP,
+  UpdatedAt TIMESTAMP,
+  UNIQUE (Name, Category, SubCategory),
+  FOREIGN KEY (Category) REFERENCES Categories(Name),
+  FOREIGN KEY (SubCategory, Category) REFERENCES SubCategories(Name, Category)
 );
 ```
 
 ### Categories Table
 ```sql
-CREATE TABLE `Categories` (
-  `Id` smallint NOT NULL AUTO_INCREMENT,
-  `Name` varchar(255) NOT NULL,
-  `CreatedAt` datetime DEFAULT NULL,
-  PRIMARY KEY (`Id`),
-  UNIQUE KEY `Name` (`Name`)
+CREATE TABLE Categories (
+  Id SMALLSERIAL PRIMARY KEY,
+  Name VARCHAR(255) UNIQUE NOT NULL,
+  CreatedAt TIMESTAMP
 );
 ```
 
 ### Subcategories Table
 ```sql
-CREATE TABLE `SubCategories` (
-  `Id` smallint NOT NULL AUTO_INCREMENT,
-  `Name` varchar(255) NOT NULL,
-  `Category` varchar(255) DEFAULT NULL,
-  `CreatedAt` datetime DEFAULT NULL,
-  PRIMARY KEY (`Id`),
-  UNIQUE KEY `UniqueId` (`Name`,`Category`),
-  KEY `Category` (`Category`),
-  CONSTRAINT `subcategories_ibfk_1` FOREIGN KEY (`Category`) REFERENCES `Categories` (`Name`)
+CREATE TABLE SubCategories (
+  Id SMALLSERIAL PRIMARY KEY,
+  Name VARCHAR(255) NOT NULL,
+  Category VARCHAR(255),
+  CreatedAt TIMESTAMP,
+  UNIQUE (Name, Category),
+  FOREIGN KEY (Category) REFERENCES Categories(Name)
 );
 ```
 
 ### Inventory Table
 ```sql
-CREATE TABLE `Inventory` (
-  `ProductId` bigint NOT NULL,
-  `SKU` int DEFAULT NULL,
-  `PurchasePrice` int DEFAULT NULL,
-  `SalePrice` int DEFAULT NULL,
-  `CreatedAt` datetime DEFAULT NULL,
-  `UpdatedAt` datetime DEFAULT NULL,
-  PRIMARY KEY (`ProductId`),
-  CONSTRAINT `inventory_ibfk_1` FOREIGN KEY (`ProductId`) REFERENCES `Products` (`Id`)
-)
+CREATE TABLE Inventory (
+  ProductId BIGINT NOT NULL PRIMARY KEY,
+  SKU INT,
+  PurchasePrice INT,
+  SalePrice INT,
+  CreatedAt TIMESTAMP,
+  UpdatedAt TIMESTAMP,
+  FOREIGN KEY (ProductId) REFERENCES Products(Id)
+);
 ```
 
 
@@ -384,7 +376,10 @@ CREATE TABLE `Inventory` (
 
 ## Metrics
 
-Metrics are exposed at `/metrics` endpoint. Ensure metrics endpoint is not publicly exposed in production without access control.
+Prometheus metrics are exposed at `/metrics`. The endpoint includes Go runtime
+and process metrics. In the local Compose setup, Prometheus scrapes this
+endpoint when the `monitoring` profile is enabled. Keep it on a trusted network
+and do not expose it publicly without access control.
 
 
 ## License

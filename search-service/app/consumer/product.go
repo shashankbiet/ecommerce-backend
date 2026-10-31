@@ -2,13 +2,13 @@ package consumer
 
 import (
 	"encoding/json"
-	"fmt"
 	"os"
 	"os/signal"
 	"search-service/app/dao"
 	model "search-service/app/models"
 	"search-service/pkg/config"
 	"search-service/pkg/db"
+	"search-service/pkg/logger"
 	searchpb "search-service/proto/search"
 	"syscall"
 
@@ -39,12 +39,14 @@ func (pc *ProductConsumer) Consume() {
 	})
 
 	if err != nil {
+		logger.Error("failed to create Kafka product consumer", "error", err)
 		panic(err)
 	}
 	defer c.Close()
 
 	err = c.SubscribeTopics([]string{config.GetConfig().ProductUpdateTopic.Name}, nil)
 	if err != nil {
+		logger.Error("failed to subscribe to product updates", "error", err)
 		panic(err)
 	}
 
@@ -57,21 +59,16 @@ func (pc *ProductConsumer) Consume() {
 	for run {
 		select {
 		case sig := <-sigchan:
-			fmt.Printf("Caught signal %v: terminating\n", sig)
+			logger.Info("stopping product consumer", "signal", sig)
 			run = false
 		default:
 			ev := c.Poll(100)
 			switch e := ev.(type) {
 			case *kafka.Message:
-				fmt.Printf("Message on %s: %s\n", e.TopicPartition, string(e.Value))
 				pc.updateProduct(e.Value)
-				if e.Headers != nil {
-					fmt.Printf("Headers: %v\n", e.Headers)
-				}
 			case kafka.Error:
-				// Errors should generally be considered informational, the client will try to automatically recover.
-				fmt.Fprintf(os.Stderr, "Error: %v\n", e)
-				if e.Code() == kafka.ErrAllBrokersDown {
+				if e.IsFatal() || e.Code() == kafka.ErrAllBrokersDown {
+					logger.Error("fatal Kafka consumer error", "error", e)
 					run = false
 				}
 			default:
@@ -80,14 +77,13 @@ func (pc *ProductConsumer) Consume() {
 		}
 	}
 
-	fmt.Printf("Closing product consumer\n")
 }
 
 func (pc *ProductConsumer) updateProduct(data []byte) {
 	var product model.Product
 	err := json.Unmarshal(data, &product)
 	if err != nil {
-		fmt.Println("Error unmarshalling product data: ", err)
+		logger.Error("failed to decode product update", "error", err)
 		return
 	}
 
@@ -100,5 +96,7 @@ func (pc *ProductConsumer) updateProduct(data []byte) {
 		SubCategory: product.SubCategory,
 	}
 
-	pc.datastore.UpsertProduct(int(product.Id), productPb)
+	if err := pc.datastore.UpsertProduct(int(product.Id), productPb); err != nil {
+		logger.Error("failed to upsert product", "product_id", product.Id, "error", err)
+	}
 }

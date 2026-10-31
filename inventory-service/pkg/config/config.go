@@ -11,7 +11,7 @@ type Configuration struct {
 	InventoryUpdateTopic KafkaTopicConfig `mapstructure:"INVENTORY_UPDATE_TOPIC"`
 }
 
-// Config struct holds the mysql database configuration
+// Config struct holds the postgres database configuration
 type SqlConfig struct {
 	Username     string `mapstructure:"USERNAME"`
 	Password     string `mapstructure:"PASSWORD"`

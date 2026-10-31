@@ -30,27 +30,52 @@ func easyjson6f8bf452DecodeInventoryServiceAppModels(in *jlexer.Lexer, out *Inve
 	for !in.IsDelim('}') {
 		key := in.UnsafeFieldName(false)
 		in.WantColon()
-		if in.IsNull() {
-			in.Skip()
-			in.WantComma()
-			continue
-		}
 		switch key {
 		case "productId":
-			out.ProductId = int64(in.Int64())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.ProductId = int64(in.Int64())
+			}
 		case "sku":
-			out.SKU = int32(in.Int32())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.SKU = int32(in.Int32())
+			}
 		case "purchasePrice":
-			out.PurchasePrice = int32(in.Int32())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.PurchasePrice = int32(in.Int32())
+			}
 		case "salePrice":
-			out.SalePrice = int32(in.Int32())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.SalePrice = int32(in.Int32())
+			}
+		case "quantity":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Quantity = int32(in.Int32())
+			}
 		case "createdAt":
-			if data := in.Raw(); in.Ok() {
-				in.AddError((out.CreatedAt).UnmarshalJSON(data))
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				if data := in.Raw(); in.Ok() {
+					in.AddError((out.CreatedAt).UnmarshalJSON(data))
+				}
 			}
 		case "updatedAt":
-			if data := in.Raw(); in.Ok() {
-				in.AddError((out.UpdatedAt).UnmarshalJSON(data))
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				if data := in.Raw(); in.Ok() {
+					in.AddError((out.UpdatedAt).UnmarshalJSON(data))
+				}
 			}
 		default:
 			in.SkipRecursive()
@@ -85,6 +110,11 @@ func easyjson6f8bf452EncodeInventoryServiceAppModels(out *jwriter.Writer, in Inv
 		const prefix string = ",\"salePrice\":"
 		out.RawString(prefix)
 		out.Int32(int32(in.SalePrice))
+	}
+	{
+		const prefix string = ",\"quantity\":"
+		out.RawString(prefix)
+		out.Int32(int32(in.Quantity))
 	}
 	{
 		const prefix string = ",\"createdAt\":"

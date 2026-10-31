@@ -56,13 +56,15 @@ func (p ProductHandler) Update(w http.ResponseWriter, r *http.Request) {
 
 	isUpdated, err := p.service.Update(request)
 	if err != nil || !isUpdated {
-		if err.Error() == constants.CONFLICT_ERROR_MESSAGE {
+		if err != nil && err.Error() == constants.CONFLICT_ERROR_MESSAGE {
 			w.WriteHeader(http.StatusConflict)
-		} else if err.Error() == constants.UNPROCESSABLE_ENTITY_ERROR_MESSAGE {
+		} else if err != nil && err.Error() == constants.UNPROCESSABLE_ENTITY_ERROR_MESSAGE {
 			w.WriteHeader(http.StatusUnprocessableEntity)
-		} else {
+		} else if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte(err.Error()))
+		} else {
+			w.WriteHeader(http.StatusNotFound)
 		}
 		return
 	}

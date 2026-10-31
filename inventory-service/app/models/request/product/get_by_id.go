@@ -1,4 +1,4 @@
-package inventory
+package product
 
 import (
 	"fmt"
@@ -31,7 +31,7 @@ func (c GetByIdRequest) Validate(r *http.Request) (interface{}, error) {
 	}
 
 	if len(errors) > 0 {
-		return nil, fmt.Errorf(strings.Join(errors, ","))
+		return nil, fmt.Errorf("%s", strings.Join(errors, ","))
 	}
 	return &request, nil
 }

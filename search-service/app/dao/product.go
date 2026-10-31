@@ -35,39 +35,60 @@ func (es *ProductDataStore) GetProductById(id string) (*searchpb.Product, error)
 		return nil, fmt.Errorf("error getting product: %s", res.String())
 	}
 
-	var product searchpb.Product
-	if err := json.NewDecoder(res.Body).Decode(&product); err != nil {
+	var doc struct {
+		Source *searchpb.Product `json:"_source"`
+	}
+	if err := json.NewDecoder(res.Body).Decode(&doc); err != nil {
 		return nil, err
 	}
+	if doc.Source == nil {
+		return nil, fmt.Errorf("product not found in response")
+	}
 
-	return &product, nil
+	return doc.Source, nil
 }
 
 func (es *ProductDataStore) FilterProduct(req *searchpb.ProductSearchRequest) (*searchpb.ProductSearchResponse, error) {
-	// Build the Elasticsearch query based on the ProductSearchRequest fields
-	query := map[string]interface{}{
-		"query": map[string]interface{}{
-			"bool": map[string]interface{}{
-				"filter": []map[string]interface{}{
-					{
-						"match": map[string]interface{}{
-							"category": req.Category,
-						},
-					},
-					{
-						"match": map[string]interface{}{
-							"subCategory": req.SubCategory,
-						},
-					},
-				},
-				"must": []map[string]interface{}{
-					{
-						"wildcard": map[string]interface{}{
-							"name": "*" + req.Keywords + "*",
-						},
-					},
+	var filters []map[string]interface{}
+	if req.Category != "" {
+		filters = append(filters, map[string]interface{}{
+			"match": map[string]interface{}{
+				"category": req.Category,
+			},
+		})
+	}
+	if req.SubCategory != "" {
+		filters = append(filters, map[string]interface{}{
+			"match": map[string]interface{}{
+				"subCategory": req.SubCategory,
+			},
+		})
+	}
+
+	boolQuery := map[string]interface{}{}
+	if len(filters) > 0 {
+		boolQuery["filter"] = filters
+	}
+
+	if req.Keywords != "" {
+		boolQuery["must"] = []map[string]interface{}{
+			{
+				"wildcard": map[string]interface{}{
+					"name": "*" + req.Keywords + "*",
 				},
 			},
+		}
+	} else {
+		boolQuery["must"] = []map[string]interface{}{
+			{
+				"match_all": map[string]interface{}{},
+			},
+		}
+	}
+
+	query := map[string]interface{}{
+		"query": map[string]interface{}{
+			"bool": boolQuery,
 		},
 	}
 
@@ -100,7 +121,7 @@ func (es *ProductDataStore) FilterProduct(req *searchpb.ProductSearchRequest) (*
 				Value int `json:"value"`
 			} `json:"total"`
 			Hits []struct {
-				Source searchpb.Product `json:"_source"`
+				Source *searchpb.Product `json:"_source"`
 			} `json:"hits"`
 		} `json:"hits"`
 	}
@@ -111,8 +132,9 @@ func (es *ProductDataStore) FilterProduct(req *searchpb.ProductSearchRequest) (*
 	// Construct the ProductSearchResponse
 	var response searchpb.ProductSearchResponse
 	for _, hit := range searchResponse.Hits.Hits {
-		product := hit.Source
-		response.Products = append(response.Products, &product)
+		if hit.Source != nil {
+			response.Products = append(response.Products, hit.Source)
+		}
 	}
 	response.TotalResults = uint32(searchResponse.Hits.Total.Value)
 	response.Keywords = req.Keywords

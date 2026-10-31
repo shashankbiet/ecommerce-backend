@@ -14,11 +14,11 @@ A comprehensive, microservices-based ecommerce backend platform built with moder
 
 Single entry point for all client requests. Handles routing, authentication verification, request logging, and response aggregation.
 
-- ✅ HTTP routing and request proxying
-- ✅ Centralized health checks
-- ✅ Request/response logging (Winston)
-- ✅ Prometheus metrics collection
-- ✅ Auth token validation middleware
+- HTTP routing and request proxying
+- Centralized health checks
+- Request/response logging (Winston)
+- Prometheus metrics collection
+- Auth token validation middleware
 
 **Quick Start:**
 ```bash
@@ -36,12 +36,12 @@ npm start
 
 Comprehensive user management including authentication, profiles, and address management with JWT-based authorization.
 
-- ✅ User registration and authentication
-- ✅ JWT token generation and validation
-- ✅ User profile management
-- ✅ Address management (multiple addresses per user)
-- ✅ Password hashing with bcrypt
-- ✅ Prometheus metrics and Winston logging
+- User registration and authentication
+- JWT token generation and validation
+- User profile management
+- Address management (multiple addresses per user)
+- Password hashing with bcrypt
+- Prometheus metrics and Winston logging
 
 **Quick Start:**
 ```bash
@@ -55,16 +55,16 @@ npm start
 ---
 
 ### 3. **Inventory Service** (Go 1.25+)
-**Port:** 3003 | **Database:** MySQL 
+**Port:** 3003 | **Database:** PostgreSQL 
 
 Product and inventory management with real-time stock tracking and category organization.
 
-- ✅ Product CRUD operations
-- ✅ Category and subcategory management
-- ✅ Inventory tracking and updates
-- ✅ Kafka producer for product updates
-- ✅ Transactional database operations
-- ✅ REST HTTP API endpoints
+- Product CRUD operations
+- Category and subcategory management
+- Inventory tracking and updates
+- Kafka producer for product updates
+- Transactional database operations
+- REST HTTP API endpoints
 
 **Quick Start:**
 ```bash
@@ -82,8 +82,8 @@ make run
 
 Product search and retrieval via gRPC. Currently implements product lookup by ID; full-text search coming soon.
 
-- ✅ Get product by ID (gRPC)
-- ✅ Kafka consumer for product updates
+- Get product by ID (gRPC)
+- Kafka consumer for product updates
 
 **Quick Start:**
 ```bash
@@ -115,7 +115,7 @@ make run
 
 ### **Databases**
 - **MongoDB** - User profiles, addresses, authentication data
-- **MySQL 8.0** - Products, categories, inventory, stock tracking
+- **PostgreSQL 16** - Products, categories, inventory, stock tracking
 - **Elasticsearch** - Full-text search index (Coming Soon)
 
 ### **Message Queue & Events**
@@ -138,8 +138,8 @@ make run
 - **Custom Middleware** - Authentication and request validation
 
 ### **Containerization & Orchestration**
-- **Docker** - Container images with multi-stage builds
-- **Docker Compose** - Local environment orchestration
+- **Podman** - Container images with multi-stage builds
+- **Podman Compose** - Local environment orchestration
 - **Alpine/Slim Images** - Lightweight container images
 - **.dockerignore** - Build optimization
 
@@ -154,7 +154,7 @@ make run
 ## Quick Start Guide
 
 ### Prerequisites
-- Docker & Docker Compose
+- Podman & Podman Compose
 - Node.js 20+ (for local development)
 - Go 1.25+ (for local development)
 - Git
@@ -165,17 +165,71 @@ git clone git@github.com:shashankbiet/ecommerce-backend.git
 cd ecommerce-backend
 ```
 
-### 2. Start All Services with Docker Compose
+### 2. Start All Services with Podman Compose
 ```bash
-docker-compose up --build
+podman-compose up --build
 ```
 
-This starts all services and dependencies:
-- API Gateway (port 3001)
-- User Service (port 3002, MongoDB)
-- Inventory Service (port 3003, MySQL)
-- Search Service (port 9004, Elasticsearch)
-- Supporting infrastructure (Kafka, Zookeeper, Prometheus, Grafana, Loki)
+For a memory-constrained machine, stop the running stack and
+serialize image builds to avoid compiler processes competing for memory:
+```bash
+podman-compose stop
+podman-compose --parallel 1 up --build
+```
+
+This starts the application services and their dependencies:
+- **API Gateway**: host port 3001; intended client entry point.
+- **User Service**: internal to the Compose network at `user-service:3002`.
+- **Inventory Service**: bound to the host loopback address on port 3003.
+- **Search Service**: host port 9004 is published.
+- **MongoDB**: host port 27017 is published.
+- **PostgreSQL**: host port 5433 is published.
+- **Elasticsearch**: host ports 9200 and 9300 are published.
+- **Kafka**: host ports 9092, 29092, and 9999 are published.
+- **Zookeeper**: available on the Compose network; no host port is published.
+- **Loki**: bound to the host loopback address on port 3100.
+- **Prometheus and Grafana**: bound to host loopback ports 9090 and 3000 when
+  the monitoring profile is enabled.
+
+### Seed Local Test Data
+
+After starting the stack (inventory-service must have run once to create its
+tables), load the seed files from `scripts/seed/`:
+```bash
+podman exec -i user-mongodb mongo userService < scripts/seed/mongo.js
+podman exec -i inventory-pg psql -U inventoryuser -d inventorydb < scripts/seed/postgres.sql
+curl -H 'Content-Type: application/x-ndjson' -XPOST \
+  'http://localhost:9200/_bulk?refresh=true' \
+  --data-binary @scripts/seed/elasticsearch.ndjson
+```
+This creates 25 demo users, 15 categories, 60 subcategories, and 105 products
+with inventory records, and indexes the products into Elasticsearch. The
+MongoDB and PostgreSQL scripts are safe to rerun; the Elasticsearch bulk load
+overwrites the same document ids. Demo accounts use the password
+`DemoPass123!`; these credentials and records are for local testing only.
+
+To enable Prometheus, Grafana, and Podman container log collection, set a local
+Grafana admin password and start the monitoring profile:
+```bash
+GRAFANA_ADMIN_PASSWORD='choose-a-local-password' podman-compose --parallel 1 \
+  --profile monitoring up --build
+```
+Grafana and Prometheus are available on `http://localhost:3000` and
+`http://localhost:9090`. Grafana is bound to localhost and anonymous admin
+access is disabled (the local default login is `admin`/`admin`; set the
+environment variable above to change it). Loki remains enabled because the
+Node.js services send logs to it directly. Promtail reads Podman machine
+journald records for container logs when the monitoring profile is enabled.
+
+Database files are stored under `bind-mount/db/`: MongoDB and PostgreSQL are
+already persisted there, and Elasticsearch uses `bind-mount/db/elasticsearch`.
+When monitoring is enabled, Prometheus data, Grafana state, Loki logs, and
+Promtail journal positions are stored under `bind-mount/monitoring/`. These are
+local development data directories and are excluded from Git. Back them up
+separately; deleting their contents deletes the associated data. Prometheus
+retains 15 days of metrics. The `:U` bind option lets Podman set directory
+ownership for the container processes; this stack configuration uses Podman
+Compose for local data mounts.
 
 ### 3. Verify Services
 ```bash

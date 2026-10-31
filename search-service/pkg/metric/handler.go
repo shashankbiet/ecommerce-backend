@@ -3,6 +3,7 @@ package metric
 import (
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/collectors"
 )
 
 type PrometheusServer struct {
@@ -15,6 +16,10 @@ func (ps *PrometheusServer) NewPrometheusServer(namespace string, subsystem stri
 	ps.Namespace = namespace
 	ps.Subsystem = subsystem
 	ps.Registry = prometheus.NewRegistry()
+	ps.Registry.MustRegister(
+		collectors.NewGoCollector(),
+		collectors.NewProcessCollector(collectors.ProcessCollectorOpts{}),
+	)
 }
 
 func (ps *PrometheusServer) CreateGrpcServerMetrics() *grpc_prometheus.ServerMetrics {

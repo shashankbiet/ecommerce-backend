@@ -1,4 +1,4 @@
-package inventory
+package product
 
 import "net/http"
 

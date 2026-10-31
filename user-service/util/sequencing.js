@@ -15,26 +15,29 @@ const counterSchema = mongoose.Schema({
 
 const Counter = mongoose.model(collectionNames.COUNTER, counterSchema);
 
-const getNewUserId = () => {
-    return new Promise((resolve, reject) => {
-        Counter.findOneAndUpdate(
-            { _id: USER_COUNTER_ID },
-            { $inc: { seq: 1 } },
-            { new: true },
-            async (err, result) => {
-                if (result == null) {
-                    const newValue = new Counter({
-                        _id: USER_COUNTER_ID,
-                        seq: USER_COUNTER_START,
-                    });
-                    await newValue.save();
-                    return resolve(USER_COUNTER_START);
-                } else {
-                    return resolve(result.seq);
-                }
-            }
-        );
-    });
+const getNewUserId = async () => {
+    let counter = await Counter.findOneAndUpdate(
+        { _id: USER_COUNTER_ID },
+        { $inc: { seq: 1 } },
+        { new: true }
+    );
+    if (!counter) {
+        try {
+            counter = await Counter.create({
+                _id: USER_COUNTER_ID,
+                seq: USER_COUNTER_START,
+            });
+            return counter.seq;
+        } catch (err) {
+            // Concurrent initialization race condition: fetch newly created counter
+            counter = await Counter.findOneAndUpdate(
+                { _id: USER_COUNTER_ID },
+                { $inc: { seq: 1 } },
+                { new: true }
+            );
+        }
+    }
+    return counter.seq;
 };
 
 module.exports = { getNewUserId };

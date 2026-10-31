@@ -3,7 +3,7 @@ const logger = require("../handler/logger");
 const { getCorrelationId } = require("../util/request-header");
 
 let notFoundHandler = async (req, res, next) => {
-    logger.error(
+    logger.warn(
         `CorrelationId: ${getCorrelationId(req)}, Method: ${req.method}, Url: ${
             req.originalUrl
         },  Message: Url not found`

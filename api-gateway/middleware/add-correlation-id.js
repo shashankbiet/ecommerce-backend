@@ -4,7 +4,9 @@ const logger = require("../handler/logger");
 
 const addCorrelationId = (req, res, next) => {
     try {
-        req.headers["correlation-id"] = v4();
+        const correlationId = req.headers["correlation-id"] || v4();
+        req.headers["correlation-id"] = correlationId;
+        res.setHeader("correlation-id", correlationId);
         next();
     } catch (err) {
         logger.error(`Error in adding correlationId, err: ${err}`);

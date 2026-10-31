@@ -1,7 +1,6 @@
 package service
 
 import (
-	"fmt"
 	"inventory-service/app/dao"
 	model "inventory-service/app/models"
 	categoryRequest "inventory-service/app/models/request/category"
@@ -18,7 +17,7 @@ func NewCategoryService(datastore dao.ICategoryDataStore) ICategoryService {
 }
 
 func (c *CategoryService) Add(request *categoryRequest.AddRequest) (int16, error) {
-	setCategory(&request.Category.Name)
+	normalizeName(&request.Category.Name)
 	id, err := c.datastore.Add(request.Category)
 	if err != nil {
 		return 0, err
@@ -29,7 +28,7 @@ func (c *CategoryService) Add(request *categoryRequest.AddRequest) (int16, error
 func (c *CategoryService) GetById(request *categoryRequest.GetByIdRequest) (*model.Category, error) {
 	category, err := c.datastore.GetById(request.Id)
 	if err != nil {
-		return nil, fmt.Errorf(err.Error())
+		return nil, err
 	}
 
 	return category, nil
@@ -38,7 +37,7 @@ func (c *CategoryService) GetById(request *categoryRequest.GetByIdRequest) (*mod
 func (c *CategoryService) GetAll(request *categoryRequest.GetAllRequest) (map[string]*model.Category, error) {
 	categories, err := c.datastore.GetAll()
 	if err != nil {
-		return nil, fmt.Errorf("")
+		return nil, err
 	}
 	return categories, nil
 }

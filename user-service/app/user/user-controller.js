@@ -18,7 +18,7 @@ userController.register = async (req, res, next) => {
         ) {
             return res.status(apiStatus.UNAUTHORIZED.status).send();
         }
-        let result = await userService.register(req.body);
+        const result = await userService.register(req.body);
         if (result) {
             return res.status(apiStatus.CREATED.status).send();
         }
@@ -31,7 +31,7 @@ userController.register = async (req, res, next) => {
 userController.get = async (req, res, next) => {
     getUserReqCounter.inc();
     try {
-        let result = await userService.get(parseInt(getUserId(req)));
+        const result = await userService.get(parseInt(getUserId(req)));
         if (result) {
             return res.status(apiStatus.OK.status).send(result);
         }
@@ -43,7 +43,7 @@ userController.get = async (req, res, next) => {
 
 userController.update = async (req, res, next) => {
     try {
-        let result = await userService.update(
+        const result = await userService.update(
             parseInt(getUserId(req)),
             req.body
         );
@@ -58,7 +58,7 @@ userController.update = async (req, res, next) => {
 
 userController.delete = async (req, res, next) => {
     try {
-        let result = await userService.delete(parseInt(getUserId(req)));
+        const result = await userService.delete(parseInt(getUserId(req)));
         if (result === true) {
             return res.status(apiStatus.OK.status).send();
         }
@@ -69,7 +69,7 @@ userController.delete = async (req, res, next) => {
 };
 
 userController.updatePassword = async (req, res, next) => {
-    let { currentPassword, newPassword } = req.body;
+    const { currentPassword, newPassword } = req.body;
     try {
         if (currentPassword == newPassword) {
             return res.status(apiStatus.BAD_REQUEST.status).send({
@@ -77,10 +77,10 @@ userController.updatePassword = async (req, res, next) => {
                 result: "Current and New Password cannot be same",
             });
         }
-        let result = await userService.updatePassword(
+        const result = await userService.updatePassword(
             parseInt(getUserId(req)),
-            req.body.currentPassword,
-            req.body.newPassword
+            currentPassword,
+            newPassword
         );
         if (result === null) {
             return res.status(apiStatus.NOT_FOUND.status).send();

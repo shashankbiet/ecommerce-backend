@@ -3,9 +3,9 @@ const LokiTransport = require("winston-loki");
 const logger = createLogger({
     transports: [
         new LokiTransport({
-            host: "http://loki:3100",
+            host: process.env.LOKI_HOST || "http://loki:3100",
             labels: { app: "user-service" },
-            json: true,
+            json: false,
             format: format.json(),
             replaceTimestamp: true,
             onConnectionError: (err) => console.error(err),

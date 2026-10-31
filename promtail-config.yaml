@@ -3,21 +3,23 @@ server:
     grpc_listen_port: 0
 
 positions:
-    filename: /tmp/positions.yaml
+    filename: /var/lib/promtail/positions.yaml
 
 clients:
     - url: http://loki:3100/loki/api/v1/push
 
 scrape_configs:
-    - job_name: system
-      static_configs:
-          - targets:
-                - localhost
-            labels:
-                job: varlogs
-                __path__: /var/log/*log
-          - targets:
-                - localhost
-            labels:
-                job: grafana_logs
-                __path__: /var/log/grafana/*log
+    - job_name: podman-journal
+      journal:
+          path: /var/log/journal
+          max_age: 12h
+          labels:
+              job: podman
+      relabel_configs:
+          - source_labels: ["__journal__CONTAINER_NAME"]
+            regex: ".+"
+            action: keep
+          - source_labels: ["__journal__CONTAINER_NAME"]
+            target_label: container
+          - source_labels: ["__journal__CONTAINER_ID_FULL"]
+            target_label: container_id

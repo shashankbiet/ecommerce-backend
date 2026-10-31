@@ -13,9 +13,7 @@ func DeliveryReportHandler(producer *kafka.Producer) {
 			switch ev := e.(type) {
 			case *kafka.Message:
 				if ev.TopicPartition.Error != nil {
-					logger.Info("Delivery failed", "topic", ev.TopicPartition, "error", ev.TopicPartition.Error)
-				} else {
-					logger.Info("Message delivered", "topic", ev.TopicPartition)
+					logger.Error("Kafka message delivery failed", "topic", ev.TopicPartition, "error", ev.TopicPartition.Error)
 				}
 			}
 		}

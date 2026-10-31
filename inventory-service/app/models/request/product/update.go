@@ -1,4 +1,4 @@
-package inventory
+package product
 
 import (
 	"encoding/json"
@@ -18,6 +18,9 @@ func (c UpdateRequest) Validate(r *http.Request) (interface{}, error) {
 
 	if err := json.NewDecoder(r.Body).Decode(&request.Product); err != nil {
 		return nil, err
+	}
+	if request.Product == nil {
+		return nil, fmt.Errorf("request body cannot be empty")
 	}
 
 	if request.Product.Id <= 0 {
@@ -41,11 +44,11 @@ func (c UpdateRequest) Validate(r *http.Request) (interface{}, error) {
 	}
 
 	if request.Product.Weight <= 0 {
-		errors = append(errors, "Invalid SubCategory")
+		errors = append(errors, "Invalid Weight")
 	}
 
 	if len(errors) > 0 {
-		return nil, fmt.Errorf(strings.Join(errors, ","))
+		return nil, fmt.Errorf("%s", strings.Join(errors, ","))
 	}
 	return &request, nil
 }

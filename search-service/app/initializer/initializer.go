@@ -2,7 +2,6 @@ package initializer
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"os/signal"
 	"search-service/app/consumer"
@@ -24,13 +23,11 @@ func InitializePrometheusServer() *metric.PrometheusServer {
 }
 
 func InitializerConfig() {
-	config := config.GetConfig()
-	fmt.Printf("config:%+v\n", config)
+	config.GetConfig()
 }
 
 func InitializeLogger() {
 	logger.InitLogger()
-	logger.Info("logger setup done")
 }
 
 func InitializeDb() {
@@ -46,6 +43,7 @@ func InitializeServer(ctx context.Context, ps *metric.PrometheusServer) {
 	grpcServer, err := grpcserver.InitGrpcServer(ctx, ps)
 	if err != nil {
 		logger.Error("error in starting gRPC server", "error", err)
+		return
 	}
 	handleGracefulShutdown(ctx, grpcServer)
 }
@@ -54,5 +52,7 @@ func handleGracefulShutdown(ctx context.Context, grpcServer *grpc.Server) {
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, syscall.SIGQUIT, syscall.SIGTERM, syscall.SIGINT)
 	<-stop
-	grpcServer.GracefulStop()
+	if grpcServer != nil {
+		grpcServer.GracefulStop()
+	}
 }

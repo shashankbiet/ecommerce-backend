@@ -6,7 +6,7 @@ const addressController = {};
 
 addressController.add = async (req, res, next) => {
     try {
-        let result = await addressService.add(
+        const result = await addressService.add(
             parseInt(getUserId(req)),
             req.body
         );
@@ -21,7 +21,7 @@ addressController.add = async (req, res, next) => {
 
 addressController.getById = async (req, res, next) => {
     try {
-        let result = await addressService.get(
+        const result = await addressService.get(
             parseInt(getUserId(req)),
             req.params.addressId
         );
@@ -36,7 +36,7 @@ addressController.getById = async (req, res, next) => {
 
 addressController.get = async (req, res, next) => {
     try {
-        let result = await addressService.get(parseInt(getUserId(req)));
+        const result = await addressService.get(parseInt(getUserId(req)));
         if (result) {
             return res.status(apiStatus.OK.status).send(result);
         }
@@ -48,7 +48,7 @@ addressController.get = async (req, res, next) => {
 
 addressController.update = async (req, res, next) => {
     try {
-        let result = await addressService.update(
+        const result = await addressService.update(
             parseInt(getUserId(req)),
             req.params.addressId,
             req.body
@@ -64,7 +64,7 @@ addressController.update = async (req, res, next) => {
 
 addressController.delete = async (req, res, next) => {
     try {
-        let result = await addressService.delete(
+        const result = await addressService.delete(
             parseInt(getUserId(req)),
             req.params.addressId
         );

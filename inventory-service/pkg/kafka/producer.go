@@ -25,4 +25,5 @@ func initKafkaProducer() {
 		panic(err)
 	}
 	kafkaProducer = producer
+	DeliveryReportHandler(producer)
 }

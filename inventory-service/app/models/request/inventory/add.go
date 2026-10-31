@@ -19,6 +19,9 @@ func (c AddRequest) Validate(r *http.Request) (interface{}, error) {
 	if err := json.NewDecoder(r.Body).Decode(&request.Inventory); err != nil {
 		return nil, err
 	}
+	if request.Inventory == nil {
+		return nil, fmt.Errorf("request body cannot be empty")
+	}
 
 	if request.Inventory.ProductId <= 0 {
 		errors = append(errors, "Invalid ProductId")
@@ -36,8 +39,12 @@ func (c AddRequest) Validate(r *http.Request) (interface{}, error) {
 		errors = append(errors, "Invalid SalePrice")
 	}
 
+	if request.Inventory.Quantity < 0 {
+		errors = append(errors, "Invalid Quantity")
+	}
+
 	if len(errors) > 0 {
-		return nil, fmt.Errorf(strings.Join(errors, ","))
+		return nil, fmt.Errorf("%s", strings.Join(errors, ","))
 	}
 	return &request, nil
 }

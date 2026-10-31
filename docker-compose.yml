@@ -18,21 +18,23 @@ services:
         environment:
             - APP_NAME=user-service
             - PORT=3002
-            - MONGODB_URL=mongodb://mongodb/userService
+            - MONGODB_URL=mongodb://user-mongodb/userService
             - ADMIN_VERIFICATION_TOKEN=1234567890
         depends_on:
-            - mongodb
+            user-mongodb:
+                condition: service_healthy
     inventory-service:
         build: ./inventory-service
         container_name: inventory-service
+        restart: on-failure:5
         environment:
             - APP_NAME=inventory-service
             - ENVIRONMENT=dev
             - HTTP_SERVER_PORT=3003
         ports:
-            - 3003:3003
+            - "127.0.0.1:3003:3003"
         depends_on:
-            mysql:
+            inventory-pg:
                 condition: service_healthy
             kafka:
                 condition: service_healthy
@@ -45,52 +47,54 @@ services:
             - GRPC_SERVER_PORT=9004
         ports:
             - 9004:9004
+        expose:
+            - "9104"
         depends_on:
             kafka:
                 condition: service_healthy
-            elasticsearch:
+            search-es:
                 condition: service_healthy
-    mongodb:
+    user-mongodb:
         image: mongo:4.0.28
-        container_name: mongodb
+        container_name: user-mongodb
         restart: always
         volumes:
-            - ./bind-mount/db/mongodb:/data/db
+            - ./bind-mount/db/user-mongodb:/data/db:U
         ports:
             - 27017:27017
-    mysql:
-        image: mysql:8.0
-        container_name: mysql
+        healthcheck:
+            test: ["CMD", "mongo", "--quiet", "--eval", "quit(db.adminCommand({ ping: 1 }).ok ? 0 : 1)"]
+            interval: 30s
+            timeout: 10s
+            retries: 12
+            start_period: 30s
+    inventory-pg:
+        image: postgres:16
+        container_name: inventory-pg
         restart: unless-stopped
         environment:
-            MYSQL_USER: testuser
-            MYSQL_PASSWORD: testpassword
-            MYSQL_ROOT_PASSWORD: testrootpassword
-            MYSQL_DATABASE: testdb
+            POSTGRES_USER: inventoryuser
+            POSTGRES_PASSWORD: inventorypassword
+            POSTGRES_DB: inventorydb
         healthcheck:
-            test:
-                [
-                    "CMD",
-                    "mysqladmin",
-                    "ping",
-                    "-h",
-                    "docker.for.mac.localhost"
-                ]
+            test: ["CMD-SHELL", "pg_isready -U inventoryuser -d inventorydb"]
             start_period: 0s
             timeout: 10s
             interval: 1s
             retries: 10
         volumes:
-            - ./bind-mount/db/mysql:/var/lib/mysql
+            - ./bind-mount/db/inventory-pg:/var/lib/postgresql/data
         ports:
-            - "3306:3306"
-    elasticsearch:
+            - "5433:5432"
+    search-es:
         image: docker.elastic.co/elasticsearch/elasticsearch:7.15.1
-        container_name: elasticsearch
+        container_name: search-es
         environment:
             - bootstrap.memory_lock=true
             - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
             - discovery.type=single-node
+        volumes:
+            - ./bind-mount/db/search-es:/usr/share/elasticsearch/data:U
         ports:
             - "9200:9200"
             - "9300:9300"
@@ -137,42 +141,31 @@ services:
     prometheus:
         image: prom/prometheus
         container_name: prometheus
+        profiles: ["monitoring"]
         restart: always
         volumes:
             - ./prometheus.yml:/etc/prometheus/prometheus.yml
+            - ./bind-mount/monitoring/prometheus:/prometheus:U
         command:
             - --config.file=/etc/prometheus/prometheus.yml
+            - --storage.tsdb.path=/prometheus
+            - --storage.tsdb.retention.time=15d
         ports:
-            - 9090:9090
+            - "127.0.0.1:9090:9090"
     grafana:
         image: grafana/grafana-oss
         container_name: grafana
+        profiles: ["monitoring"]
         restart: unless-stopped
         environment:
             - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
-            - GF_AUTH_ANONYMOUS_ENABLED=true
-            - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
-        entrypoint:
-            - sh
-            - -euc
-            - |
-              mkdir -p /etc/grafana/provisioning/datasources
-              cat <<EOF > /etc/grafana/provisioning/datasources/ds.yaml
-              apiVersion: 1
-              datasources:
-              - name: Loki
-              type: loki
-              access: proxy
-              orgId: 1
-              url: http://loki:3100
-              basicAuth: false
-              isDefault: true
-              version: 1
-              editable: false
-              EOF
-              /run.sh
+            - GF_AUTH_ANONYMOUS_ENABLED=false
+            - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin}
+        volumes:
+            - ./datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml:ro
+            - ./bind-mount/monitoring/grafana:/var/lib/grafana:U
         ports:
-            - 3000:3000
+            - "127.0.0.1:3000:3000"
         depends_on:
             - prometheus
     loki:
@@ -181,17 +174,20 @@ services:
         restart: unless-stopped
         volumes:
             - ./loki-config.yaml:/mnt/config/loki-config.yaml:ro
+            - ./bind-mount/monitoring/loki:/tmp/loki:U
         command:
             - --config.file=/mnt/config/loki-config.yaml
         ports:
-            - 3100:3100
+            - "127.0.0.1:3100:3100"
     promtail:
         image: grafana/promtail:2.9.0
         container_name: promtail
+        profiles: ["monitoring"]
         restart: unless-stopped
         volumes:
             - ./promtail-config.yaml:/etc/promtail/promtail-config.yaml:ro
-            - /var/log:/var/log
+            - /var/log/journal:/var/log/journal:ro
+            - ./bind-mount/monitoring/promtail:/var/lib/promtail:U
         command:
             - --config.file=/etc/promtail/promtail-config.yaml
         depends_on:

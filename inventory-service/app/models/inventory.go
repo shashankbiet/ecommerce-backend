@@ -8,6 +8,7 @@ type Inventory struct {
 	SKU           int32     `json:"sku"`
 	PurchasePrice int32     `json:"purchasePrice"`
 	SalePrice     int32     `json:"salePrice"`
+	Quantity      int32     `json:"quantity"`
 	CreatedAt     time.Time `json:"createdAt"`
 	UpdatedAt     time.Time `json:"updatedAt"`
 }

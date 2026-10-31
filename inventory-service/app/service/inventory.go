@@ -2,7 +2,6 @@ package service
 
 import (
 	"encoding/json"
-	"fmt"
 	"inventory-service/app/dao"
 	model "inventory-service/app/models"
 	inventoryRequest "inventory-service/app/models/request/inventory"
@@ -12,7 +11,7 @@ import (
 
 type InventoryService struct {
 	datastore dao.IInventoryDataStore
-	producer  producer.IProductProducer
+	producer  producer.IInventoryProducer
 }
 
 func NewInventoryService(datastore dao.IInventoryDataStore, producer producer.IInventoryProducer) IInventoryService {
@@ -32,9 +31,12 @@ func (p *InventoryService) Add(request *inventoryRequest.AddRequest) (int64, err
 }
 
 func (p *InventoryService) Update(request *inventoryRequest.UpdateRequest) (bool, error) {
-	_, err := p.datastore.Update(request.Inventory)
+	updated, err := p.datastore.Update(request.Inventory)
 	if err != nil {
 		return false, err
+	}
+	if !updated {
+		return false, nil
 	}
 	p.publishInventoryMessage(request.Inventory)
 	return true, nil
@@ -43,7 +45,7 @@ func (p *InventoryService) Update(request *inventoryRequest.UpdateRequest) (bool
 func (p *InventoryService) GetByProductId(request *inventoryRequest.GetByIdRequest) (*model.Inventory, error) {
 	inventory, err := p.datastore.GetByProductId(request.ProductId)
 	if err != nil {
-		return nil, fmt.Errorf(err.Error())
+		return nil, err
 	}
 
 	return inventory, nil
@@ -52,7 +54,7 @@ func (p *InventoryService) GetByProductId(request *inventoryRequest.GetByIdReque
 func (p *InventoryService) GetAll(request *inventoryRequest.GetAllRequest) ([]*model.Inventory, error) {
 	inventories, err := p.datastore.GetAll()
 	if err != nil {
-		return nil, fmt.Errorf("")
+		return nil, err
 	}
 	return inventories, nil
 }
@@ -60,7 +62,8 @@ func (p *InventoryService) GetAll(request *inventoryRequest.GetAllRequest) ([]*m
 func (p *InventoryService) publishInventoryMessage(inventory *model.Inventory) {
 	arr, err := json.Marshal(inventory)
 	if err != nil {
-		logger.Error("unable to marshal inventory struct into []byte")
+		logger.Error("unable to marshal inventory struct into []byte", "error", err)
+		return
 	}
 	p.producer.Publish(arr)
 }

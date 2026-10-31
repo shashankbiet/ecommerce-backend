@@ -8,17 +8,20 @@ const authController = {};
 
 authController.login = async (req, res, next) => {
     try {
-        let { email, phoneNumber, password } = req.body;
-        let user = await axios.post(
+        const { email, phoneNumber, password } = req.body;
+        const user = await axios.post(
             config.userService.target +
                 config.userService.authPath +
                 "/authenticate",
-            { email, phoneNumber, password }
+            { email, phoneNumber, password },
+            {
+                headers: {
+                    "correlation-id": getCorrelationId(req),
+                },
+                timeout: 5000,
+            }
         );
-        if (user == null) {
-            return res.status(apiStatus.UNAUTHORIZED.status).send();
-        }
-        let token = await authService.createToken(user.data);
+        const token = await authService.createToken(user.data);
         return res.status(apiStatus.OK.status).send(token);
     } catch (err) {
         if (
