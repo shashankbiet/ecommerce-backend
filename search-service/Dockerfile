@@ -3,10 +3,10 @@ RUN apk add --no-progress --no-cache gcc musl-dev
 
 WORKDIR /build
 
-COPY go.mod go.sum ./
+COPY search-service/go.mod search-service/go.sum ./
 RUN go mod download
 
-COPY . .
+COPY search-service/. .
 
 RUN --mount=type=cache,id=search-go-build,target=/root/.cache/go-build \
     GOMAXPROCS=1 go build -p=1 -tags musl -ldflags '-extldflags "-static"' -o /build/bin/app

@@ -1,7 +1,9 @@
 version: "3.9"
 services:
     api-gateway:
-        build: ./api-gateway
+        build:
+            context: .
+            dockerfile: api-gateway/Dockerfile
         container_name: api-gateway
         environment:
             - APP_NAME=api-gateway
@@ -13,7 +15,9 @@ services:
         depends_on:
             - user-service
     user-service:
-        build: ./user-service
+        build:
+            context: .
+            dockerfile: user-service/Dockerfile
         container_name: user-service
         environment:
             - APP_NAME=user-service
@@ -24,7 +28,9 @@ services:
             user-mongodb:
                 condition: service_healthy
     inventory-service:
-        build: ./inventory-service
+        build:
+            context: .
+            dockerfile: inventory-service/Dockerfile
         container_name: inventory-service
         restart: on-failure:5
         environment:
@@ -39,7 +45,9 @@ services:
             kafka:
                 condition: service_healthy
     search-service:
-        build: ./search-service
+        build:
+            context: .
+            dockerfile: search-service/Dockerfile
         container_name: search-service
         environment:
             - APP_NAME=search-service

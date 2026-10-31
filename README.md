@@ -170,6 +170,9 @@ cd ecommerce-backend
 podman-compose up --build
 ```
 
+Compose builds application images from the repository root and uses the root
+`.dockerignore`; each Dockerfile copies only its service's files.
+
 For a memory-constrained machine, stop the running stack and
 serialize image builds to avoid compiler processes competing for memory:
 ```bash
