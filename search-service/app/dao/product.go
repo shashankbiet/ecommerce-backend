@@ -74,7 +74,10 @@ func (es *ProductDataStore) FilterProduct(req *searchpb.ProductSearchRequest) (*
 		boolQuery["must"] = []map[string]interface{}{
 			{
 				"wildcard": map[string]interface{}{
-					"name": "*" + req.Keywords + "*",
+					"name": map[string]interface{}{
+						"value":            "*" + req.Keywords + "*",
+						"case_insensitive": true,
+					},
 				},
 			},
 		}

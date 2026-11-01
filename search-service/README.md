@@ -74,31 +74,31 @@ docker-compose up --build search-service
 ```
 ## Usage Examples
 
-### Get Product by ID (Currently Implemented)
+### Search Products
 ```bash
 grpcurl \
 	-plaintext \
 	-emit-defaults \
-	-proto 'https://github.com/shashankbiet/ecommerce-backend/search-service/proto/search/search.proto' \
-	-import-path 'https://github.com/shashankbiet/ecommerce-backend/search-service/proto/search' \
-	-d '{"category":"mobile","keywords":"n","sub_category":"smartphone"}' \
+	-proto 'search-service/proto/search/search.proto' \
+	-import-path '.' \
+	-d '{"category":"Electronics","keywords":"keyboard","sub_category":"Accessories"}' \
 	'localhost:9004' \
 	searchpb.SearchService.GetProduct
 
 # {
 #     "products": [
 #         {
-#             "id": 0,
-#             "name": "Nord 42820",
-#             "description": "4G mobile phone",
-#             "brand": "Oneplus",
-#             "category": "MOBILE",
-#             "subCategory": "SMARTPHONE"
+#             "id": 4,
+#             "name": "Mechanical Keyboard",
+#             "description": "Mechanical Keyboard, a demo accessories item from Electronics.",
+#             "brand": "Northstar",
+#             "category": "Electronics",
+#             "subCategory": "Accessories"
 #         }
 #     ],
-#     "keywords": "n",
-#     "category": "mobile",
-#     "sub_category": "smartphone",
+#     "keywords": "keyboard",
+#     "category": "Electronics",
+#     "sub_category": "Accessories",
 #     "total_results": 1
 # }
 ```
