@@ -203,6 +203,9 @@ Optionally, run the drift check to confirm the `.env` files, `secrets/`, and
 ```bash
 python3 scripts/check_env_drift.py
 ```
+CI runs the same check with empty secret-file fixtures; it does not check local
+`.env` values or require real credentials. The local check still reports missing
+secret files.
 The generated values are for local testing only. The MongoDB root username
 (`mongo-ecommerce`) and PostgreSQL username (`postgres_user`) and database
 (`inventorydb`) are set in `docker-compose.yml`; keep them equal to the values in
