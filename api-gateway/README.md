@@ -28,15 +28,6 @@ npm install
 ```
 
 
-## Environment Variables
-Example .env:
-```env
-PORT=3001
-ACCESS_TOKEN_SECRET=9876543210
-USER_SERVICE_TARGET=http://user-service:3002
-```
-
-
 ## Running the Application
 
 ### Locally
@@ -81,7 +72,7 @@ curl --location 'http://localhost:3001/api/user/register' \
     "firstName": "test",
     "lastName": "test",
     "role": "ADMIN",
-    "token": "1234567890"
+    "token": "{ADMIN_VERIFICATION_TOKEN}"
 }'
 
 # 200 {}

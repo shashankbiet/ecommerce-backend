@@ -3,7 +3,7 @@ package pg
 import (
 	"context"
 	"database/sql"
-	"fmt"
+	"errors"
 	model "inventory-service/app/models"
 	"inventory-service/pkg/db"
 	"inventory-service/pkg/logger"
@@ -44,7 +44,7 @@ func initPgInventoryStore(db *sql.DB) error {
 func (c PgInventoryStore) Add(inventory *model.Inventory) (int64, error) {
 	if c.sqlDb == nil {
 		logger.Error(DB_CONNECTION_FAILED)
-		return 0, fmt.Errorf(DB_CONNECTION_FAILED)
+		return 0, errors.New(DB_CONNECTION_FAILED)
 	}
 
 	ctx, cancelFunc := context.WithTimeout(context.Background(), SQL_TIMEOUT*time.Second)
@@ -60,7 +60,7 @@ func (c PgInventoryStore) Add(inventory *model.Inventory) (int64, error) {
 func (c PgInventoryStore) Update(inventory *model.Inventory) (bool, error) {
 	if c.sqlDb == nil {
 		logger.Error(DB_CONNECTION_FAILED)
-		return false, fmt.Errorf(DB_CONNECTION_FAILED)
+		return false, errors.New(DB_CONNECTION_FAILED)
 	}
 
 	ctx, cancelFunc := context.WithTimeout(context.Background(), SQL_TIMEOUT*time.Second)
@@ -83,7 +83,7 @@ func (c PgInventoryStore) Update(inventory *model.Inventory) (bool, error) {
 func (c PgInventoryStore) GetByProductId(productId int64) (*model.Inventory, error) {
 	if c.sqlDb == nil {
 		logger.Error(DB_CONNECTION_FAILED)
-		return nil, fmt.Errorf(DB_CONNECTION_FAILED)
+		return nil, errors.New(DB_CONNECTION_FAILED)
 	}
 
 	var inventory model.Inventory
@@ -95,7 +95,7 @@ func (c PgInventoryStore) GetByProductId(productId int64) (*model.Inventory, err
 func (c PgInventoryStore) GetAll() ([]*model.Inventory, error) {
 	if c.sqlDb == nil {
 		logger.Error(DB_CONNECTION_FAILED)
-		return nil, fmt.Errorf(DB_CONNECTION_FAILED)
+		return nil, errors.New(DB_CONNECTION_FAILED)
 	}
 
 	rows, err := c.sqlDb.Query(INVENTORY_GET_QUERY)
@@ -103,7 +103,7 @@ func (c PgInventoryStore) GetAll() ([]*model.Inventory, error) {
 		logger.Error(err.Error())
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	inventoryList := make([]*model.Inventory, 0)
 	for rows.Next() {

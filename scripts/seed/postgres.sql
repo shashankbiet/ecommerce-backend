@@ -1,6 +1,6 @@
 -- Demo seed data for inventory-service (PostgreSQL, database: inventorydb).
 -- Run after inventory-service has started once (it creates the tables):
---   podman exec -i inventory-pg psql -U inventoryuser -d inventorydb < scripts/seed/postgres.sql
+--   podman exec -i postgres psql -U "$SQL_CONFIG_USERNAME" -d inventorydb < scripts/seed/postgres.sql
 -- Safe to rerun: existing rows are left unchanged.
 
 BEGIN;

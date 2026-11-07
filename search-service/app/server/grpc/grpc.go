@@ -24,6 +24,7 @@ func InitGrpcServer(ctx context.Context, ps *metric.PrometheusServer) (*grpc.Ser
 	grpcMetrics := ps.CreateGrpcServerMetrics()
 	unaryServerInterceptor := []grpc.UnaryServerInterceptor{
 		grpcMetrics.UnaryServerInterceptor(),
+		metric.UnaryMetricsInterceptor(),
 	}
 	streamServerInterceptor := []grpc.StreamServerInterceptor{
 		grpcMetrics.StreamServerInterceptor(),
@@ -37,7 +38,7 @@ func InitGrpcServer(ctx context.Context, ps *metric.PrometheusServer) (*grpc.Ser
 
 	registerServices(ctx, grpcServer)
 
-	port := fmt.Sprintf(":%v", config.GetConfig().GrpcServer.Port)
+	port := fmt.Sprintf(":%v", config.GetConfig().SearchService.GrpcPort)
 	lis, err := net.Listen("tcp", port)
 	if err != nil {
 		return nil, err
@@ -45,7 +46,7 @@ func InitGrpcServer(ctx context.Context, ps *metric.PrometheusServer) (*grpc.Ser
 
 	metricsListener, err := net.Listen("tcp", ":9104")
 	if err != nil {
-		lis.Close()
+		_ = lis.Close()
 		return nil, fmt.Errorf("listen for Prometheus metrics: %w", err)
 	}
 	metricsServer := &http.Server{

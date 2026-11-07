@@ -29,7 +29,7 @@ func (es *ProductDataStore) GetProductById(id string) (*searchpb.Product, error)
 	if err != nil {
 		return nil, err
 	}
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	if res.IsError() {
 		return nil, fmt.Errorf("error getting product: %s", res.String())
@@ -111,7 +111,7 @@ func (es *ProductDataStore) FilterProduct(req *searchpb.ProductSearchRequest) (*
 	if err != nil {
 		return nil, err
 	}
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	if res.IsError() {
 		return nil, fmt.Errorf("error filtering products: %s", res.String())
@@ -170,7 +170,7 @@ func (es *ProductDataStore) UpsertProduct(productId int, product *searchpb.Produ
 	if err != nil {
 		return err
 	}
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	// Check for errors in the response
 	if res.IsError() {
@@ -191,7 +191,7 @@ func (es *ProductDataStore) DeleteProduct(productId int) error {
 	if err != nil {
 		return err
 	}
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 
 	if res.IsError() {
 		return fmt.Errorf("error deleting product: %s", res.String())

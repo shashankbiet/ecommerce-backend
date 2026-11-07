@@ -5,14 +5,14 @@ type Configuration struct {
 	Environment        string              `mapstructure:"ENVIRONMENT"`
 	AppName            string              `mapstructure:"APP_NAME"`
 	ElasticSearch      ElasticSearchConfig `mapstructure:"ELASTIC_SEARCH"`
-	GrpcServer         GrpcServerConfig    `mapstructure:"GRPC_SERVER"`
+	SearchService      SearchServiceConfig `mapstructure:"SEARCH_SERVICE"`
 	KafkaConfig        KafkaConfig         `mapstructure:"KAFKA_CONFIG"`
 	ProductUpdateTopic KafkaTopicConfig    `mapstructure:"PRODUCT_UPDATE_TOPIC"`
 }
 
 type KafkaConfig struct {
-	Servers string `mapstructure:"SERVERS"`
-	GroupId string `mapstructure:"GROUP_ID"`
+	Server               string `mapstructure:"SERVER"`
+	SearchServiceGroupId string `mapstructure:"SEARCH_SERVICE_GROUP_ID"`
 }
 
 type KafkaTopicConfig struct {
@@ -22,8 +22,8 @@ type KafkaTopicConfig struct {
 	AutoOffsetReset string `mapstructure:"AUTO_OFFSET_RESET"`
 }
 
-type GrpcServerConfig struct {
-	Port int `mapstructure:"PORT"`
+type SearchServiceConfig struct {
+	GrpcPort int `mapstructure:"GRPC_PORT"`
 }
 
 type ElasticSearchConfig struct {

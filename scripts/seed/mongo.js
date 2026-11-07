@@ -1,6 +1,6 @@
 // Demo seed data for user-service (MongoDB). Demo account password: DemoPass123!
 // Run:
-//   podman exec -i user-mongodb mongo userService < scripts/seed/mongo.js
+//   podman exec -i mongodb mongo userService < scripts/seed/mongo.js
 // Database name matches user-service config (userService).
 // Safe to rerun: missing users are inserted and seeded passwords are refreshed.
 

@@ -5,7 +5,7 @@ type Configuration struct {
 	Environment          string           `mapstructure:"ENVIRONMENT"`
 	AppName              string           `mapstructure:"APP_NAME"`
 	SqlConfig            SqlConfig        `mapstructure:"SQL_CONFIG"`
-	HttpServer           HttpServerConfig `mapstructure:"HTTP_SERVER"`
+	InventoryService     HttpServerConfig `mapstructure:"INVENTORY_SERVICE"`
 	KafkaConfig          KafkaConfig      `mapstructure:"KAFKA_CONFIG"`
 	ProductUpdateTopic   KafkaTopicConfig `mapstructure:"PRODUCT_UPDATE_TOPIC"`
 	InventoryUpdateTopic KafkaTopicConfig `mapstructure:"INVENTORY_UPDATE_TOPIC"`
@@ -32,7 +32,7 @@ type HttpServerConfig struct {
 }
 
 type KafkaConfig struct {
-	BootstrapServers string `mapstructure:"BOOTSTRAP_SERVERS"`
+	Server string `mapstructure:"SERVER"`
 }
 
 type KafkaTopicConfig struct {

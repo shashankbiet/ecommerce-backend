@@ -1,4 +1,4 @@
-const { body, param, check } = require("express-validator");
+const { body, param } = require("express-validator");
 const addressTypes = require("../shared/constants/address-types");
 const addressValidator = {};
 

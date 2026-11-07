@@ -1,17 +1,31 @@
-version: "3.9"
 services:
     api-gateway:
         build:
             context: .
             dockerfile: api-gateway/Dockerfile
         container_name: api-gateway
+        env_file:
+            - ./api-gateway/.env
         environment:
-            - APP_NAME=api-gateway
-            - PORT=3001
-            - ACCESS_TOKEN_SECRET=9876543210
+            - API_GATEWAY_ACCESS_TOKEN_SECRET_FILE=/run/secrets/api_gateway_access_token_secret
             - USER_SERVICE_TARGET=http://user-service:3002
+        secrets:
+            - api_gateway_access_token_secret
         ports:
-            - 3001:3001
+            - "127.0.0.1:3001:3001"
+        healthcheck:
+            test:
+                - CMD
+                - node
+                - -e
+                - >-
+                    fetch('http://127.0.0.1:3001/health').then((response) =>
+                    process.exit(response.ok ? 0 : 1)).catch(() =>
+                    process.exit(1))
+            interval: 30s
+            timeout: 3s
+            retries: 3
+            start_period: 10s
         depends_on:
             - user-service
     user-service:
@@ -19,13 +33,30 @@ services:
             context: .
             dockerfile: user-service/Dockerfile
         container_name: user-service
+        env_file:
+            - ./user-service/.env
+        healthcheck:
+            test:
+                - CMD
+                - node
+                - -e
+                - >-
+                    fetch('http://127.0.0.1:3002/api/user/health').then((response) =>
+                    process.exit(response.ok ? 0 : 1)).catch(() =>
+                    process.exit(1))
+            interval: 30s
+            timeout: 3s
+            retries: 3
+            start_period: 10s
         environment:
-            - APP_NAME=user-service
-            - PORT=3002
-            - MONGODB_URL=mongodb://user-mongodb/userService
-            - ADMIN_VERIFICATION_TOKEN=1234567890
+            - MONGODB_HOST=mongodb
+            - USER_SERVICE_ADMIN_VERIFICATION_TOKEN_FILE=/run/secrets/user_service_admin_verification_token
+            - MONGODB_ROOT_PASSWORD_FILE=/run/secrets/mongodb_root_password
+        secrets:
+            - user_service_admin_verification_token
+            - mongodb_root_password
         depends_on:
-            user-mongodb:
+            mongodb:
                 condition: service_healthy
     inventory-service:
         build:
@@ -33,14 +64,26 @@ services:
             dockerfile: inventory-service/Dockerfile
         container_name: inventory-service
         restart: on-failure:5
+        env_file:
+            - ./inventory-service/.env
+        healthcheck:
+            test: ["CMD", "/src/app", "healthcheck"]
+            interval: 30s
+            timeout: 3s
+            retries: 3
+            start_period: 10s
         environment:
-            - APP_NAME=inventory-service
-            - ENVIRONMENT=dev
-            - HTTP_SERVER_PORT=3003
+            - ENVIRONMENT=default
+            - SQL_CONFIG_PASSWORD_FILE=/run/secrets/sql_config_password
+            - SQL_CONFIG_HOST=postgres
+            - SQL_CONFIG_PORT=5432
+            - KAFKA_CONFIG_SERVER=kafka:19092
+        secrets:
+            - sql_config_password
         ports:
             - "127.0.0.1:3003:3003"
         depends_on:
-            inventory-pg:
+            postgres:
                 condition: service_healthy
             kafka:
                 condition: service_healthy
@@ -49,68 +92,91 @@ services:
             context: .
             dockerfile: search-service/Dockerfile
         container_name: search-service
+        env_file:
+            - ./search-service/.env
+        healthcheck:
+            test: ["CMD", "/src/app", "healthcheck"]
+            interval: 30s
+            timeout: 3s
+            retries: 3
+            start_period: 10s
         environment:
-            - APP_NAME=search-service
-            - ENVIRONMENT=dev
-            - GRPC_SERVER_PORT=9004
+            - ENVIRONMENT=default
+            - ELASTIC_SEARCH_ADDRESS=http://elastic-search:9200
+            - ELASTIC_SEARCH_PASSWORD_FILE=/run/secrets/elastic_search_password
+            - KAFKA_CONFIG_SERVER=kafka:19092
+        secrets:
+            - elastic_search_password
         ports:
-            - 9004:9004
+            - "127.0.0.1:9004:9004"
         expose:
             - "9104"
         depends_on:
             kafka:
                 condition: service_healthy
-            search-es:
+            elastic-search:
                 condition: service_healthy
-    user-mongodb:
+    mongodb:
         image: mongo:4.0.28
-        container_name: user-mongodb
+        container_name: mongodb
         restart: always
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: mongo-ecommerce
+            MONGO_INITDB_ROOT_PASSWORD_FILE: /run/secrets/mongodb_root_password
+        secrets:
+            - mongodb_root_password
         volumes:
-            - ./bind-mount/db/user-mongodb:/data/db:U
+            - ./bind-mount/db/mongodb:/data/db:U
         ports:
-            - 27017:27017
+            - "127.0.0.1:27017:27017"
         healthcheck:
-            test: ["CMD", "mongo", "--quiet", "--eval", "quit(db.adminCommand({ ping: 1 }).ok ? 0 : 1)"]
-            interval: 30s
+            test:
+                - CMD-SHELL
+                - >-
+                    mongo --quiet --username mongo-ecommerce
+                    --password "$$(cat /run/secrets/mongodb_root_password)"
+                    --authenticationDatabase admin
+                    --eval 'quit(db.adminCommand({ ping: 1 }).ok ? 0 : 1)'
+            interval: 5s
             timeout: 10s
             retries: 12
             start_period: 30s
-    inventory-pg:
+    postgres:
         image: postgres:16
-        container_name: inventory-pg
+        container_name: postgres
         restart: unless-stopped
         environment:
-            POSTGRES_USER: inventoryuser
-            POSTGRES_PASSWORD: inventorypassword
+            POSTGRES_USER: postgres_user
+            POSTGRES_PASSWORD_FILE: /run/secrets/sql_config_password
             POSTGRES_DB: inventorydb
+        secrets:
+            - sql_config_password
         healthcheck:
-            test: ["CMD-SHELL", "pg_isready -U inventoryuser -d inventorydb"]
+            test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -p 5432 -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
             start_period: 0s
             timeout: 10s
             interval: 1s
             retries: 10
         volumes:
-            - ./bind-mount/db/inventory-pg:/var/lib/postgresql/data
+            - ./bind-mount/db/postgres:/var/lib/postgresql/data
         ports:
-            - "5433:5432"
-    search-es:
+            - "127.0.0.1:5433:5432"
+    elastic-search:
         image: docker.elastic.co/elasticsearch/elasticsearch:7.15.1
-        container_name: search-es
+        container_name: elastic-search
         environment:
             - bootstrap.memory_lock=true
             - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
             - discovery.type=single-node
         volumes:
-            - ./bind-mount/db/search-es:/usr/share/elasticsearch/data:U
+            - ./bind-mount/db/elastic-search:/usr/share/elasticsearch/data:U
         ports:
-            - "9200:9200"
-            - "9300:9300"
+            - "127.0.0.1:9200:9200"
         healthcheck:
             test: ["CMD", "curl", "-f", "http://localhost:9200"]
-            interval: 30s
+            interval: 5s
             timeout: 10s
-            retries: 3
+            retries: 30
     zookeeper:
         image: confluentinc/cp-zookeeper:7.3.0
         hostname: zookeeper
@@ -125,9 +191,9 @@ services:
         container_name: kafka
         restart: always
         ports:
-            - "9092:9092"
+            - "127.0.0.1:9092:9092"
             - "29092:29092"
-            - "9999:9999"
+            - "127.0.0.1:9999:9999"
         environment:
             - KAFKA_ADVERTISED_LISTENERS=INTERNAL://kafka:19092,EXTERNAL://localhost:9092,DOCKER://host.docker.internal:29092
             - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,DOCKER:PLAINTEXT
@@ -144,6 +210,9 @@ services:
             - KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND=true
         healthcheck:
             test: [ "CMD", "nc", "-vz", "localhost", "9092" ]
+            interval: 5s
+            timeout: 10s
+            retries: 20
         depends_on:
             - zookeeper
     prometheus:
@@ -168,9 +237,13 @@ services:
         environment:
             - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
             - GF_AUTH_ANONYMOUS_ENABLED=false
-            - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin}
+            - GF_SECURITY_ADMIN_PASSWORD__FILE=/run/secrets/grafana_admin_password
+        secrets:
+            - grafana_admin_password
         volumes:
             - ./datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml:ro
+            - ./grafana/provisioning/dashboards/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml:ro
+            - ./grafana/dashboards:/etc/grafana/dashboards:ro
             - ./bind-mount/monitoring/grafana:/var/lib/grafana:U
         ports:
             - "127.0.0.1:3000:3000"
@@ -192,11 +265,29 @@ services:
         container_name: promtail
         profiles: ["monitoring"]
         restart: unless-stopped
+        security_opt:
+            - label=disable
         volumes:
             - ./promtail-config.yaml:/etc/promtail/promtail-config.yaml:ro
-            - /var/log/journal:/var/log/journal:ro
+            # Podman machine bind mount of the VM journal (see README); podman-compose
+            # resolves host paths with realpath, so /var/log/journal cannot be used on macOS.
+            - /srv/journal:/var/log/journal:ro
             - ./bind-mount/monitoring/promtail:/var/lib/promtail:U
         command:
             - --config.file=/etc/promtail/promtail-config.yaml
         depends_on:
             - loki
+
+secrets:
+    api_gateway_access_token_secret:
+        file: ./secrets/api_gateway_access_token_secret
+    user_service_admin_verification_token:
+        file: ./secrets/user_service_admin_verification_token
+    mongodb_root_password:
+        file: ./secrets/mongodb_root_password
+    sql_config_password:
+        file: ./secrets/sql_config_password
+    elastic_search_password:
+        file: ./secrets/elastic_search_password
+    grafana_admin_password:
+        file: ./secrets/grafana_admin_password

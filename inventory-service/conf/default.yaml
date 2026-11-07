@@ -1,20 +1,20 @@
-ENVIRONMENT: "local"
+ENVIRONMENT: "dev"
 APP_NAME: "inventory-service"
 SQL_CONFIG:
-    USERNAME: "testuser"
-    PASSWORD: "testpassword"
-    HOST: "localhost"
-    PORT: "5432"
-    DATABASE: "testdb"
+    USERNAME: ""
+    PASSWORD: ""
+    HOST: ""
+    PORT: ""
+    DATABASE: ""
     MAX_LIFE_TIME: 3
     MAX_OPEN_CONNS: 10
     MAX_IDLE_CONNS: 10
-HTTP_SERVER:
+INVENTORY_SERVICE:
     PORT: 3003
     READ_TIMEOUT_MS: 1000
     WRITE_TIMEOUT_MS: 1000
 KAFKA_CONFIG:
-    BOOTSTRAP_SERVERS: "localhost:9092"
+    SERVER: "localhost:9092"
 PRODUCT_UPDATE_TOPIC:
     NAME: "product_update"
 INVENTORY_UPDATE_TOPIC:

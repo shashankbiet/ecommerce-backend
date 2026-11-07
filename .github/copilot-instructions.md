@@ -23,7 +23,9 @@ Run Go tests from either Go service directory with `go test ./...`. The current 
 
 There are no repository-level test, lint, or format scripts. The Node package scripts currently provide only `start` and `dev`; the Go Makefiles provide `build`, `run`, and `clean`. The README mentions `make test` and Node lint/format scripts, but those targets/scripts are not defined in the current manifests.
 
-For the full local stack, see the root README; it uses `podman-compose up --build`. Run the optional data seeder with `podman-compose --profile seed run --rm seed-data`.
+For the full local stack, see the root README; it uses
+`podman-compose up --build`. Run the optional data
+seeder with `podman-compose --profile seed run --rm seed-data`.
 
 ## Repository conventions
 

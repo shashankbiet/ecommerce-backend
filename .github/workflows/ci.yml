@@ -1,0 +1,182 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  changes:
+    name: Detect changes
+    runs-on: ubuntu-latest
+    outputs:
+      api-gateway: ${{ steps.filter.outputs.api-gateway }}
+      user-service: ${{ steps.filter.outputs.user-service }}
+      inventory-service: ${{ steps.filter.outputs.inventory-service }}
+      search-service: ${{ steps.filter.outputs.search-service }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: dorny/paths-filter@v4.0.3
+        id: filter
+        with:
+          filters: |
+            api-gateway:
+              - 'api-gateway/**'
+              - 'docker-compose.yml'
+            user-service:
+              - 'user-service/**'
+              - 'docker-compose.yml'
+            inventory-service:
+              - 'inventory-service/**'
+              - 'docker-compose.yml'
+            search-service:
+              - 'search-service/**'
+              - 'search-service/proto/**'
+              - 'docker-compose.yml'
+
+  # Runs on every change: cheap, and it guards the shared env and compose contract.
+  repo-checks:
+    name: Env drift check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-python@v7.1.0
+        with:
+          python-version: '3.12'
+      - run: pip install pyyaml
+      - run: python3 scripts/check_env_drift.py
+
+  go:
+    name: Go (${{ matrix.service }})
+    needs: changes
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        service: [inventory-service, search-service]
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 0  # golangci-lint needs the base branch to report only new issues
+      - uses: actions/setup-go@v7.0.0
+        if: needs.changes.outputs[matrix.service] == 'true'
+        with:
+          go-version-file: ${{ matrix.service }}/go.mod
+          cache-dependency-path: ${{ matrix.service }}/go.sum
+      # Pull requests only: existing findings are not yet triaged, so only new ones fail.
+      - name: Lint (new issues)
+        if: needs.changes.outputs[matrix.service] == 'true' && github.event_name == 'pull_request'
+        uses: golangci/golangci-lint-action@v9.3.0
+        with:
+          version: v2.15.0
+          working-directory: ${{ matrix.service }}
+          only-new-issues: true
+      - name: Check formatting
+        if: needs.changes.outputs[matrix.service] == 'true'
+        working-directory: ${{ matrix.service }}
+        run: test -z "$(gofmt -l .)"
+      - name: Vet
+        if: needs.changes.outputs[matrix.service] == 'true'
+        working-directory: ${{ matrix.service }}
+        run: go vet ./...
+      - name: Test
+        if: needs.changes.outputs[matrix.service] == 'true'
+        working-directory: ${{ matrix.service }}
+        run: go test -race ./...
+      - name: Build
+        if: needs.changes.outputs[matrix.service] == 'true'
+        working-directory: ${{ matrix.service }}
+        run: make build
+
+  node:
+    name: Node (${{ matrix.service }})
+    needs: changes
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        service: [api-gateway, user-service]
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-node@v7.1.0
+        if: needs.changes.outputs[matrix.service] == 'true'
+        with:
+          node-version: 'lts/*'
+          cache: npm
+          cache-dependency-path: ${{ matrix.service }}/package-lock.json
+      - name: Install
+        if: needs.changes.outputs[matrix.service] == 'true'
+        working-directory: ${{ matrix.service }}
+        run: npm ci
+      - name: Syntax check
+        if: needs.changes.outputs[matrix.service] == 'true'
+        working-directory: ${{ matrix.service }}
+        run: node --check server.js
+      - name: Lint
+        if: needs.changes.outputs[matrix.service] == 'true'
+        working-directory: ${{ matrix.service }}
+        run: npm run lint
+      - name: Test
+        if: needs.changes.outputs[matrix.service] == 'true'
+        working-directory: ${{ matrix.service }}
+        run: npm test
+      # Advisory only until existing dependency advisories are triaged.
+      - name: Audit production dependencies
+        if: needs.changes.outputs[matrix.service] == 'true'
+        working-directory: ${{ matrix.service }}
+        run: npm audit --omit=dev --audit-level=high
+        continue-on-error: true
+
+  docker:
+    name: Image (${{ matrix.service }})
+    needs: changes
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        service: [api-gateway, user-service, inventory-service, search-service]
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: docker/setup-buildx-action@v4.4.1
+        if: needs.changes.outputs[matrix.service] == 'true'
+      - name: Build image
+        if: needs.changes.outputs[matrix.service] == 'true'
+        uses: docker/build-push-action@v7.4.0
+        with:
+          # Context is the repo root, matching docker-compose.yml.
+          context: .
+          file: ${{ matrix.service }}/Dockerfile
+          tags: ecommerce/${{ matrix.service }}:ci
+          load: true
+          cache-from: type=gha,scope=${{ matrix.service }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.service }}
+      - name: Trivy scan
+        if: needs.changes.outputs[matrix.service] == 'true'
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: ecommerce/${{ matrix.service }}:ci
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+          exit-code: '1'
+
+  # Single required check. Path-filtered jobs can be skipped, and this job
+  # passes only when every upstream job succeeded or was skipped by design.
+  ci-status:
+    name: CI status
+    if: always()
+    needs: [changes, repo-checks, go, node, docker]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Evaluate results
+        env:
+          RESULTS: ${{ toJSON(needs) }}
+        run: |
+          echo "$RESULTS" | jq -e '.changes.result == "success" and ([.[] | .result] | all(. == "success" or . == "skipped"))'

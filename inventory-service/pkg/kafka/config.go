@@ -19,6 +19,6 @@ func getKafkaConfigMap() *kafka.ConfigMap {
 
 func initKafkaConfigMap() {
 	kafkaConfigMap = &kafka.ConfigMap{
-		"bootstrap.servers": config.GetConfig().KafkaConfig.BootstrapServers,
+		"bootstrap.servers": config.GetConfig().KafkaConfig.Server,
 	}
 }

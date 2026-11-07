@@ -16,10 +16,10 @@ scrape_configs:
           labels:
               job: podman
       relabel_configs:
-          - source_labels: ["__journal__CONTAINER_NAME"]
+          - source_labels: ["__journal_container_name"]
             regex: ".+"
             action: keep
-          - source_labels: ["__journal__CONTAINER_NAME"]
+          - source_labels: ["__journal_container_name"]
             target_label: container
-          - source_labels: ["__journal__CONTAINER_ID_FULL"]
+          - source_labels: ["__journal_container_id_full"]
             target_label: container_id

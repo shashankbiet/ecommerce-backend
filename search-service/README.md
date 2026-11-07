@@ -15,7 +15,7 @@ gRPC-based search service for product search, advanced filtering, index manageme
 
 
 ## Tech Stack
-- Runtime: Go 1.25+
+- Runtime: Go 1.26+
 - Protocol: gRPC with Protocol Buffers
 - Search Engine: Elasticsearch
 - Message Queue: Kafka
@@ -28,24 +28,6 @@ gRPC-based search service for product search, advanced filtering, index manageme
 ```bash
 cd search-service
 go mod download
-```
-
-## Environment Variables
-
-Example `conf/dev.yaml`:
-```yaml
-ENVIRONMENT: "dev"
-APP_NAME: "search-service"
-GRPC_SERVER:
-    PORT: 9004
-ELASTIC_SEARCH:
-    ADDRESS: http://elasticsearch:9200
-    INDEX_NAME: searchindex
-KAFKA_CONFIG:
-    SERVERS: "kafka:19092"
-    GROUP_ID: "inventory_service"
-PRODUCT_UPDATE_TOPIC:
-    NAME: "product_update"
 ```
 
 ## Running the Application

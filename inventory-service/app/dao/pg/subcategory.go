@@ -3,7 +3,7 @@ package pg
 import (
 	"context"
 	"database/sql"
-	"fmt"
+	"errors"
 	model "inventory-service/app/models"
 	"inventory-service/pkg/db"
 	"inventory-service/pkg/logger"
@@ -44,7 +44,7 @@ func initPgSubCategoryStore(db *sql.DB) error {
 func (c PgSubCategoryStore) Add(subcategory *model.SubCategory) (int16, error) {
 	if c.sqlDb == nil {
 		logger.Error(DB_CONNECTION_FAILED)
-		return 0, fmt.Errorf(DB_CONNECTION_FAILED)
+		return 0, errors.New(DB_CONNECTION_FAILED)
 	}
 
 	ctx, cancelFunc := context.WithTimeout(context.Background(), SQL_TIMEOUT*time.Second)
@@ -61,7 +61,7 @@ func (c PgSubCategoryStore) Add(subcategory *model.SubCategory) (int16, error) {
 func (c PgSubCategoryStore) GetById(id int16) (*model.SubCategory, error) {
 	if c.sqlDb == nil {
 		logger.Error(DB_CONNECTION_FAILED)
-		return nil, fmt.Errorf(DB_CONNECTION_FAILED)
+		return nil, errors.New(DB_CONNECTION_FAILED)
 	}
 
 	var subcategory model.SubCategory
@@ -73,7 +73,7 @@ func (c PgSubCategoryStore) GetById(id int16) (*model.SubCategory, error) {
 func (c PgSubCategoryStore) GetAll() (map[string]*model.SubCategory, error) {
 	if c.sqlDb == nil {
 		logger.Error(DB_CONNECTION_FAILED)
-		return nil, fmt.Errorf(DB_CONNECTION_FAILED)
+		return nil, errors.New(DB_CONNECTION_FAILED)
 	}
 
 	rows, err := c.sqlDb.Query(SUB_CATEGORY_GET_QUERY)
@@ -81,7 +81,7 @@ func (c PgSubCategoryStore) GetAll() (map[string]*model.SubCategory, error) {
 		logger.Error(err.Error())
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	subcategories := make(map[string]*model.SubCategory, 0)
 	for rows.Next() {

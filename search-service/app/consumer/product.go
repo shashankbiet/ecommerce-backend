@@ -33,8 +33,8 @@ func NewProductConsumer() *ProductConsumer {
 
 func (pc *ProductConsumer) Consume() {
 	c, err := kafka.NewConsumer(&kafka.ConfigMap{
-		"bootstrap.servers": config.GetConfig().KafkaConfig.Servers,
-		"group.id":          config.GetConfig().KafkaConfig.GroupId,
+		"bootstrap.servers": config.GetConfig().KafkaConfig.Server,
+		"group.id":          config.GetConfig().KafkaConfig.SearchServiceGroupId,
 		"auto.offset.reset": "earliest",
 	})
 
@@ -42,7 +42,7 @@ func (pc *ProductConsumer) Consume() {
 		logger.Error("failed to create Kafka product consumer", "error", err)
 		panic(err)
 	}
-	defer c.Close()
+	defer func() { _ = c.Close() }()
 
 	err = c.SubscribeTopics([]string{config.GetConfig().ProductUpdateTopic.Name}, nil)
 	if err != nil {

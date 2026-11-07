@@ -7,11 +7,11 @@ const validate = (req, res, next) => {
         return next();
     }
     const extractedErrors = [];
-    errors
-        .array()
-        .forEach((err) =>
-            extractedErrors.push({ [err.path || err.param || "field"]: err.msg })
-        );
+    errors.array().forEach((err) =>
+        extractedErrors.push({
+            [err.path || err.param || "field"]: err.msg,
+        })
+    );
 
     return res.status(status.BAD_REQUEST.status).json({
         errors: extractedErrors,

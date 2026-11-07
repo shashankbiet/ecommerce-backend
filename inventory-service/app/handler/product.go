@@ -24,7 +24,7 @@ func (p ProductHandler) Add(w http.ResponseWriter, r *http.Request) {
 	val, err := validateRequest.Validate(r)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(err.Error()))
+		_, _ = w.Write([]byte(err.Error()))
 		return
 	}
 	request := val.(*productRequest.AddRequest)
@@ -37,7 +37,7 @@ func (p ProductHandler) Add(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusUnprocessableEntity)
 		} else {
 			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte(err.Error()))
+			_, _ = w.Write([]byte(err.Error()))
 		}
 		return
 	}
@@ -49,7 +49,7 @@ func (p ProductHandler) Update(w http.ResponseWriter, r *http.Request) {
 	val, err := validateRequest.Validate(r)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(err.Error()))
+		_, _ = w.Write([]byte(err.Error()))
 		return
 	}
 	request := val.(*productRequest.UpdateRequest)
@@ -62,7 +62,7 @@ func (p ProductHandler) Update(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusUnprocessableEntity)
 		} else if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte(err.Error()))
+			_, _ = w.Write([]byte(err.Error()))
 		} else {
 			w.WriteHeader(http.StatusNotFound)
 		}
@@ -76,7 +76,7 @@ func (p ProductHandler) GetById(w http.ResponseWriter, r *http.Request) {
 	val, err := validateRequest.Validate(r)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(err.Error()))
+		_, _ = w.Write([]byte(err.Error()))
 		return
 	}
 	request := val.(*productRequest.GetByIdRequest)
@@ -87,7 +87,7 @@ func (p ProductHandler) GetById(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusBadRequest)
 		} else {
 			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte(err.Error()))
+			_, _ = w.Write([]byte(err.Error()))
 		}
 		return
 	}
@@ -98,7 +98,7 @@ func (p ProductHandler) GetById(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusOK)
-	w.Write(jsonBytes)
+	_, _ = w.Write(jsonBytes)
 }
 
 func (p ProductHandler) GetAll(w http.ResponseWriter, r *http.Request) {
@@ -106,7 +106,7 @@ func (p ProductHandler) GetAll(w http.ResponseWriter, r *http.Request) {
 	val, err := validateRequest.Validate(r)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(err.Error()))
+		_, _ = w.Write([]byte(err.Error()))
 		return
 	}
 	request := val.(*productRequest.GetAllRequest)
@@ -114,7 +114,7 @@ func (p ProductHandler) GetAll(w http.ResponseWriter, r *http.Request) {
 	products, err := p.service.GetAll(request)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		_, _ = w.Write([]byte(err.Error()))
 		return
 	}
 	jsonBytes, err := json.Marshal(products)
@@ -123,5 +123,5 @@ func (p ProductHandler) GetAll(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusOK)
-	w.Write(jsonBytes)
+	_, _ = w.Write(jsonBytes)
 }

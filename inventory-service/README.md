@@ -18,7 +18,7 @@ HTTP-based inventory service for product management, category organization, inve
 
 
 ## Tech Stack
-- Runtime: Go 1.25+
+- Runtime: Go 1.26+
 - Framework: HTTP REST
 - Database: PostgreSQL 16
 - Message Queue: Kafka
@@ -31,31 +31,6 @@ HTTP-based inventory service for product management, category organization, inve
 ```bash
 cd inventory-service
 go mod download
-```
-
-## Environment Variables
-
-Example `conf/dev.yaml`:
-```yaml
-ENVIRONMENT: "dev"
-APP_NAME: "inventory-service"
-SQL_CONFIG:
-    USERNAME: "testuser"
-    PASSWORD: "testpassword"
-    HOST: "postgres"
-    PORT: "5432"
-    DATABASE: "testdb"
-    MAX_LIFE_TIME: 3
-    MAX_OPEN_CONNS: 10
-    MAX_IDLE_CONNS: 10
-HTTP_SERVER:
-    PORT: 3003
-KAFKA_CONFIG:
-    BOOTSTRAP_SERVERS: "kafka:19092"
-PRODUCT_UPDATE_TOPIC:
-    NAME: "product_update"
-INVENTORY_UPDATE_TOPIC:
-    NAME: "inventory_update"
 ```
 
 ## Running the Application

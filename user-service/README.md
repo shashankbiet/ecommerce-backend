@@ -34,16 +34,6 @@ cd user-service
 npm install
 ```
 
-## Environment Variables
-Example .env:
-```env
-PORT=3002
-NODE_ENV=development
-MONGODB_URL=mongodb://mongodb/userService
-ADMIN_VERIFICATION_TOKEN=1234567890
-ACCESS_TOKEN_SECRET=9876543210
-```
-
 ## Running the Application
 
 ### Locally
@@ -88,7 +78,7 @@ curl --location 'http://localhost:3002/api/user/register' \
     "firstName": "John",
     "lastName": "Doe",
     "role": "USER",
-    "token": "1234567890"
+    "token": "{ADMIN_VERIFICATION_TOKEN}"
 }'
 
 # 201 {

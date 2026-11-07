@@ -2,6 +2,7 @@
 **/.git
 **/.env
 **/.env.*
+secrets
 **/npm-debug.log*
 **/coverage
 **/*.log

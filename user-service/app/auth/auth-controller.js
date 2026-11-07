@@ -6,7 +6,11 @@ const authController = {};
 authController.authenticate = async (req, res, next) => {
     try {
         const { email, phoneNumber, password } = req.body;
-        const user = await authService.authenticate(email, phoneNumber, password);
+        const user = await authService.authenticate(
+            email,
+            phoneNumber,
+            password
+        );
         if (user == null) {
             return res.status(apiStatus.UNAUTHORIZED.status).send();
         }

@@ -3,7 +3,7 @@ package pg
 import (
 	"context"
 	"database/sql"
-	"fmt"
+	"errors"
 	model "inventory-service/app/models"
 	"inventory-service/pkg/db"
 	"inventory-service/pkg/logger"
@@ -44,7 +44,7 @@ func initPgProductStore(db *sql.DB) error {
 func (c PgProductStore) Add(product *model.Product) (int64, error) {
 	if c.sqlDb == nil {
 		logger.Error(DB_CONNECTION_FAILED)
-		return 0, fmt.Errorf(DB_CONNECTION_FAILED)
+		return 0, errors.New(DB_CONNECTION_FAILED)
 	}
 
 	ctx, cancelFunc := context.WithTimeout(context.Background(), SQL_TIMEOUT*time.Second)
@@ -61,7 +61,7 @@ func (c PgProductStore) Add(product *model.Product) (int64, error) {
 func (c PgProductStore) Update(product *model.Product) (bool, error) {
 	if c.sqlDb == nil {
 		logger.Error(DB_CONNECTION_FAILED)
-		return false, fmt.Errorf(DB_CONNECTION_FAILED)
+		return false, errors.New(DB_CONNECTION_FAILED)
 	}
 
 	ctx, cancelFunc := context.WithTimeout(context.Background(), SQL_TIMEOUT*time.Second)
@@ -84,7 +84,7 @@ func (c PgProductStore) Update(product *model.Product) (bool, error) {
 func (c PgProductStore) GetById(id int64) (*model.Product, error) {
 	if c.sqlDb == nil {
 		logger.Error(DB_CONNECTION_FAILED)
-		return nil, fmt.Errorf(DB_CONNECTION_FAILED)
+		return nil, errors.New(DB_CONNECTION_FAILED)
 	}
 
 	var product model.Product
@@ -96,7 +96,7 @@ func (c PgProductStore) GetById(id int64) (*model.Product, error) {
 func (c PgProductStore) GetAll() ([]*model.Product, error) {
 	if c.sqlDb == nil {
 		logger.Error(DB_CONNECTION_FAILED)
-		return nil, fmt.Errorf(DB_CONNECTION_FAILED)
+		return nil, errors.New(DB_CONNECTION_FAILED)
 	}
 
 	rows, err := c.sqlDb.Query(PRODUCT_GET_QUERY)
@@ -104,7 +104,7 @@ func (c PgProductStore) GetAll() ([]*model.Product, error) {
 		logger.Error(err.Error())
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	products := make([]*model.Product, 0)
 	for rows.Next() {

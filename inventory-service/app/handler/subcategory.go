@@ -24,7 +24,7 @@ func (s *SubCategoryHandler) Add(w http.ResponseWriter, r *http.Request) {
 	val, err := validateRequest.Validate(r)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(err.Error()))
+		_, _ = w.Write([]byte(err.Error()))
 		return
 	}
 	request := val.(*subCategoryRequest.AddRequest)
@@ -36,7 +36,7 @@ func (s *SubCategoryHandler) Add(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusUnprocessableEntity)
 		} else {
 			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte(err.Error()))
+			_, _ = w.Write([]byte(err.Error()))
 		}
 		return
 	}
@@ -48,7 +48,7 @@ func (s *SubCategoryHandler) GetById(w http.ResponseWriter, r *http.Request) {
 	val, err := validateRequest.Validate(r)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(err.Error()))
+		_, _ = w.Write([]byte(err.Error()))
 		return
 	}
 	request := val.(*subCategoryRequest.GetByIdRequest)
@@ -59,7 +59,7 @@ func (s *SubCategoryHandler) GetById(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusBadRequest)
 		} else {
 			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte(err.Error()))
+			_, _ = w.Write([]byte(err.Error()))
 		}
 		return
 	}
@@ -70,7 +70,7 @@ func (s *SubCategoryHandler) GetById(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusOK)
-	w.Write(jsonBytes)
+	_, _ = w.Write(jsonBytes)
 }
 
 func (s *SubCategoryHandler) GetAll(w http.ResponseWriter, r *http.Request) {
@@ -78,7 +78,7 @@ func (s *SubCategoryHandler) GetAll(w http.ResponseWriter, r *http.Request) {
 	val, err := validateRequest.Validate(r)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(err.Error()))
+		_, _ = w.Write([]byte(err.Error()))
 		return
 	}
 	request := val.(*subCategoryRequest.GetAllRequest)
@@ -86,7 +86,7 @@ func (s *SubCategoryHandler) GetAll(w http.ResponseWriter, r *http.Request) {
 	subcategories, err := s.service.GetAll(request)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		_, _ = w.Write([]byte(err.Error()))
 		return
 	}
 	jsonBytes, err := json.Marshal(subcategories)
@@ -95,5 +95,5 @@ func (s *SubCategoryHandler) GetAll(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusOK)
-	w.Write(jsonBytes)
+	_, _ = w.Write(jsonBytes)
 }

@@ -1,0 +1,15 @@
+{
+  "name": "load-test",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Load test and observability checks for the ecommerce backend",
+  "scripts": {
+    "load-test": "node load-test.js",
+    "observability-check": "node observability-check.js"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "@grpc/grpc-js": "^1.14.7",
+    "@grpc/proto-loader": "^0.8.1"
+  }
+}

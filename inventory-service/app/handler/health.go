@@ -31,7 +31,7 @@ func HealthCheckHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	// Write the JSON response
-	w.Write(statsJSON)
+	_, _ = w.Write(statsJSON)
 }
 
 func getAppStats() AppStats {

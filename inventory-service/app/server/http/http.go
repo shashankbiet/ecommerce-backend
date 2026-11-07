@@ -15,9 +15,10 @@ import (
 
 func InitHttpServer() (*http.Server, error) {
 	router := mux.NewRouter()
+	router.Use(metricsMiddleware)
 	router.HandleFunc("/health", handler.HealthCheckHandler).Methods(http.MethodGet)
 	router.Handle("/metrics", promhttp.Handler()).Methods(http.MethodGet)
-	router.Handle("/debug/pprof/", http.HandlerFunc(pprof.Index))
+	router.Handle("/debug/pprof", http.HandlerFunc(pprof.Index))
 	router.Handle("/debug/pprof/cmdline", http.HandlerFunc(pprof.Cmdline))
 	router.Handle("/debug/pprof/profile", http.HandlerFunc(pprof.Profile))
 	router.Handle("/debug/pprof/symbol", http.HandlerFunc(pprof.Symbol))
@@ -36,12 +37,12 @@ func InitHttpServer() (*http.Server, error) {
 		return nil, err
 	}
 
-	port := fmt.Sprintf(":%d", config.GetConfig().HttpServer.Port)
+	port := fmt.Sprintf(":%d", config.GetConfig().InventoryService.Port)
 	httpServer := &http.Server{
 		Addr:         port,
 		Handler:      router,
-		ReadTimeout:  time.Duration(config.GetConfig().HttpServer.ReadTimeoutMs) * time.Millisecond,  // maximum duration for reading the entire request
-		WriteTimeout: time.Duration(config.GetConfig().HttpServer.WriteTimeoutMs) * time.Millisecond, // maximum duration before timing out writes of the response
+		ReadTimeout:  time.Duration(config.GetConfig().InventoryService.ReadTimeoutMs) * time.Millisecond,  // maximum duration for reading the entire request
+		WriteTimeout: time.Duration(config.GetConfig().InventoryService.WriteTimeoutMs) * time.Millisecond, // maximum duration before timing out writes of the response
 	}
 
 	go func() {

@@ -1,6 +1,7 @@
 const express = require("express");
 const { createProxyMiddleware } = require("http-proxy-middleware");
 const addCorrelationId = require("./middleware/add-correlation-id");
+const { recordRequestDuration } = require("./middleware/api-metrics");
 const authenticateToken = require("./middleware/authenticate-token");
 const notFoundHandler = require("./middleware/not-found-handler");
 const router = require("./handler/router");
@@ -17,6 +18,7 @@ const app = express();
 
 // Add a trace ID so this request can be correlated across services.
 app.use(addCorrelationId);
+app.use(recordRequestDuration);
 
 // Forward authenticated user requests to the User Service.
 const setRequestHeader = (proxyReq, req) => {
