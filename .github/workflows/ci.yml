@@ -58,10 +58,13 @@ jobs:
           mkdir -p secrets
           touch secrets/api_gateway_access_token_secret \
             secrets/user_service_admin_verification_token \
-            secrets/mongodb_root_password \
             secrets/sql_config_password \
             secrets/elastic_search_password \
-            secrets/grafana_admin_password
+            secrets/redis_username \
+            secrets/redis_password \
+            secrets/grafana_admin_password \
+            secrets/minio_root_user \
+            secrets/minio_root_password 
       - run: python3 scripts/check_env_drift.py
 
   go:
