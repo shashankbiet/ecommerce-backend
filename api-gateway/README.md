@@ -1,123 +1,60 @@
 # API Gateway
 
-Lightweight HTTP gateway that routes and aggregates requests to backend services (User Service). Designed for local development and as the single entry point for client apps.
+Express gateway and single entry point for client apps. It validates bearer tokens, proxies user requests to the user service, and forwards trusted identity headers.
 
-Node.js Express-based gateway providing routing, request proxying, basic auth hooks, and response aggregation for the ecommerce backend.
+- **Port:** 3001
+- **Stack:** Node.js, Express
 
+## Run
 
-## Key Features
-- Route proxying to internal services (users)
-- Centralized health & readiness endpoints
-- Simple auth middleware hooks (extensible)
-- Request/response logging
-- Basic metrics endpoint compatible with Prometheus
-- Config-driven per-environment settings
-
-
-## Tech Stack
-- Runtime: Node.js
-- Framework: Express.js
-- Database: MongoDB
-- Containerization: Docker
-
-
-## Installation
 ```bash
 cd api-gateway
 npm install
+npm start      # production mode
+npm run dev    # nodemon, development mode
 ```
 
+With Compose, from the repository root:
 
-## Running the Application
-
-### Locally
-1. Start directly
-    ```bash
-    npm start
-    ```
-
-2. Start with nodemon for hot reload (if configured):
-    ```bash
-    npm run dev
-    ```
-
-### Using Docker Compose (Recommended)
 ```bash
-docker-compose up --build api-gateway
+podman-compose up --build api-gateway
 ```
 
-### Lint and format
+## Configuration
+
+Values are in [.env.example](.env.example).
+
+| Variable | Description |
+| --- | --- |
+| `API_GATEWAY_PORT` | HTTP port |
+| `API_GATEWAY_ACCESS_TOKEN_SECRET_FILE` | Secret file used to verify bearer tokens |
+| `USER_SERVICE_TARGET` | User service base URL |
+| `USER_SERVICE_USER_PATH` | Proxied user path (`/api/user`) |
+| `USER_SERVICE_AUTH_PATH` | Proxied auth path (`/api/auth`) |
+
+## API
+
+| Method | Path | Auth | Description |
+| --- | --- | --- | --- |
+| POST | `/auth/login` | No | Log in and return a token |
+| POST | `/api/user/register` | No | Register a user |
+| ALL | `/api/user/*` | Yes | Proxied to the user service |
+
+The user service documents its endpoints in [user-service](../user-service/README.md).
+
+## Health and Metrics
+
+- `GET /health`
+- `GET /metrics` (Prometheus; keep it off public networks)
+
+## Tests and Lint
+
 ```bash
+npm test
 npm run lint
 npm run format
 ```
 
-## Usage Examples
-
-### Health
-```bash
-curl http://localhost:3001/health
-
-# 200 {"status":"ok"}
-```
-
-### Create User
-```bash
-curl --location 'http://localhost:3001/api/user/register' \
---header 'Content-Type: application/json' \
---data-raw '{
-    "phoneNumber": "9876543210",
-    "email": "test@test.com",
-    "password": "test@",
-    "firstName": "test",
-    "lastName": "test",
-    "role": "ADMIN",
-    "token": "{ADMIN_VERIFICATION_TOKEN}"
-}'
-
-# 200 {}
-```
-
-### Login User
-```bash
-curl --location 'http://localhost:3001/auth/login' \
---header 'Content-Type: application/json' \
---data '{
-    "phoneNumber":9876543210,
-    "password":"test"
-}'
-
-# 200 {eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEwMDYsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc3MTc1ODczMywiZXhwIjoxNzcxODQ1MTMzfQ.47CAst2SnDU9QIImvl-G0zBbWYyUyzy6bQes2-s_M_0}
-```
-
-### Get User
-```bash
-curl --location 'http://localhost:3001/api/user' \
---header 'Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEwMDMsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc3MTc1ODU0MCwiZXhwIjoxNzcxODQ0OTQwfQ.oPg7B3HfBv8G-W7LOWL4FJX_35ppv0937CZREEPChH8'
-
-# 200 {
-#   "userId": 1006,
-#   "phoneNumber": "9876543210",
-#   "email": "test@test.com",
-#   "role": "ADMIN",
-#   "firstName": "test",
-#   "lastName": "test",
-#   "isActive": true,
-#   "createdDate": "2026-02-22T11:11:47.481Z"
-# }
-```
-
-### Additional Endpoints
-Similarly, you can access other user service APIs as documented in the [user-service README](../user-service/README.md).
-
-
-
-## Metrics
-
-The gateway currently exposes a health endpoint at `/health`; it does not
-currently expose a Prometheus metrics endpoint.
-
-
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+MIT

@@ -1,7 +1,10 @@
--- Demo seed data for inventory-service (PostgreSQL, database: inventorydb).
--- Run after inventory-service has started once (it creates the tables):
---   podman exec -i postgres psql -U "$SQL_CONFIG_USERNAME" -d inventorydb < scripts/seed/postgres.sql
+-- Demo seed data for inventory-service and user-service (PostgreSQL).
+-- Run after both services have started once (they create the tables):
+--   podman exec -i postgres psql -U "$SQL_CONFIG_USERNAME" -d postgres < scripts/seed/postgres.sql
 -- Safe to rerun: existing rows are left unchanged.
+
+\set ON_ERROR_STOP on
+\connect inventory_db
 
 BEGIN;
 
@@ -309,5 +312,75 @@ INSERT INTO Inventory(ProductId, SKU, PurchasePrice, SalePrice, Quantity, Create
 SELECT ProductId, SKU, PurchasePrice, SalePrice, 10 + ProductId % 91, CreatedAt, UpdatedAt
 FROM InventorySeed
 ON CONFLICT (ProductId) DO NOTHING;
+
+COMMIT;
+
+\connect user_db
+
+BEGIN;
+
+INSERT INTO users (user_id, phone_number, email, password, role, first_name, last_name, created_date, is_active)
+VALUES
+  (1001, '5552000001', 'demo.customer01@example.com', '$2b$10$NdHeFH3Cf8BrwvqM7.3v9u0O3GqKuf1f0aLBuFoRW3KXA2UxZglam', 'CUSTOMER', 'Avery', 'Bennett', NOW(), true),
+  (1002, '5552000002', 'demo.customer02@example.com', '$2b$10$NdHeFH3Cf8BrwvqM7.3v9u0O3GqKuf1f0aLBuFoRW3KXA2UxZglam', 'CUSTOMER', 'Jordan', 'Carter', NOW(), true),
+  (1003, '5552000003', 'demo.customer03@example.com', '$2b$10$NdHeFH3Cf8BrwvqM7.3v9u0O3GqKuf1f0aLBuFoRW3KXA2UxZglam', 'CUSTOMER', 'Taylor', 'Diaz', NOW(), true),
+  (1004, '5552000004', 'demo.customer04@example.com', '$2b$10$NdHeFH3Cf8BrwvqM7.3v9u0O3GqKuf1f0aLBuFoRW3KXA2UxZglam', 'CUSTOMER', 'Morgan', 'Ellis', NOW(), true),
+  (1005, '5552000005', 'demo.customer05@example.com', '$2b$10$NdHeFH3Cf8BrwvqM7.3v9u0O3GqKuf1f0aLBuFoRW3KXA2UxZglam', 'CUSTOMER', 'Riley', 'Foster', NOW(), true),
+  (1006, '5552000006', 'demo.customer06@example.com', '$2b$10$NdHeFH3Cf8BrwvqM7.3v9u0O3GqKuf1f0aLBuFoRW3KXA2UxZglam', 'CUSTOMER', 'Casey', 'Garcia', NOW(), true),
+  (1007, '5552000007', 'demo.customer07@example.com', '$2b$10$NdHeFH3Cf8BrwvqM7.3v9u0O3GqKuf1f0aLBuFoRW3KXA2UxZglam', 'CUSTOMER', 'Cameron', 'Hayes', NOW(), true),
+  (1008, '5552000008', 'demo.customer08@example.com', '$2b$10$NdHeFH3Cf8BrwvqM7.3v9u0O3GqKuf1f0aLBuFoRW3KXA2UxZglam', 'CUSTOMER', 'Drew', 'Irwin', NOW(), true),
+  (1009, '5552000009', 'demo.customer09@example.com', '$2b$10$NdHeFH3Cf8BrwvqM7.3v9u0O3GqKuf1f0aLBuFoRW3KXA2UxZglam', 'CUSTOMER', 'Quinn', 'Jordan', NOW(), true),
+  (1010, '5552000010', 'demo.customer10@example.com', '$2b$10$NdHeFH3Cf8BrwvqM7.3v9u0O3GqKuf1f0aLBuFoRW3KXA2UxZglam', 'CUSTOMER', 'Hayden', 'Kim', NOW(), true),
+  (1011, '5552000011', 'demo.customer11@example.com', '$2b$10$NdHeFH3Cf8BrwvqM7.3v9u0O3GqKuf1f0aLBuFoRW3KXA2UxZglam', 'CUSTOMER', 'Reese', 'Lane', NOW(), true),
+  (1012, '5552000012', 'demo.customer12@example.com', '$2b$10$NdHeFH3Cf8BrwvqM7.3v9u0O3GqKuf1f0aLBuFoRW3KXA2UxZglam', 'CUSTOMER', 'Parker', 'Morris', NOW(), true),
+  (1013, '5552000013', 'demo.customer13@example.com', '$2b$10$NdHeFH3Cf8BrwvqM7.3v9u0O3GqKuf1f0aLBuFoRW3KXA2UxZglam', 'CUSTOMER', 'Rowan', 'Nguyen', NOW(), true),
+  (1014, '5552000014', 'demo.customer14@example.com', '$2b$10$NdHeFH3Cf8BrwvqM7.3v9u0O3GqKuf1f0aLBuFoRW3KXA2UxZglam', 'CUSTOMER', 'Skyler', 'Owens', NOW(), true),
+  (1015, '5552000015', 'demo.customer15@example.com', '$2b$10$NdHeFH3Cf8BrwvqM7.3v9u0O3GqKuf1f0aLBuFoRW3KXA2UxZglam', 'CUSTOMER', 'Finley', 'Patel', NOW(), true),
+  (1016, '5552000016', 'demo.customer16@example.com', '$2b$10$NdHeFH3Cf8BrwvqM7.3v9u0O3GqKuf1f0aLBuFoRW3KXA2UxZglam', 'CUSTOMER', 'Emerson', 'Quinn', NOW(), true),
+  (1017, '5552000017', 'demo.customer17@example.com', '$2b$10$NdHeFH3Cf8BrwvqM7.3v9u0O3GqKuf1f0aLBuFoRW3KXA2UxZglam', 'CUSTOMER', 'Dakota', 'Reed', NOW(), true),
+  (1018, '5552000018', 'demo.customer18@example.com', '$2b$10$NdHeFH3Cf8BrwvqM7.3v9u0O3GqKuf1f0aLBuFoRW3KXA2UxZglam', 'CUSTOMER', 'Arden', 'Singh', NOW(), true),
+  (1019, '5552000019', 'demo.customer19@example.com', '$2b$10$NdHeFH3Cf8BrwvqM7.3v9u0O3GqKuf1f0aLBuFoRW3KXA2UxZglam', 'CUSTOMER', 'Sage', 'Turner', NOW(), true),
+  (1020, '5552000020', 'demo.customer20@example.com', '$2b$10$NdHeFH3Cf8BrwvqM7.3v9u0O3GqKuf1f0aLBuFoRW3KXA2UxZglam', 'CUSTOMER', 'Logan', 'Upton', NOW(), true),
+  (1021, '5552000021', 'demo.merchant21@example.com', '$2b$10$NdHeFH3Cf8BrwvqM7.3v9u0O3GqKuf1f0aLBuFoRW3KXA2UxZglam', 'MERCHANT', 'Kendall', 'Vargas', NOW(), true),
+  (1022, '5552000022', 'demo.merchant22@example.com', '$2b$10$NdHeFH3Cf8BrwvqM7.3v9u0O3GqKuf1f0aLBuFoRW3KXA2UxZglam', 'MERCHANT', 'Jamie', 'Walker', NOW(), true),
+  (1023, '5552000023', 'demo.merchant23@example.com', '$2b$10$NdHeFH3Cf8BrwvqM7.3v9u0O3GqKuf1f0aLBuFoRW3KXA2UxZglam', 'MERCHANT', 'Blake', 'Xu', NOW(), true),
+  (1024, '5552000024', 'demo.merchant24@example.com', '$2b$10$NdHeFH3Cf8BrwvqM7.3v9u0O3GqKuf1f0aLBuFoRW3KXA2UxZglam', 'MERCHANT', 'Payton', 'Young', NOW(), true),
+  (1025, '5552000025', 'demo.merchant25@example.com', '$2b$10$NdHeFH3Cf8BrwvqM7.3v9u0O3GqKuf1f0aLBuFoRW3KXA2UxZglam', 'MERCHANT', 'Alex', 'Zimmer', NOW(), true)
+ON CONFLICT (user_id) DO UPDATE
+SET
+  phone_number = EXCLUDED.phone_number,
+  email = EXCLUDED.email,
+  password = EXCLUDED.password,
+  role = EXCLUDED.role,
+  first_name = EXCLUDED.first_name,
+  last_name = EXCLUDED.last_name,
+  is_active = true;
+
+SELECT setval('user_id_seq', GREATEST((SELECT COALESCE(MAX(user_id), 1000) FROM users), 1000), true);
+
+INSERT INTO user_addresses (
+  address_id, user_id, type, line1, district, landmark, state, pincode
+)
+SELECT
+  ('00000000-0000-4000-8000-' || LPAD(user_id::text, 12, '0'))::UUID,
+  user_id,
+  'HOME',
+  FORMAT('%s Demo Street', user_id - 1000),
+  'Sample District',
+  'Near Demo Park',
+  'Sample State',
+  100001
+FROM users
+WHERE role = 'CUSTOMER'
+  AND email LIKE 'demo.customer%@example.com'
+ON CONFLICT (address_id) DO UPDATE
+SET
+  user_id = EXCLUDED.user_id,
+  type = EXCLUDED.type,
+  line1 = EXCLUDED.line1,
+  district = EXCLUDED.district,
+  landmark = EXCLUDED.landmark,
+  state = EXCLUDED.state,
+  pincode = EXCLUDED.pincode;
 
 COMMIT;

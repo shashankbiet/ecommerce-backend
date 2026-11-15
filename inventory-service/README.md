@@ -1,294 +1,77 @@
 # Inventory Service
 
-Go microservice providing product inventory management, category management, and stock tracking. Designed for the ecommerce backend with PostgreSQL persistence and Kafka integration.
+Go HTTP service for categories, subcategories, products, and inventory. It stores data in PostgreSQL and publishes changes to Kafka.
 
-HTTP-based inventory service for product management, category organization, inventory tracking, and real-time updates via Kafka with comprehensive logging and Prometheus metrics.
+- **Port:** 3003
+- **Stack:** Go, PostgreSQL 16, Kafka
 
-## Key Features
-- Product management (CRUD operations)
-- Category and subcategory management
-- Inventory tracking and stock management
-- Real-time inventory updates via Kafka producer
-- HTTP REST API endpoints
-- Request/response logging with Zap
-- Prometheus metrics collection
-- PostgreSQL persistence
-- Database health checks
-- Transactional operations
+## Run
 
-
-## Tech Stack
-- Runtime: Go 1.26+
-- Framework: HTTP REST
-- Database: PostgreSQL 16
-- Message Queue: Kafka
-- Logging: Zap
-- Metrics: Prometheus client
-- Containerization: Docker
-
-
-## Installation
 ```bash
 cd inventory-service
 go mod download
+make run       # builds and runs ./.bin/app
+make build
 ```
 
-## Running the Application
+With Compose, from the repository root:
 
-### Locally
-1. Start directly
-    ```bash
-    make run
-    ```
-
-2. Start with live reload (if configured):
-    ```bash
-    make dev
-    ```
-
-3. Build the binary
-    ```bash
-    make build
-    ```
-
-### Using Docker Compose (Recommended)
 ```bash
-docker-compose up --build inventory-service
+podman-compose up --build inventory-service
 ```
 
-### Run tests
-```bash
-make test
-```
+## Configuration
 
+Values are in [.env.example](.env.example).
 
-## Usage Examples
+| Variable | Description |
+| --- | --- |
+| `INVENTORY_SERVICE_PORT` | HTTP port |
+| `INVENTORY_SERVICE_READ_TIMEOUT_MS` | Read timeout in milliseconds |
+| `INVENTORY_SERVICE_WRITE_TIMEOUT_MS` | Write timeout in milliseconds |
+| `SQL_CONFIG_USERNAME` | PostgreSQL username |
+| `SQL_CONFIG_PASSWORD_FILE` | Secret file for the PostgreSQL password |
+| `SQL_CONFIG_HOST` | PostgreSQL host |
+| `SQL_CONFIG_PORT` | PostgreSQL port |
+| `SQL_CONFIG_DATABASE` | PostgreSQL database name |
+| `SQL_CONFIG_MAX_LIFE_TIME` | Connection max lifetime |
+| `SQL_CONFIG_MAX_OPEN_CONNS` | Max open connections |
+| `SQL_CONFIG_MAX_IDLE_CONNS` | Max idle connections |
+| `KAFKA_CONFIG_SERVER` | Kafka broker |
+| `PRODUCT_UPDATE_TOPIC_NAME` | Product update topic |
+| `INVENTORY_UPDATE_TOPIC_NAME` | Inventory update topic |
 
-### Health Check
-```bash
-curl http://localhost:3003/health
+## API
 
-# 200 {"status":"ok"}
-```
+| Method | Path | Description |
+| --- | --- | --- |
+| POST | `/api/category` | Create category |
+| GET | `/api/category` | List categories |
+| GET | `/api/category/{id}` | Get category |
+| POST | `/api/subcategory` | Create subcategory |
+| GET | `/api/subcategory` | List subcategories |
+| GET | `/api/subcategory/{id}` | Get subcategory |
+| POST | `/api/product` | Create product (publishes `product_update`) |
+| PUT | `/api/product` | Update product (publishes `product_update`) |
+| GET | `/api/product` | List products |
+| GET | `/api/product/{id}` | Get product |
+| POST | `/api/inventory` | Create inventory record (publishes `inventory_update`) |
+| PUT | `/api/inventory` | Update inventory record (publishes `inventory_update`) |
+| GET | `/api/inventory` | List inventory |
+| GET | `/api/inventory/{productId}` | Get inventory for a product |
 
-### Add Category
-```bash
-curl --location 'http://localhost:3003/api/category' \
---header 'Content-Type: application/json' \
---data '{
-    "name": "mobile"
-}'
-```
-
-### Get All Category
-```bash
-curl --location 'http://localhost:3003/api/category'
-
-# 200{
-#     "GROCERY": {
-#         "id": 1,
-#         "name": "GROCERY",
-#         "createdAt": "2026-02-22T10:25:30Z"
-#     },
-#     "MOBILE": {
-#         "id": 2,
-#         "name": "MOBILE",
-#         "createdAt": "2026-02-22T10:27:06Z"
-#     }
-#     }
-# }
-```
-
-### Get Category by Id
-```bash
-curl --location 'http://localhost:3003/api/category/2'
-```
-
-
-### Add Sub-Category
-```bash
-curl --location 'http://localhost:3003/api/subcategory' \
---header 'Content-Type: application/json' \
---data '{
-    "name": "smartphone",
-    "category":"mobile"
-}'
-```
-
-### Get All Sub-Category
-```bash
-curl --location 'http://localhost:3003/api/subcategory'
-
-# 200 {
-#   "PULSE_AND_CEREALS": {
-#     "id": 1,
-#     "name": "PULSE_AND_CEREALS",
-#     "category": "GROCERY",
-#     "createdAt": "2026-02-22T10:25:55Z"
-#   },
-#   "SMARTPHONE": {
-#     "id": 2,
-#     "name": "SMARTPHONE",
-#     "category": "MOBILE",
-#     "createdAt": "2026-02-22T10:27:29Z"
-#   }
-# }
-```
-
-### Get Sub-Category by Id
-```bash
-curl --location 'http://localhost:3003/api/subcategory/2'
-```
-
-### Add Product
-```bash
-curl --location 'http://localhost:3003/api/product' \
---header 'Content-Type: application/json' \
---data '{
-    "name": "Nord 42820",
-    "description":"4G mobile phone",
-    "brand": "Oneplus",
-    "category": "mobile",
-    "subCategory":"smartphone",
-    "imageId":"oneplus_4_phone_image.png",
-    "weight":145.9
-}'
-
-# 201 {}
-```
-
-### List All Products
-```bash
-curl --location 'http://localhost:3003/api/product'
-
-# 200 [
-# {
-#     "id":4,
-#     "name":"Nord 42820",
-#     "description":"4G mobile phone",
-#     "brand":"Oneplus",
-#     "category":"MOBILE",
-#     "subCategory":"SMARTPHONE",
-#     "imageId":"oneplus_4_phone_image.png",
-#     "weight":145.9,
-#     "createdAt":"2026-02-22T10:27:32Z",
-#     "updatedAt":"2026-02-22T10:27:32Z"
-# }
-# ]
-```
-
-### Create Product
-```bash
-curl --location 'http://localhost:3003/api/product/4'
-
-# 201 {
-#   "id": 4,
-#   "name": "Nord 42820",
-#   "description": "4G mobile phone",
-#   "brand": "Oneplus",
-#   "category": "MOBILE",
-#   "subCategory": "SMARTPHONE",
-#   "imageId": "oneplus_4_phone_image.png",
-#   "weight": 145.9,
-#   "createdAt": "2026-02-22T10:27:32Z",
-#   "updatedAt": "2026-02-22T10:27:32Z"
-# }
-```
-
-### Update Product
-```bash
-curl --location --request PUT 'http://localhost:3003/api/product' \
---header 'Content-Type: application/json' \
---data '{
-    "id":11,
-    "name": "Nord 4",
-    "description":"4G mobile phone",
-    "brand": "Oneplus",
-    "category": "mobile",
-    "subCategory":"smartphone",
-    "imageId":"oneplus_4_image.png",
-    "weight":100
-}'
-
-# 200 {}
-```
-
-### Add Inventory
-```bash
-curl --location 'http://localhost:3003/api/inventory' \
---header 'Content-Type: application/json' \
---data '{
-    "productId": 4,
-    "sku":6,
-    "purchasePrice": 100,
-    "salePrice": 125
-}'
-```
-
-### Get All Inventory
-```bash
-curl --location 'http://localhost:3003/api/inventory'
-```
-
-### Get Inventory by Id
-```bash
-curl --location 'http://localhost:3003/api/inventory/10'
-```
-
-### Update Inventory
-```bash
-curl --location --request PUT 'http://localhost:3003/api/inventory' \
---header 'Content-Type: application/json' \
---data '{
-    "productId": 10,
-    "sku":11,
-    "purchasePrice": 120,
-    "salePrice": 145
-}'
-```
-
-
-
-## API Endpoints
-
-### Categories
-- `GET /category` - List all categories
-- `GET /category/:id` - Get category by id
-- `POST /category` - Create new category
-
-### Subcategories
-- `GET /subcategory` - List subcategories for category
-- `GET /subcategory/:id` - Get subcategory by ID
-- `POST /subcategory` - Create new subcategory
-
-### Products
-- `GET /product` - List all products
-- `GET /product/:id` - Get product by ID
-- `POST /product` - Create new product
-- `PUT /product` - Update product details
-
-### Inventory
-- `GET /inventory` - List all inventory
-- `GET /inventory/:id` - Get product by ID
-- `POST /inventory` - Create new product
-- `PUT /inventory` - Update product details
-
-
-### Health & Monitoring
-- `GET /health` - Health check endpoint
-- `GET /metrics` - Prometheus metrics
-
+Category and subcategory names are normalized by the service.
 
 ## Kafka Topics
 
-### Published Topics
-- `product_update` - Product change event
-- `inventory_update` - Inventory change events
-
+Published on writes:
+- `product_update` - product create/update (consumed by search service)
+- `inventory_update` - inventory create/update
 
 ## Database Schema
 
-### Products Table
+PostgreSQL database `inventory_db`.
+
 ```sql
 CREATE TABLE Products (
   Id BIGSERIAL PRIMARY KEY,
@@ -305,19 +88,13 @@ CREATE TABLE Products (
   FOREIGN KEY (Category) REFERENCES Categories(Name),
   FOREIGN KEY (SubCategory, Category) REFERENCES SubCategories(Name, Category)
 );
-```
 
-### Categories Table
-```sql
 CREATE TABLE Categories (
   Id SMALLSERIAL PRIMARY KEY,
   Name VARCHAR(255) UNIQUE NOT NULL,
   CreatedAt TIMESTAMP
 );
-```
 
-### Subcategories Table
-```sql
 CREATE TABLE SubCategories (
   Id SMALLSERIAL PRIMARY KEY,
   Name VARCHAR(255) NOT NULL,
@@ -326,10 +103,7 @@ CREATE TABLE SubCategories (
   UNIQUE (Name, Category),
   FOREIGN KEY (Category) REFERENCES Categories(Name)
 );
-```
 
-### Inventory Table
-```sql
 CREATE TABLE Inventory (
   ProductId BIGINT NOT NULL PRIMARY KEY,
   SKU INT,
@@ -341,22 +115,17 @@ CREATE TABLE Inventory (
 );
 ```
 
+## Health and Metrics
 
-## Integration with Other Services
+- `GET /health`
+- `GET /metrics` (Prometheus; keep it off public networks)
 
-### Search Service
-- Publishes product updates to `product_update` Kafka topic
-- Search service consumes these events to maintain product index
+## Tests
 
-
-## Metrics
-
-Prometheus metrics are exposed at `/metrics`. The endpoint includes Go runtime
-and process metrics. In the local Compose setup, Prometheus scrapes this
-endpoint when the `monitoring` profile is enabled. Keep it on a trusted network
-and do not expose it publicly without access control.
-
+```bash
+go test ./...
+```
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+MIT

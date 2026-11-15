@@ -1,68 +1,121 @@
 const addressService = {};
-const userModel = require("../shared/models/user-model");
-const mongoose = require("mongoose");
+const { query } = require("../../handler/postgres");
 
 addressService.add = async (userId, body) => {
     const { type, line1, line2, district, landmark, state, pincode } = body;
-    const address = {
-        addressId: new mongoose.Types.ObjectId(),
-        type,
-        line1,
-        line2,
-        district,
-        landmark,
-        state,
-        pincode,
-    };
-    const result = await userModel.findOneAndUpdate(
-        { userId, isActive: true },
-        { $push: { address } }
+    const userResult = await query(
+        `SELECT user_id
+         FROM users
+         WHERE user_id = $1 AND is_active = true`,
+        [userId]
     );
-    return Boolean(result);
+    if (userResult.rowCount === 0) {
+        return false;
+    }
+    const insertResult = await query(
+        `INSERT INTO user_addresses
+            (user_id, type, line1, line2, district, landmark, state, pincode)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+        [userId, type, line1, line2, district, landmark, state, pincode]
+    );
+    return insertResult.rowCount > 0;
 };
 
 addressService.get = async (userId, addressId) => {
     if (addressId) {
-        const user = await userModel.findOne(
-            { userId, isActive: true, "address.addressId": addressId },
-            { "address.$": 1 }
+        const result = await query(
+            `SELECT a.address_id, a.type, a.line1, a.line2, a.district, a.landmark, a.state, a.pincode
+             FROM user_addresses a
+             JOIN users u ON u.user_id = a.user_id
+             WHERE a.user_id = $1 AND a.address_id = $2 AND u.is_active = true`,
+            [userId, addressId]
         );
-        return user && user.address && user.address.length > 0
-            ? user.address[0]
-            : null;
+        if (result.rowCount === 0) {
+            return null;
+        }
+        const row = result.rows[0];
+        return {
+            addressId: row.address_id,
+            type: row.type,
+            line1: row.line1,
+            line2: row.line2,
+            district: row.district,
+            landmark: row.landmark,
+            state: row.state,
+            pincode: row.pincode,
+        };
     }
-    const user = await userModel.findOne(
-        { userId, isActive: true },
-        { address: 1 }
+    const userResult = await query(
+        `SELECT user_id
+         FROM users
+         WHERE user_id = $1 AND is_active = true`,
+        [userId]
     );
-    return user ? user.address || [] : null;
+    if (userResult.rowCount === 0) {
+        return null;
+    }
+    const result = await query(
+        `SELECT address_id, type, line1, line2, district, landmark, state, pincode
+         FROM user_addresses
+         WHERE user_id = $1
+         ORDER BY created_date ASC`,
+        [userId]
+    );
+    return result.rows.map((row) => ({
+        addressId: row.address_id,
+        type: row.type,
+        line1: row.line1,
+        line2: row.line2,
+        district: row.district,
+        landmark: row.landmark,
+        state: row.state,
+        pincode: row.pincode,
+    }));
 };
 
 addressService.update = async (userId, addressId, body) => {
     const { type, line1, line2, district, landmark, state, pincode } = body;
-    const result = await userModel.findOneAndUpdate(
-        { userId, isActive: true, "address.addressId": addressId },
-        {
-            $set: {
-                "address.$.type": type,
-                "address.$.line1": line1,
-                "address.$.line2": line2,
-                "address.$.district": district,
-                "address.$.landmark": landmark,
-                "address.$.state": state,
-                "address.$.pincode": pincode,
-            },
-        }
+    const result = await query(
+        `UPDATE user_addresses a
+         SET type = $1,
+             line1 = $2,
+             line2 = $3,
+             district = $4,
+             landmark = $5,
+             state = $6,
+             pincode = $7,
+             last_modified_date = NOW()
+         FROM users u
+         WHERE a.user_id = $8
+           AND a.address_id = $9
+           AND u.user_id = a.user_id
+           AND u.is_active = true`,
+        [
+            type,
+            line1,
+            line2,
+            district,
+            landmark,
+            state,
+            pincode,
+            userId,
+            addressId,
+        ]
     );
-    return Boolean(result);
+    return result.rowCount > 0;
 };
 
 addressService.delete = async (userId, addressId) => {
-    const result = await userModel.findOneAndUpdate(
-        { userId, isActive: true, "address.addressId": addressId },
-        { $pull: { address: { addressId } } }
+    const result = await query(
+        `DELETE FROM user_addresses a
+         USING users u
+         WHERE a.user_id = $1
+           AND a.address_id = $2
+           AND u.user_id = a.user_id
+           AND u.is_active = true`,
+        [userId, addressId]
     );
-    return Boolean(result);
+    return result.rowCount > 0;
 };
 
 module.exports = addressService;

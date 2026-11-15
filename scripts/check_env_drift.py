@@ -20,7 +20,7 @@ TOKEN = re.compile(r"\b[A-Z][A-Z0-9_]+\b")
 
 # Compose literals for the database images must equal the service .env values.
 LITERAL_PAIRS = [
-    ("mongodb", "MONGO_INITDB_ROOT_USERNAME", "user-service", "MONGODB_ROOT_USERNAME"),
+    ("postgres", "POSTGRES_USER", "user-service", "SQL_CONFIG_USERNAME"),
     ("postgres", "POSTGRES_USER", "inventory-service", "SQL_CONFIG_USERNAME"),
     ("postgres", "POSTGRES_DB", "inventory-service", "SQL_CONFIG_DATABASE"),
 ]

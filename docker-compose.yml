@@ -49,14 +49,15 @@ services:
             retries: 3
             start_period: 10s
         environment:
-            - MONGODB_HOST=mongodb
             - USER_SERVICE_ADMIN_VERIFICATION_TOKEN_FILE=/run/secrets/user_service_admin_verification_token
-            - MONGODB_ROOT_PASSWORD_FILE=/run/secrets/mongodb_root_password
+            - SQL_CONFIG_HOST=postgres
+            - SQL_CONFIG_PORT=5432
+            - SQL_CONFIG_PASSWORD_FILE=/run/secrets/sql_config_password
         secrets:
             - user_service_admin_verification_token
-            - mongodb_root_password
+            - sql_config_password
         depends_on:
-            mongodb:
+            postgres:
                 condition: service_healthy
     inventory-service:
         build:
@@ -116,31 +117,6 @@ services:
                 condition: service_healthy
             elastic-search:
                 condition: service_healthy
-    mongodb:
-        image: mongo:4.0.28
-        container_name: mongodb
-        restart: always
-        environment:
-            MONGO_INITDB_ROOT_USERNAME: mongo-ecommerce
-            MONGO_INITDB_ROOT_PASSWORD_FILE: /run/secrets/mongodb_root_password
-        secrets:
-            - mongodb_root_password
-        volumes:
-            - ./bind-mount/db/mongodb:/data/db:U
-        ports:
-            - "127.0.0.1:27017:27017"
-        healthcheck:
-            test:
-                - CMD-SHELL
-                - >-
-                    mongo --quiet --username mongo-ecommerce
-                    --password "$$(cat /run/secrets/mongodb_root_password)"
-                    --authenticationDatabase admin
-                    --eval 'quit(db.adminCommand({ ping: 1 }).ok ? 0 : 1)'
-            interval: 5s
-            timeout: 10s
-            retries: 12
-            start_period: 30s
     postgres:
         image: postgres:16
         container_name: postgres
@@ -148,9 +124,27 @@ services:
         environment:
             POSTGRES_USER: postgres_user
             POSTGRES_PASSWORD_FILE: /run/secrets/sql_config_password
-            POSTGRES_DB: inventorydb
+            POSTGRES_DB: inventory_db
         secrets:
             - sql_config_password
+        entrypoint:
+            - sh
+            - -ec
+            - |
+                docker-entrypoint.sh postgres &
+                child=$$!
+                trap 'kill -TERM "$$child" 2>/dev/null; wait "$$child"; exit $$?' TERM INT
+                until pg_isready -h /var/run/postgresql -U "$${POSTGRES_USER}" -d postgres -q; do
+                    kill -0 "$$child" 2>/dev/null || exit 1
+                    sleep 1
+                done
+                for db_name in inventory_db user_db langfuse; do
+                    database_exists="$$(psql -h /var/run/postgresql -U "$${POSTGRES_USER}" -d postgres -tAc "SELECT 1 FROM pg_database WHERE datname = '$$db_name'")"
+                    if [ "$$database_exists" != "1" ]; then
+                        createdb -h /var/run/postgresql -U "$${POSTGRES_USER}" --owner="$${POSTGRES_USER}" "$$db_name"
+                    fi
+                done
+                wait "$$child"
         healthcheck:
             test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -p 5432 -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
             start_period: 0s
@@ -164,16 +158,19 @@ services:
     elastic-search:
         image: docker.elastic.co/elasticsearch/elasticsearch:7.15.1
         container_name: elastic-search
+        restart: unless-stopped
         environment:
             - bootstrap.memory_lock=true
             - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
             - discovery.type=single-node
+            - xpack.security.enabled=true
+            - ELASTIC_PASSWORD=${ELASTIC_PASSWORD:?Set ELASTIC_PASSWORD in .env}
         volumes:
             - ./bind-mount/db/elastic-search:/usr/share/elasticsearch/data:U
         ports:
             - "127.0.0.1:9200:9200"
         healthcheck:
-            test: ["CMD", "curl", "-f", "http://localhost:9200"]
+            test: ["CMD-SHELL", "curl -fsS -u \"elastic:$$ELASTIC_PASSWORD\" http://localhost:9200 > /dev/null"]
             interval: 5s
             timeout: 10s
             retries: 30
@@ -191,9 +188,9 @@ services:
         container_name: kafka
         restart: always
         ports:
-            - "127.0.0.1:9092:9092"
-            - "29092:29092"
-            - "127.0.0.1:9999:9999"
+            - 127.0.0.1:9092:9092
+            - 29092:29092
+            - 127.0.0.1:9999:9999
         environment:
             - KAFKA_ADVERTISED_LISTENERS=INTERNAL://kafka:19092,EXTERNAL://localhost:9092,DOCKER://host.docker.internal:29092
             - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,DOCKER:PLAINTEXT
@@ -228,7 +225,7 @@ services:
             - --storage.tsdb.path=/prometheus
             - --storage.tsdb.retention.time=15d
         ports:
-            - "127.0.0.1:9090:9090"
+            - 127.0.0.1:9090:9090
     grafana:
         image: grafana/grafana-oss
         container_name: grafana
@@ -246,7 +243,7 @@ services:
             - ./grafana/dashboards:/etc/grafana/dashboards:ro
             - ./bind-mount/monitoring/grafana:/var/lib/grafana:U
         ports:
-            - "127.0.0.1:3000:3000"
+            - 127.0.0.1:3000:3000
         depends_on:
             - prometheus
     loki:
@@ -259,7 +256,7 @@ services:
         command:
             - --config.file=/mnt/config/loki-config.yaml
         ports:
-            - "127.0.0.1:3100:3100"
+            - 127.0.0.1:3100:3100
     promtail:
         image: grafana/promtail:2.9.0
         container_name: promtail
@@ -283,8 +280,6 @@ secrets:
         file: ./secrets/api_gateway_access_token_secret
     user_service_admin_verification_token:
         file: ./secrets/user_service_admin_verification_token
-    mongodb_root_password:
-        file: ./secrets/mongodb_root_password
     sql_config_password:
         file: ./secrets/sql_config_password
     elastic_search_password:

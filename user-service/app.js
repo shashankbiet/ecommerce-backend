@@ -2,15 +2,11 @@ const express = require("express");
 const router = require("./handler/router");
 const apiErrorHandler = require("./middleware/api-error-handler");
 const notFoundHandler = require("./middleware/not-found-handler");
-const mongodb = require("./handler/mongodb");
 const { registerRestApiResponseTime } = require("./middleware/api-metrics");
 const app = express();
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
-//Database
-mongodb();
 
 app.use(function (req, res, next) {
     //Remove headers

@@ -15,7 +15,14 @@ const env = process.env.NODE_ENV === "prod" ? "prod" : "dev";
  * env: string,
  * appName: string,
  * port: number,
- * mongodbUrl: string,
+ * postgresConfig: {
+ * host: string,
+ * port: number,
+ * database: string,
+ * user: string,
+ * password: string,
+ * maxClients: number
+ * },
  * adminVerificationToken: string
  * disableUrlLogging: []
  * }}
@@ -24,9 +31,14 @@ module.exports = {
     env,
     appName: "user-service",
     port: Number(process.env.USER_SERVICE_PORT) || 3002,
-    mongodbUrl: `mongodb://${encodeURIComponent(process.env.MONGODB_ROOT_USERNAME)}:${encodeURIComponent(
-        process.env.MONGODB_ROOT_PASSWORD
-    )}@${process.env.MONGODB_HOST || "localhost"}:27017/${process.env.USER_SERVICE_DATABASE}?authSource=admin`,
+    postgresConfig: {
+        host: process.env.SQL_CONFIG_HOST || "localhost",
+        port: Number(process.env.SQL_CONFIG_PORT) || 5432,
+        database: process.env.SQL_CONFIG_DATABASE || "user_db",
+        user: process.env.SQL_CONFIG_USERNAME || "postgres_user",
+        password: process.env.SQL_CONFIG_PASSWORD || "",
+        maxClients: Number(process.env.SQL_CONFIG_MAX_CLIENTS) || 10,
+    },
     adminVerificationToken: process.env.USER_SERVICE_ADMIN_VERIFICATION_TOKEN,
     disableUrlLogging: [apiUrl.health, apiUrl.metrics],
 };

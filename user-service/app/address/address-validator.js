@@ -21,12 +21,12 @@ addressValidator.add = () => {
 };
 
 addressValidator.getById = () => {
-    return [param("addressId").isMongoId()];
+    return [param("addressId").isUUID().withMessage("Invalid address id")];
 };
 
 addressValidator.update = () => {
     return [
-        param("addressId").isMongoId(),
+        param("addressId").isUUID().withMessage("Invalid address id"),
         body("type")
             .notEmpty()
             .withMessage("Empty type")
@@ -41,7 +41,7 @@ addressValidator.update = () => {
 };
 
 addressValidator.delete = () => {
-    return [param("addressId").isMongoId()];
+    return [param("addressId").isUUID().withMessage("Invalid address id")];
 };
 
 module.exports = addressValidator;

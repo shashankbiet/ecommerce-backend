@@ -1,180 +1,75 @@
 # User Service
 
-Node.js microservice providing user management, authentication, and account operations. Designed for the ecommerce backend with MongoDB persistence and Prometheus metrics.
+Node.js (Express) service for registration, authentication, user profiles, and addresses, backed by PostgreSQL.
 
-Express.js-based user service for registration, authentication, user profiles, and address management with JWT token support and comprehensive API logging.
+- **Port:** 3002
+- **Stack:** Node.js, Express, PostgreSQL, JWT
 
+## Run
 
-## Key Features
-- User registration with email and phone authentication
-- JWT-based authentication and authorization
-- User profile management (CRUD operations)
-- Address management for users
-- Admin role verification and token validation
-- Request/response logging with Winston
-- Prometheus metrics collection
-- MongoDB persistence
-- Health check endpoints
-
-
-## Tech Stack
-- Runtime: Node.js
-- Framework: Express.js
-- Database: MongoDB
-- Authentication: JWT (JSON Web Tokens)
-- Password Hashing: bcrypt
-- Logging: Winston
-- Metrics: Prometheus client
-- Containerization: Docker
-
-
-## Installation
 ```bash
 cd user-service
 npm install
+npm start      # production mode
+npm run dev    # nodemon, development mode
 ```
 
-## Running the Application
+With Compose, from the repository root:
 
-### Locally
-1. Start directly
-    ```bash
-    npm start
-    ```
-
-2. Start with nodemon for hot reload (if configured):
-    ```bash
-    npm run dev
-    ```
-
-### Using Docker Compose (Recommended)
 ```bash
-docker-compose up --build user-service
+podman-compose up --build user-service
 ```
 
-### Lint and format
+## Configuration
+
+Values are in [.env.example](.env.example).
+
+| Variable | Description |
+| --- | --- |
+| `USER_SERVICE_PORT` | HTTP port |
+| `USER_SERVICE_ADMIN_VERIFICATION_TOKEN_FILE` | Secret file for the admin verification token |
+| `SQL_CONFIG_USERNAME` | PostgreSQL username |
+| `SQL_CONFIG_PASSWORD_FILE` | Secret file for the PostgreSQL password |
+| `SQL_CONFIG_HOST` | PostgreSQL host |
+| `SQL_CONFIG_PORT` | PostgreSQL port |
+| `SQL_CONFIG_DATABASE` | PostgreSQL database name |
+| `SQL_CONFIG_MAX_CLIENTS` | Max PostgreSQL clients |
+
+## Database
+
+PostgreSQL database `user_db` (set by `SQL_CONFIG_DATABASE`). Stores user profiles, addresses, and authentication data.
+
+## API
+
+Paths are served by this service. The gateway forwards them and enforces the bearer token on everything except register and login.
+
+| Method | Path | Auth | Description |
+| --- | --- | --- | --- |
+| POST | `/api/user/register` | No | Register a user |
+| POST | `/api/auth/authenticate` | No | Log in and return a token |
+| GET | `/api/user` | Yes | Get profile |
+| PUT | `/api/user` | Yes | Update profile |
+| DELETE | `/api/user` | Yes | Delete profile |
+| PUT | `/api/user/password` | Yes | Change password |
+| POST | `/api/user/address` | Yes | Add address |
+| GET | `/api/user/address` | Yes | List addresses |
+| GET | `/api/user/address/:addressId` | Yes | Get address |
+| PUT | `/api/user/address/:addressId` | Yes | Update address |
+| DELETE | `/api/user/address/:addressId` | Yes | Delete address |
+
+## Health and Metrics
+
+- `GET /api/user/health`
+- `GET /api/user/metrics` (Prometheus; keep it off public networks)
+
+## Tests and Lint
+
 ```bash
+npm test
 npm run lint
 npm run format
 ```
 
-## Usage Examples
-
-### Health Check
-```bash
-curl http://localhost:3002/health
-
-# 200 {"status":"ok"}
-```
-
-### Register User
-```bash
-curl --location 'http://localhost:3002/api/user/register' \
---header 'Content-Type: application/json' \
---data-raw '{
-    "phoneNumber": "9876543210",
-    "email": "test@test.com",
-    "password": "test@123",
-    "firstName": "John",
-    "lastName": "Doe",
-    "role": "USER",
-    "token": "{ADMIN_VERIFICATION_TOKEN}"
-}'
-
-# 201 {
-#   "userId": "507f1f77bcf86cd799439011",
-#   "message": "User registered successfully"
-# }
-```
-
-### Authenticate User
-```bash
-curl --location 'http://localhost:3002/auth/authenticate' \
---header 'Content-Type: application/json' \
---data '{
-    "phoneNumber": "9876543210",
-    "password": "test@123"
-}'
-
-# 200 {
-#   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI1MDdmMWY3N2JjZjg2Y2Q3OTk0MzkwMTEiLCJyb2xlIjoiVVNFUiIsImlhdCI6MTcxNzM4MDAzMCwiZXhwIjoxNzE3NDY2NDMwfQ.kX5c4q9pK2m8nL3oQ1r6sT7uV8wX9yZ0aB1cD2eF3gH"
-# }
-```
-
-### Get User Profile
-```bash
-curl --location 'http://localhost:3002/api/user' \
---header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI1MDdmMWY3N2JjZjg2Y2Q3OTk0MzkwMTEiLCJyb2xlIjoiVVNFUiIsImlhdCI6MTcxNzM4MDAzMCwiZXhwIjoxNzE3NDY2NDMwfQ.kX5c4q9pK2m8nL3oQ1r6sT7uV8wX9yZ0aB1cD2eF3gH'
-
-# 200 {
-#   "userId": "507f1f77bcf86cd799439011",
-#   "phoneNumber": "9876543210",
-#   "email": "test@test.com",
-#   "firstName": "John",
-#   "lastName": "Doe",
-#   "role": "USER",
-#   "isActive": true,
-#   "createdDate": "2026-02-22T11:11:47.481Z"
-# }
-```
-
-### Add User Address
-```bash
-curl --location 'http://localhost:3002/api/address' \
---header 'Authorization: Bearer <token>' \
---header 'Content-Type: application/json' \
---data-raw '{
-    "type": "HOME",
-    "line1": "123 MG Road",
-    "line2": "Apartment 4B",
-    "district": "Bangalore",
-    "landmark": "Near Indiranagar Tech Park",
-    "state": "Karnataka",
-    "pincode": 560038
-}'
-
-# 201 {
-#   "addressId": "507f1f77bcf86cd799439012",
-#   "message": "Address added successfully"
-# }
-```
-
-### Get User Addresses
-```bash
-curl --location 'http://localhost:3002/api/address' \
---header 'Authorization: Bearer <token>'
-
-# 200 [
-#   {
-#     "addressId": "507f1f77bcf86cd799439012",
-#     "type": "HOME",
-#     "line1": "123 MG Road",
-#     "line2": "Apartment 4B",
-#     "district": "Bangalore",
-#     "landmark": "Near Indiranagar Tech Park",
-#     "state": "Karnataka",
-#     "pincode": 560038
-#   }
-# ]
-```
-
-## API Endpoints
-- `POST /api/user/register` - Register new user
-- `POST /auth/authenticate` - User authenticate
-- `GET /api/user` - Get user profile (requires auth)
-- `PUT /api/user` - Update user profile (requires auth)
-- `DELETE /api/user` - Delete user profile (requires auth)
-- `POST /api/address` - Add new address (requires auth)
-- `GET /api/address` - Get user addresses (requires auth)
-- `PUT /api/address/:id` - Update address (requires auth)
-- `DELETE /api/address/:id` - Delete address (requires auth)
-- `GET /health` - Health check
-- `GET /metrics` - Metrics
-
-## Metrics
-
-Expose Prometheus metrics at `/metrics`. Ensure this is not publicly exposed in production without access control.
-
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+MIT

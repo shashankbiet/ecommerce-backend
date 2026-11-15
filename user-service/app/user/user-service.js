@@ -1,9 +1,7 @@
-const userModel = require("../shared/models/user-model");
-const mongoError = require("../shared/constants/mongo-error");
-const sequencing = require("../../util/sequencing");
 const hashing = require("../../util/hashing");
 const { adminVerificationToken } = require("../../config");
 const { dbResponseTimeHistogram } = require("../../util/metrics");
+const { query } = require("../../handler/postgres");
 const userService = {};
 
 userService.isAdmin = (token) => {
@@ -17,31 +15,27 @@ userService.register = async (body) => {
     let timer = dbResponseTimeHistogram.startTimer();
     try {
         let { phoneNumber, email, password, role, firstName, lastName } = body;
-        let dbUser = await userModel.findOne({
-            $or: [{ email: email }, { phoneNumber: phoneNumber }],
-        });
-        if (dbUser) {
+        const dbUser = await query(
+            `SELECT user_id FROM users
+             WHERE email = $1 OR phone_number = $2`,
+            [email, phoneNumber]
+        );
+        if (dbUser.rowCount > 0) {
             timer({ ...metricsLabels, success: false });
             return null;
         }
         password = await hashing.encrypt(password);
-        let userId = await sequencing.getNewUserId();
-        let user = new userModel({
-            userId,
-            phoneNumber,
-            email,
-            password,
-            role,
-            firstName,
-            lastName,
-        });
-
-        await user.save();
+        const insertUser = await query(
+            `INSERT INTO users (phone_number, email, password, role, first_name, last_name)
+             VALUES ($1, $2, $3, $4, $5, $6)
+             RETURNING user_id`,
+            [phoneNumber, email, password, role, firstName, lastName]
+        );
         timer({ ...metricsLabels, success: true });
-        return userId;
+        return Number(insertUser.rows[0].user_id);
     } catch (err) {
         timer({ ...metricsLabels, success: false });
-        if (err.code && err.code == mongoError.DUPLICATE_KEY.code) {
+        if (err.code === "23505") {
             return null;
         }
         throw err;
@@ -54,13 +48,27 @@ userService.get = async (userId) => {
     };
     let timer = dbResponseTimeHistogram.startTimer();
     try {
-        let user = await userModel.findOne(
-            { userId: userId, isActive: true },
-            { password: 0, _id: 0, address: 0 }
+        const result = await query(
+            `SELECT user_id, phone_number, email, role, first_name, last_name,
+                    created_date, last_modified_date, is_active
+             FROM users
+             WHERE user_id = $1 AND is_active = true`,
+            [userId]
         );
         timer({ ...metricsLabels, success: true });
-        if (user) {
-            return user.toObject();
+        if (result.rowCount > 0) {
+            const user = result.rows[0];
+            return {
+                userId: Number(user.user_id),
+                phoneNumber: user.phone_number,
+                email: user.email,
+                role: user.role,
+                firstName: user.first_name,
+                lastName: user.last_name,
+                createdDate: user.created_date,
+                lastModifiedDate: user.last_modified_date,
+                isActive: user.is_active,
+            };
         }
         return null;
     } catch (err) {
@@ -71,41 +79,51 @@ userService.get = async (userId) => {
 
 userService.update = async (userId, body) => {
     const { firstName, lastName } = body;
-    const result = await userModel.findOneAndUpdate(
-        { userId, isActive: true },
-        { $set: { firstName, lastName, lastModifiedDate: new Date() } }
+    const result = await query(
+        `UPDATE users
+         SET first_name = $1,
+             last_name = $2,
+             last_modified_date = NOW()
+         WHERE user_id = $3 AND is_active = true`,
+        [firstName, lastName, userId]
     );
-    return Boolean(result);
+    return result.rowCount > 0;
 };
 
 userService.delete = async (userId) => {
-    const result = await userModel.findOneAndUpdate(
-        { userId, isActive: true },
-        { $set: { isActive: false, lastModifiedDate: new Date() } }
+    const result = await query(
+        `UPDATE users
+         SET is_active = false,
+             last_modified_date = NOW()
+         WHERE user_id = $1 AND is_active = true`,
+        [userId]
     );
-    return Boolean(result);
+    return result.rowCount > 0;
 };
 
 userService.updatePassword = async (userId, currentPassword, newPassword) => {
-    const user = await userModel.findOne(
-        { userId, isActive: true },
-        { password: 1 }
+    const userResult = await query(
+        `SELECT password
+         FROM users
+         WHERE user_id = $1 AND is_active = true`,
+        [userId]
     );
-    if (!user) {
+    if (userResult.rowCount === 0) {
         return null;
     }
-    const auth = await hashing.compare(currentPassword, user.password);
+    const auth = await hashing.compare(
+        currentPassword,
+        userResult.rows[0].password
+    );
     if (!auth) {
         return false;
     }
-    await userModel.findOneAndUpdate(
-        { userId, isActive: true },
-        {
-            $set: {
-                password: await hashing.encrypt(newPassword),
-                lastModifiedDate: new Date(),
-            },
-        }
+    await query(
+        `UPDATE users
+         SET password = $1,
+             last_modified_date = NOW()
+         WHERE user_id = $2 AND is_active = true`,
+        [await hashing.encrypt(newPassword), userId]
     );
     return true;
 };
