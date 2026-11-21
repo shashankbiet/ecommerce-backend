@@ -56,8 +56,9 @@ grpcurl -plaintext -emit-defaults \
 ## Kafka Topics
 
 Subscribed (consumer group `search_service`):
-- `product_update` - product change events, indexed into Elasticsearch
-- `inventory_update` - inventory change events
+- `product_update` - product create/update events, indexed into Elasticsearch with the current product model
+
+Product update events include `id`, `name`, `description`, `slug`, numeric `brand`, `category`, and `sub_category` IDs, `image_url`, `status`, `created_at`, `updated_at`, and `deleted_at`. Legacy camelCase events and indexed documents remain readable during migration, while updated events replace indexed documents with snake_case fields through `doc_as_upsert`.
 
 ## Health and Metrics
 

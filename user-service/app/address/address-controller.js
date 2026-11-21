@@ -23,7 +23,7 @@ addressController.getById = async (req, res, next) => {
     try {
         const result = await addressService.get(
             parseInt(getUserId(req)),
-            req.params.addressId
+            req.params.address_id ?? req.params.addressId
         );
         if (result) {
             return res.status(apiStatus.OK.status).send(result);
@@ -50,7 +50,7 @@ addressController.update = async (req, res, next) => {
     try {
         const result = await addressService.update(
             parseInt(getUserId(req)),
-            req.params.addressId,
+            req.params.address_id ?? req.params.addressId,
             req.body
         );
         if (result) {
@@ -66,7 +66,7 @@ addressController.delete = async (req, res, next) => {
     try {
         const result = await addressService.delete(
             parseInt(getUserId(req)),
-            req.params.addressId
+            req.params.address_id ?? req.params.addressId
         );
         if (result) {
             return res.status(apiStatus.OK.status).send();

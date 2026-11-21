@@ -30,21 +30,32 @@ func easyjson36e8fbc0DecodeInventoryServiceAppModels(in *jlexer.Lexer, out *SubC
 	for !in.IsDelim('}') {
 		key := in.UnsafeFieldName(false)
 		in.WantColon()
-		if in.IsNull() {
-			in.Skip()
-			in.WantComma()
-			continue
-		}
 		switch key {
 		case "id":
-			out.Id = int16(in.Int16())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Id = int16(in.Int16())
+			}
 		case "name":
-			out.Name = string(in.String())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Name = string(in.String())
+			}
 		case "category":
-			out.Category = string(in.String())
-		case "createdAt":
-			if data := in.Raw(); in.Ok() {
-				in.AddError((out.CreatedAt).UnmarshalJSON(data))
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Category = int16(in.Int16())
+			}
+		case "created_at":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				if data := in.Raw(); in.Ok() {
+					in.AddError((out.CreatedAt).UnmarshalJSON(data))
+				}
 			}
 		default:
 			in.SkipRecursive()
@@ -73,10 +84,10 @@ func easyjson36e8fbc0EncodeInventoryServiceAppModels(out *jwriter.Writer, in Sub
 	{
 		const prefix string = ",\"category\":"
 		out.RawString(prefix)
-		out.String(string(in.Category))
+		out.Int16(int16(in.Category))
 	}
 	{
-		const prefix string = ",\"createdAt\":"
+		const prefix string = ",\"created_at\":"
 		out.RawString(prefix)
 		out.Raw((in.CreatedAt).MarshalJSON())
 	}

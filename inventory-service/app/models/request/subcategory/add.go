@@ -1,7 +1,6 @@
 package subcategory
 
 import (
-	"encoding/json"
 	"fmt"
 	model "inventory-service/app/models"
 	"net/http"
@@ -16,7 +15,7 @@ func (c AddRequest) Validate(r *http.Request) (interface{}, error) {
 	var request AddRequest
 	errors := make([]string, 0)
 
-	if err := json.NewDecoder(r.Body).Decode(&request.SubCategory); err != nil {
+	if err := model.DecodeJSON(r.Body, &request.SubCategory); err != nil {
 		return nil, err
 	}
 	if request.SubCategory == nil {
@@ -27,7 +26,7 @@ func (c AddRequest) Validate(r *http.Request) (interface{}, error) {
 		errors = append(errors, "Invalid SubCategory Name")
 	}
 
-	if request.SubCategory.Category == "" {
+	if request.SubCategory.Category <= 0 {
 		errors = append(errors, "Invalid Category Name")
 	}
 

@@ -3,22 +3,26 @@
 GO_SERVICES := inventory-service search-service
 NODE_SERVICES := api-gateway user-service
 
-.PHONY: help test test-go test-node lint lint-go lint-node format
+.PHONY: help test test-go test-node test-seed lint lint-go lint-node format
 
 help:
 	@echo "Targets:"
 	@echo "  test     Run Go and Node unit tests"
+	@echo "  test-seed Validate PostgreSQL and Elasticsearch seed consistency"
 	@echo "  lint     Run Go and Node linters locally"
 	@echo "  lint-go  Run golangci-lint on the Go services"
 	@echo "  format   Apply gofmt and Prettier to the services"
 
-test: test-go test-node
+test: test-go test-node test-seed
 
 test-go:
 	@for s in $(GO_SERVICES); do echo "==> go test $$s"; (cd $$s && go test ./...) || exit 1; done
 
 test-node:
 	@for s in $(NODE_SERVICES); do echo "==> npm test $$s"; (cd $$s && npm test) || exit 1; done
+
+test-seed:
+	@python3 scripts/seed/validate.py
 
 lint: lint-go lint-node
 

@@ -5,7 +5,7 @@ const authService = {};
 authService.authenticate = async (email, phoneNumber, plainPass) => {
     const orConditions = [];
     if (email) orConditions.push({ email });
-    if (phoneNumber) orConditions.push({ phoneNumber });
+    if (phoneNumber) orConditions.push({ phone_number: phoneNumber });
     if (orConditions.length === 0) {
         return null;
     }
@@ -29,7 +29,7 @@ authService.authenticate = async (email, phoneNumber, plainPass) => {
     );
     const user = result.rows[0];
     if (user && (await hashing.compare(plainPass, user.password))) {
-        return { userId: Number(user.user_id), role: user.role };
+        return { user_id: Number(user.user_id), role: user.role };
     }
     return null;
 };

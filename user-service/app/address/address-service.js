@@ -35,7 +35,7 @@ addressService.get = async (userId, addressId) => {
         }
         const row = result.rows[0];
         return {
-            addressId: row.address_id,
+            address_id: row.address_id,
             type: row.type,
             line1: row.line1,
             line2: row.line2,
@@ -58,11 +58,11 @@ addressService.get = async (userId, addressId) => {
         `SELECT address_id, type, line1, line2, district, landmark, state, pincode
          FROM user_addresses
          WHERE user_id = $1
-         ORDER BY created_date ASC`,
+         ORDER BY created_at ASC`,
         [userId]
     );
     return result.rows.map((row) => ({
-        addressId: row.address_id,
+        address_id: row.address_id,
         type: row.type,
         line1: row.line1,
         line2: row.line2,
@@ -84,7 +84,7 @@ addressService.update = async (userId, addressId, body) => {
              landmark = $5,
              state = $6,
              pincode = $7,
-             last_modified_date = NOW()
+             updated_at = NOW()
          FROM users u
          WHERE a.user_id = $8
            AND a.address_id = $9

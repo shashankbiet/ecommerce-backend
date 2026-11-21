@@ -30,35 +30,84 @@ func easyjsonCf3f67efDecodeInventoryServiceAppModels(in *jlexer.Lexer, out *Prod
 	for !in.IsDelim('}') {
 		key := in.UnsafeFieldName(false)
 		in.WantColon()
-		if in.IsNull() {
-			in.Skip()
-			in.WantComma()
-			continue
-		}
 		switch key {
 		case "id":
-			out.Id = int64(in.Int64())
-		case "name":
-			out.Name = string(in.String())
-		case "description":
-			out.Description = string(in.String())
-		case "brand":
-			out.Brand = string(in.String())
-		case "category":
-			out.Category = string(in.String())
-		case "subCategory":
-			out.SubCategory = string(in.String())
-		case "imageId":
-			out.ImageId = string(in.String())
-		case "weight":
-			out.Weight = float32(in.Float32())
-		case "createdAt":
-			if data := in.Raw(); in.Ok() {
-				in.AddError((out.CreatedAt).UnmarshalJSON(data))
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Id = int64(in.Int64())
 			}
-		case "updatedAt":
-			if data := in.Raw(); in.Ok() {
-				in.AddError((out.UpdatedAt).UnmarshalJSON(data))
+		case "name":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Name = string(in.String())
+			}
+		case "description":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Description = string(in.String())
+			}
+		case "slug":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Slug = string(in.String())
+			}
+		case "brand":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Brand = int16(in.Int16())
+			}
+		case "category":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Category = int16(in.Int16())
+			}
+		case "sub_category":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.SubCategory = int16(in.Int16())
+			}
+		case "image_url":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.ImageUrl = string(in.String())
+			}
+		case "status":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Status = ProductStatus(in.Int64())
+			}
+		case "created_at":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				if data := in.Raw(); in.Ok() {
+					in.AddError((out.CreatedAt).UnmarshalJSON(data))
+				}
+			}
+		case "updated_at":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				if data := in.Raw(); in.Ok() {
+					in.AddError((out.UpdatedAt).UnmarshalJSON(data))
+				}
+			}
+		case "deleted_at":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				if data := in.Raw(); in.Ok() {
+					in.AddError((out.DeletedAt).UnmarshalJSON(data))
+				}
 			}
 		default:
 			in.SkipRecursive()
@@ -90,39 +139,49 @@ func easyjsonCf3f67efEncodeInventoryServiceAppModels(out *jwriter.Writer, in Pro
 		out.String(string(in.Description))
 	}
 	{
+		const prefix string = ",\"slug\":"
+		out.RawString(prefix)
+		out.String(string(in.Slug))
+	}
+	{
 		const prefix string = ",\"brand\":"
 		out.RawString(prefix)
-		out.String(string(in.Brand))
+		out.Int16(int16(in.Brand))
 	}
 	{
 		const prefix string = ",\"category\":"
 		out.RawString(prefix)
-		out.String(string(in.Category))
+		out.Int16(int16(in.Category))
 	}
 	{
-		const prefix string = ",\"subCategory\":"
+		const prefix string = ",\"sub_category\":"
 		out.RawString(prefix)
-		out.String(string(in.SubCategory))
+		out.Int16(int16(in.SubCategory))
 	}
 	{
-		const prefix string = ",\"imageId\":"
+		const prefix string = ",\"image_url\":"
 		out.RawString(prefix)
-		out.String(string(in.ImageId))
+		out.String(string(in.ImageUrl))
 	}
 	{
-		const prefix string = ",\"weight\":"
+		const prefix string = ",\"status\":"
 		out.RawString(prefix)
-		out.Float32(float32(in.Weight))
+		out.Int64(int64(in.Status))
 	}
 	{
-		const prefix string = ",\"createdAt\":"
+		const prefix string = ",\"created_at\":"
 		out.RawString(prefix)
 		out.Raw((in.CreatedAt).MarshalJSON())
 	}
 	{
-		const prefix string = ",\"updatedAt\":"
+		const prefix string = ",\"updated_at\":"
 		out.RawString(prefix)
 		out.Raw((in.UpdatedAt).MarshalJSON())
+	}
+	{
+		const prefix string = ",\"deleted_at\":"
+		out.RawString(prefix)
+		out.Raw((in.DeletedAt).MarshalJSON())
 	}
 	out.RawByte('}')
 }

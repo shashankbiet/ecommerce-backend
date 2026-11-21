@@ -14,6 +14,7 @@ const {
 } = require("./util/request-header");
 const { isPublicUrl } = require("./util/request-url");
 const logger = require("./handler/logger");
+const normalizeContractFields = require("./middleware/normalize-contract-fields");
 const app = express();
 
 // Add a trace ID so this request can be correlated across services.
@@ -65,6 +66,7 @@ app.use(
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(normalizeContractFields);
 
 //Routes
 router(app);

@@ -39,7 +39,7 @@ describe("authenticateToken", () => {
     });
 
     it("accepts a valid Bearer token and forwards identity headers", () => {
-        const token = jwt.sign({ userId: 7, role: "CUSTOMER" }, "test-secret");
+        const token = jwt.sign({ user_id: 7, role: "CUSTOMER" }, "test-secret");
         const req = {
             originalUrl: "/api/user",
             headers: { authorization: `Bearer ${token}` },
@@ -55,6 +55,7 @@ describe("authenticateToken", () => {
     });
 
     it("accepts a raw token without the Bearer prefix", () => {
+        // Legacy tokens remain valid while clients migrate to snake_case claims.
         const token = jwt.sign({ userId: 3, role: "ADMIN" }, "test-secret");
         const req = {
             originalUrl: "/api/user",

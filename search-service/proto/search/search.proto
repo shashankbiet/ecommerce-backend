@@ -12,22 +12,31 @@ service SearchService{
 message  ProductSearchRequest {
     string keywords = 1;
     string category = 2;
-    string sub_category = 3;
+    string sub_category = 3 [json_name = "sub_category"];
 }
 
 message ProductSearchResponse {
     string keywords = 1;
     string category = 2;
-    string sub_category = 3;
-    uint32 total_results = 4;
+    string sub_category = 3 [json_name = "sub_category"];
+    uint32 total_results = 4 [json_name = "total_results"];
     repeated Product products = 5;
 }
 
 message Product{
-    int32 id = 1;
+    int64 id = 1;
     string name = 2;
     string description = 3;
     string brand = 4;
     string category = 5;
-    string subCategory = 6;
+    string sub_category = 6 [json_name = "sub_category"];
+    string slug = 7;
+    int32 brand_id = 8 [json_name = "brand_id"];
+    int32 category_id = 9 [json_name = "category_id"];
+    int32 sub_category_id = 10 [json_name = "sub_category_id"];
+    string image_url = 11 [json_name = "image_url"];
+    int64 status = 12;
+    string created_at = 13 [json_name = "created_at"];
+    string updated_at = 14 [json_name = "updated_at"];
+    string deleted_at = 15 [json_name = "deleted_at"];
 }

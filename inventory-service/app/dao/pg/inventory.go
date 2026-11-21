@@ -50,7 +50,7 @@ func (c PgInventoryStore) Add(inventory *model.Inventory) (int64, error) {
 	ctx, cancelFunc := context.WithTimeout(context.Background(), SQL_TIMEOUT*time.Second)
 	defer cancelFunc()
 
-	_, err := c.sqlDb.ExecContext(ctx, INVENTORY_INSERT_QUERY, inventory.ProductId, inventory.SKU, inventory.PurchasePrice, inventory.SalePrice, inventory.Quantity, time.Now(), time.Now())
+	_, err := c.sqlDb.ExecContext(ctx, INVENTORY_INSERT_QUERY, inventory.ProductId, inventory.SKU, inventory.MRP, inventory.PurchasePrice, inventory.SalePrice, inventory.Quantity, time.Now(), time.Now())
 	if err != nil {
 		return 0, mapConstraintError(err)
 	}
@@ -66,7 +66,7 @@ func (c PgInventoryStore) Update(inventory *model.Inventory) (bool, error) {
 	ctx, cancelFunc := context.WithTimeout(context.Background(), SQL_TIMEOUT*time.Second)
 	defer cancelFunc()
 
-	res, err := c.sqlDb.ExecContext(ctx, INVENTORY_UPDATE_QUERY, inventory.SKU, inventory.PurchasePrice, inventory.SalePrice, inventory.Quantity, time.Now(), inventory.ProductId)
+	res, err := c.sqlDb.ExecContext(ctx, INVENTORY_UPDATE_QUERY, inventory.SKU, inventory.MRP, inventory.PurchasePrice, inventory.SalePrice, inventory.Quantity, time.Now(), inventory.ProductId)
 	if err != nil {
 		return false, mapConstraintError(err)
 	}
@@ -88,7 +88,7 @@ func (c PgInventoryStore) GetByProductId(productId int64) (*model.Inventory, err
 
 	var inventory model.Inventory
 	row := c.sqlDb.QueryRow(INVENTORY_GET_BY_ID_QUERY, productId)
-	err := row.Scan(&inventory.ProductId, &inventory.SKU, &inventory.PurchasePrice, &inventory.SalePrice, &inventory.Quantity, &inventory.CreatedAt, &inventory.UpdatedAt)
+	err := row.Scan(&inventory.ProductId, &inventory.SKU, &inventory.MRP, &inventory.PurchasePrice, &inventory.SalePrice, &inventory.Quantity, &inventory.CreatedAt, &inventory.UpdatedAt)
 	return &inventory, err
 }
 
@@ -108,7 +108,7 @@ func (c PgInventoryStore) GetAll() ([]*model.Inventory, error) {
 	inventoryList := make([]*model.Inventory, 0)
 	for rows.Next() {
 		var inventory model.Inventory
-		err := rows.Scan(&inventory.ProductId, &inventory.SKU, &inventory.PurchasePrice, &inventory.SalePrice, &inventory.Quantity, &inventory.CreatedAt, &inventory.UpdatedAt)
+		err := rows.Scan(&inventory.ProductId, &inventory.SKU, &inventory.MRP, &inventory.PurchasePrice, &inventory.SalePrice, &inventory.Quantity, &inventory.CreatedAt, &inventory.UpdatedAt)
 		if err != nil {
 			logger.Error(err.Error())
 			continue

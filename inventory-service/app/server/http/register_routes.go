@@ -11,6 +11,18 @@ import (
 	"github.com/gorilla/mux"
 )
 
+func registerBrandHandler(router *mux.Router) error {
+	brandStore, err := pgDao.GetPgBrandStore()
+	if err != nil {
+		return fmt.Errorf("initialize PostgreSQL brand store: %w", err)
+	}
+	brandService := service.NewBrandService(brandStore)
+	brandHandler := handler.NewBrandHandler(brandService)
+
+	router.HandleFunc("/api/brand", brandHandler.GetAll).Methods(http.MethodGet)
+	return nil
+}
+
 func registerCategoryRoutes(router *mux.Router) error {
 	categoryStore, err := pgDao.GetPgCategoryStore()
 	if err != nil {
@@ -66,7 +78,36 @@ func registerInventoryHandler(router *mux.Router) error {
 
 	router.HandleFunc("/api/inventory", inventoryHandler.Add).Methods(http.MethodPost)
 	router.HandleFunc("/api/inventory", inventoryHandler.Update).Methods(http.MethodPut)
-	router.HandleFunc("/api/inventory/{productId}", inventoryHandler.GetById).Methods(http.MethodGet)
+	router.HandleFunc("/api/inventory/{product_id}", inventoryHandler.GetById).Methods(http.MethodGet)
 	router.HandleFunc("/api/inventory", inventoryHandler.GetAll).Methods(http.MethodGet)
+	return nil
+}
+
+func registerKeywordHandler(router *mux.Router) error {
+	keywordStore, err := pgDao.GetPgKeywordStore()
+	if err != nil {
+		return fmt.Errorf("initialize PostgreSQL keyword store: %w", err)
+	}
+	keywordService := service.NewKeywordService(keywordStore)
+	keywordHandler := handler.NewKeywordHandler(keywordService)
+
+	router.HandleFunc("/api/keyword", keywordHandler.Add).Methods(http.MethodPost)
+	router.HandleFunc("/api/keyword/{id}", keywordHandler.GetById).Methods(http.MethodGet)
+	router.HandleFunc("/api/keyword", keywordHandler.GetAll).Methods(http.MethodGet)
+	return nil
+}
+
+func registerProductKeywordHandler(router *mux.Router) error {
+	productKeywordStore, err := pgDao.GetPgProductKeywordStore()
+	if err != nil {
+		return fmt.Errorf("initialize PostgreSQL product keyword store: %w", err)
+	}
+	productKeywordService := service.NewProductKeywordService(productKeywordStore)
+	productKeywordHandler := handler.NewProductKeywordHandler(productKeywordService)
+
+	router.HandleFunc("/api/product-keyword", productKeywordHandler.Add).Methods(http.MethodPost)
+	router.HandleFunc("/api/product-keyword/product/{product_id}", productKeywordHandler.GetByProductId).Methods(http.MethodGet)
+	router.HandleFunc("/api/product-keyword/keyword/{keyword_id}", productKeywordHandler.GetByKeywordId).Methods(http.MethodGet)
+	router.HandleFunc("/api/product-keyword/{product_id}/{keyword_id}", productKeywordHandler.Delete).Methods(http.MethodDelete)
 	return nil
 }

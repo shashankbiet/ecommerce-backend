@@ -57,7 +57,7 @@ describe("addressController", () => {
         const res = makeRes();
 
         await addressController.getById(
-            makeReq({ params: { addressId: "a1" } }),
+            makeReq({ params: { address_id: "a1" } }),
             res,
             jest.fn()
         );
@@ -81,7 +81,7 @@ describe("addressController", () => {
         const res = makeRes();
 
         await addressController.update(
-            makeReq({ params: { addressId: "a1" }, body: { line1: "y" } }),
+            makeReq({ params: { address_id: "a1" }, body: { line1: "y" } }),
             res,
             jest.fn()
         );
@@ -97,7 +97,7 @@ describe("addressController", () => {
         const res = makeRes();
 
         await addressController.delete(
-            makeReq({ params: { addressId: "a1" } }),
+            makeReq({ params: { address_id: "a1" } }),
             res,
             jest.fn()
         );
@@ -111,7 +111,7 @@ describe("addressController", () => {
         const next = jest.fn();
 
         await addressController.delete(
-            makeReq({ params: { addressId: "a1" } }),
+            makeReq({ params: { address_id: "a1" } }),
             makeRes(),
             next
         );

@@ -47,16 +47,40 @@ func createCategoriesTable(db *sql.DB) error {
 }
 
 func createSubCategoriesTable(db *sql.DB) error {
-	return createTable(db, "subcategories", SUB_CATEGORY_CREATE_TABLE_QUERY)
+	return createTable(db, "sub categories", SUB_CATEGORY_CREATE_TABLE_QUERY)
+}
+
+func createBrandsTable(db *sql.DB) error {
+	return createTable(db, "brands", BRAND_CREATE_TABLE_QUERY)
 }
 
 func createProductsTable(db *sql.DB) error {
-	return createTable(db, "products", PRODUCT_CREATE_TABLE_QUERY)
+	if err := createBrandsTable(db); err != nil {
+		return err
+	}
+	if err := createTable(db, "products", PRODUCT_CREATE_TABLE_QUERY); err != nil {
+		return err
+	}
+	if err := createTable(db, "products brand constraint", PRODUCT_BRAND_CONSTRAINT_QUERY); err != nil {
+		return err
+	}
+	if err := createTable(db, "products status constraint", PRODUCT_STATUS_CONSTRAINT_QUERY); err != nil {
+		return err
+	}
+	if err := createKeywordsTable(db); err != nil {
+		return err
+	}
+	return createProductKeywordsTable(db)
+}
+
+func createKeywordsTable(db *sql.DB) error {
+	return createTable(db, "keywords", KEYWORD_CREATE_TABLE_QUERY)
+}
+
+func createProductKeywordsTable(db *sql.DB) error {
+	return createTable(db, "product keywords", PRODUCT_KEYWORD_CREATE_TABLE_QUERY)
 }
 
 func createInventoryTable(db *sql.DB) error {
-	if err := createTable(db, "inventory", INVENTORY_CREATE_TABLE_QUERY); err != nil {
-		return err
-	}
-	return createTable(db, "inventory quantity", INVENTORY_ADD_QUANTITY_COLUMN_QUERY)
+	return createTable(db, "inventory", INVENTORY_CREATE_TABLE_QUERY)
 }

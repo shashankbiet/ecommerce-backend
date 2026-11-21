@@ -1,7 +1,6 @@
 package product
 
 import (
-	"encoding/json"
 	"fmt"
 	model "inventory-service/app/models"
 	"net/http"
@@ -16,7 +15,7 @@ func (c AddRequest) Validate(r *http.Request) (interface{}, error) {
 	var request AddRequest
 	errors := make([]string, 0)
 
-	if err := json.NewDecoder(r.Body).Decode(&request.Product); err != nil {
+	if err := model.DecodeJSON(r.Body, &request.Product); err != nil {
 		return nil, err
 	}
 	if request.Product == nil {
@@ -27,20 +26,20 @@ func (c AddRequest) Validate(r *http.Request) (interface{}, error) {
 		errors = append(errors, "Invalid Product Name")
 	}
 
-	if request.Product.Brand == "" {
+	if request.Product.Brand <= 0 {
 		errors = append(errors, "Invalid Brand")
 	}
 
-	if request.Product.Category == "" {
+	if request.Product.Category <= 0 {
 		errors = append(errors, "Invalid Category")
 	}
 
-	if request.Product.SubCategory == "" {
+	if request.Product.SubCategory <= 0 {
 		errors = append(errors, "Invalid SubCategory")
 	}
 
-	if request.Product.Weight <= 0 {
-		errors = append(errors, "Invalid Weight")
+	if !request.Product.Status.IsValid() {
+		errors = append(errors, "Invalid Status")
 	}
 
 	if len(errors) > 0 {

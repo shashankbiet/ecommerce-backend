@@ -31,7 +31,7 @@ func easyjson6f8bf452DecodeInventoryServiceAppModels(in *jlexer.Lexer, out *Inve
 		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		switch key {
-		case "productId":
+		case "product_id":
 			if in.IsNull() {
 				in.Skip()
 			} else {
@@ -43,13 +43,19 @@ func easyjson6f8bf452DecodeInventoryServiceAppModels(in *jlexer.Lexer, out *Inve
 			} else {
 				out.SKU = int32(in.Int32())
 			}
-		case "purchasePrice":
+		case "mrp":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.MRP = int32(in.Int32())
+			}
+		case "purchase_price":
 			if in.IsNull() {
 				in.Skip()
 			} else {
 				out.PurchasePrice = int32(in.Int32())
 			}
-		case "salePrice":
+		case "sale_price":
 			if in.IsNull() {
 				in.Skip()
 			} else {
@@ -61,7 +67,7 @@ func easyjson6f8bf452DecodeInventoryServiceAppModels(in *jlexer.Lexer, out *Inve
 			} else {
 				out.Quantity = int32(in.Int32())
 			}
-		case "createdAt":
+		case "created_at":
 			if in.IsNull() {
 				in.Skip()
 			} else {
@@ -69,7 +75,7 @@ func easyjson6f8bf452DecodeInventoryServiceAppModels(in *jlexer.Lexer, out *Inve
 					in.AddError((out.CreatedAt).UnmarshalJSON(data))
 				}
 			}
-		case "updatedAt":
+		case "updated_at":
 			if in.IsNull() {
 				in.Skip()
 			} else {
@@ -92,7 +98,7 @@ func easyjson6f8bf452EncodeInventoryServiceAppModels(out *jwriter.Writer, in Inv
 	first := true
 	_ = first
 	{
-		const prefix string = ",\"productId\":"
+		const prefix string = ",\"product_id\":"
 		out.RawString(prefix[1:])
 		out.Int64(int64(in.ProductId))
 	}
@@ -102,12 +108,17 @@ func easyjson6f8bf452EncodeInventoryServiceAppModels(out *jwriter.Writer, in Inv
 		out.Int32(int32(in.SKU))
 	}
 	{
-		const prefix string = ",\"purchasePrice\":"
+		const prefix string = ",\"mrp\":"
+		out.RawString(prefix)
+		out.Int32(int32(in.MRP))
+	}
+	{
+		const prefix string = ",\"purchase_price\":"
 		out.RawString(prefix)
 		out.Int32(int32(in.PurchasePrice))
 	}
 	{
-		const prefix string = ",\"salePrice\":"
+		const prefix string = ",\"sale_price\":"
 		out.RawString(prefix)
 		out.Int32(int32(in.SalePrice))
 	}
@@ -117,12 +128,12 @@ func easyjson6f8bf452EncodeInventoryServiceAppModels(out *jwriter.Writer, in Inv
 		out.Int32(int32(in.Quantity))
 	}
 	{
-		const prefix string = ",\"createdAt\":"
+		const prefix string = ",\"created_at\":"
 		out.RawString(prefix)
 		out.Raw((in.CreatedAt).MarshalJSON())
 	}
 	{
-		const prefix string = ",\"updatedAt\":"
+		const prefix string = ",\"updated_at\":"
 		out.RawString(prefix)
 		out.Raw((in.UpdatedAt).MarshalJSON())
 	}

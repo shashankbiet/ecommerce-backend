@@ -10,7 +10,8 @@ import (
 )
 
 const (
-	ID = "productId"
+	ID       = "product_id"
+	LegacyID = "productId"
 )
 
 type GetByIdRequest struct {
@@ -20,7 +21,11 @@ type GetByIdRequest struct {
 func (c GetByIdRequest) Validate(r *http.Request) (interface{}, error) {
 	var request GetByIdRequest
 	errors := make([]string, 0)
-	id, err := strconv.ParseInt(mux.Vars(r)[ID], 10, 64)
+	value := mux.Vars(r)[ID]
+	if value == "" {
+		value = mux.Vars(r)[LegacyID]
+	}
+	id, err := strconv.ParseInt(value, 10, 64)
 	if err != nil {
 		return request, err
 	}

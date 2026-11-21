@@ -6,19 +6,19 @@ const validate = require("../../util/validator");
 router.post("/", addressValidator.add(), validate, addressController.add);
 router.get("/", addressController.get);
 router.get(
-    "/:addressId",
+    "/:address_id",
     addressValidator.getById(),
     validate,
     addressController.getById
 );
 router.put(
-    "/:addressId",
+    "/:address_id",
     addressValidator.update(),
     validate,
     addressController.update
 );
 router.delete(
-    "/:addressId",
+    "/:address_id",
     addressValidator.delete(),
     validate,
     addressController.delete

@@ -5,7 +5,7 @@ authValidator.login = () => {
     return [
         oneOf([
             body("email").isEmail().withMessage("Invalid email address"),
-            body("phoneNumber")
+            body("phone_number")
                 .isNumeric()
                 .withMessage("Phone number must be numeric")
                 .isLength({ max: 10, min: 10 })

@@ -22,8 +22,6 @@ func NewProductService(datastore dao.IProductDataStore, producer producer.IProdu
 }
 
 func (p *ProductService) Add(request *productRequest.AddRequest) (int64, error) {
-	normalizeName(&request.Product.Category)
-	normalizeName(&request.Product.SubCategory)
 	id, err := p.datastore.Add(request.Product)
 	if err != nil {
 		return 0, err
@@ -36,8 +34,6 @@ func (p *ProductService) Add(request *productRequest.AddRequest) (int64, error) 
 }
 
 func (p *ProductService) Update(request *productRequest.UpdateRequest) (bool, error) {
-	normalizeName(&request.Product.Category)
-	normalizeName(&request.Product.SubCategory)
 	updated, err := p.datastore.Update(request.Product)
 	if err != nil {
 		return false, err

@@ -50,11 +50,34 @@ func (c PgProductStore) Add(product *model.Product) (int64, error) {
 	ctx, cancelFunc := context.WithTimeout(context.Background(), SQL_TIMEOUT*time.Second)
 	defer cancelFunc()
 
+	var deletedAt interface{}
+	if !product.DeletedAt.IsZero() {
+		deletedAt = product.DeletedAt
+	}
+
 	var id int64
-	err := c.sqlDb.QueryRowContext(ctx, PRODUCT_INSERT_QUERY, product.Name, product.Description, product.Brand, product.Category, product.SubCategory, product.ImageId, product.Weight, time.Now(), time.Now()).Scan(&id)
+	now := time.Now().UTC()
+	err := c.sqlDb.QueryRowContext(
+		ctx,
+		PRODUCT_INSERT_QUERY,
+		product.Name,
+		product.Description,
+		product.Slug,
+		product.Brand,
+		product.Category,
+		product.SubCategory,
+		product.ImageUrl,
+		product.Status,
+		now,
+		now,
+		deletedAt,
+	).Scan(&id)
 	if err != nil {
 		return 0, mapConstraintError(err)
 	}
+	product.Id = id
+	product.CreatedAt = now
+	product.UpdatedAt = now
 	return id, nil
 }
 
@@ -67,7 +90,27 @@ func (c PgProductStore) Update(product *model.Product) (bool, error) {
 	ctx, cancelFunc := context.WithTimeout(context.Background(), SQL_TIMEOUT*time.Second)
 	defer cancelFunc()
 
-	res, err := c.sqlDb.ExecContext(ctx, PRODUCT_UPDATE_QUERY, product.Name, product.Description, product.Brand, product.Category, product.SubCategory, product.ImageId, product.Weight, time.Now(), product.Id)
+	var deletedAt interface{}
+	if !product.DeletedAt.IsZero() {
+		deletedAt = product.DeletedAt
+	}
+
+	updatedAt := time.Now().UTC()
+	res, err := c.sqlDb.ExecContext(
+		ctx,
+		PRODUCT_UPDATE_QUERY,
+		product.Name,
+		product.Description,
+		product.Slug,
+		product.Brand,
+		product.Category,
+		product.SubCategory,
+		product.ImageUrl,
+		product.Status,
+		updatedAt,
+		deletedAt,
+		product.Id,
+	)
 	if err != nil {
 		return false, mapConstraintError(err)
 	}
@@ -78,6 +121,7 @@ func (c PgProductStore) Update(product *model.Product) (bool, error) {
 	if rowsAffected == 0 {
 		return false, nil
 	}
+	product.UpdatedAt = updatedAt
 	return true, nil
 }
 
@@ -88,8 +132,25 @@ func (c PgProductStore) GetById(id int64) (*model.Product, error) {
 	}
 
 	var product model.Product
+	var deletedAt sql.NullTime
 	row := c.sqlDb.QueryRow(PRODUCT_GET_BY_ID_QUERY, id)
-	err := row.Scan(&product.Id, &product.Name, &product.Description, &product.Brand, &product.Category, &product.SubCategory, &product.ImageId, &product.Weight, &product.CreatedAt, &product.UpdatedAt)
+	err := row.Scan(
+		&product.Id,
+		&product.Name,
+		&product.Description,
+		&product.Slug,
+		&product.Brand,
+		&product.Category,
+		&product.SubCategory,
+		&product.ImageUrl,
+		&product.Status,
+		&product.CreatedAt,
+		&product.UpdatedAt,
+		&deletedAt,
+	)
+	if deletedAt.Valid {
+		product.DeletedAt = deletedAt.Time
+	}
 	return &product, err
 }
 
@@ -109,10 +170,27 @@ func (c PgProductStore) GetAll() ([]*model.Product, error) {
 	products := make([]*model.Product, 0)
 	for rows.Next() {
 		var product model.Product
-		err := rows.Scan(&product.Id, &product.Name, &product.Description, &product.Brand, &product.Category, &product.SubCategory, &product.ImageId, &product.Weight, &product.CreatedAt, &product.UpdatedAt)
+		var deletedAt sql.NullTime
+		err := rows.Scan(
+			&product.Id,
+			&product.Name,
+			&product.Description,
+			&product.Slug,
+			&product.Brand,
+			&product.Category,
+			&product.SubCategory,
+			&product.ImageUrl,
+			&product.Status,
+			&product.CreatedAt,
+			&product.UpdatedAt,
+			&deletedAt,
+		)
 		if err != nil {
 			logger.Error(err.Error())
 			continue
+		}
+		if deletedAt.Valid {
+			product.DeletedAt = deletedAt.Time
 		}
 		products = append(products, &product)
 	}

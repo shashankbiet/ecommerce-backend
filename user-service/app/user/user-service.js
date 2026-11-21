@@ -14,7 +14,14 @@ userService.register = async (body) => {
     };
     let timer = dbResponseTimeHistogram.startTimer();
     try {
-        let { phoneNumber, email, password, role, firstName, lastName } = body;
+        let {
+            phone_number: phoneNumber,
+            email,
+            password,
+            role,
+            first_name: firstName,
+            last_name: lastName,
+        } = body;
         const dbUser = await query(
             `SELECT user_id FROM users
              WHERE email = $1 OR phone_number = $2`,
@@ -50,7 +57,7 @@ userService.get = async (userId) => {
     try {
         const result = await query(
             `SELECT user_id, phone_number, email, role, first_name, last_name,
-                    created_date, last_modified_date, is_active
+                    created_at, updated_at, is_active
              FROM users
              WHERE user_id = $1 AND is_active = true`,
             [userId]
@@ -59,15 +66,15 @@ userService.get = async (userId) => {
         if (result.rowCount > 0) {
             const user = result.rows[0];
             return {
-                userId: Number(user.user_id),
-                phoneNumber: user.phone_number,
+                user_id: Number(user.user_id),
+                phone_number: user.phone_number,
                 email: user.email,
                 role: user.role,
-                firstName: user.first_name,
-                lastName: user.last_name,
-                createdDate: user.created_date,
-                lastModifiedDate: user.last_modified_date,
-                isActive: user.is_active,
+                first_name: user.first_name,
+                last_name: user.last_name,
+                created_at: user.created_at,
+                updated_at: user.updated_at,
+                is_active: user.is_active,
             };
         }
         return null;
@@ -78,12 +85,12 @@ userService.get = async (userId) => {
 };
 
 userService.update = async (userId, body) => {
-    const { firstName, lastName } = body;
+    const { first_name: firstName, last_name: lastName } = body;
     const result = await query(
         `UPDATE users
          SET first_name = $1,
              last_name = $2,
-             last_modified_date = NOW()
+             updated_at = NOW()
          WHERE user_id = $3 AND is_active = true`,
         [firstName, lastName, userId]
     );
@@ -94,7 +101,7 @@ userService.delete = async (userId) => {
     const result = await query(
         `UPDATE users
          SET is_active = false,
-             last_modified_date = NOW()
+             updated_at = NOW()
          WHERE user_id = $1 AND is_active = true`,
         [userId]
     );
@@ -121,7 +128,7 @@ userService.updatePassword = async (userId, currentPassword, newPassword) => {
     await query(
         `UPDATE users
          SET password = $1,
-             last_modified_date = NOW()
+             updated_at = NOW()
          WHERE user_id = $2 AND is_active = true`,
         [await hashing.encrypt(newPassword), userId]
     );

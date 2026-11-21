@@ -8,6 +8,10 @@ type ICategoryDataStore interface {
 	GetAll() (map[string]*model.Category, error)
 }
 
+type IBrandDataStore interface {
+	GetAll() ([]*model.Brand, error)
+}
+
 type ISubCategoryDataStore interface {
 	Add(subcategory *model.SubCategory) (int16, error)
 	GetById(id int16) (*model.SubCategory, error)
@@ -26,4 +30,17 @@ type IInventoryDataStore interface {
 	Update(inventory *model.Inventory) (bool, error)
 	GetByProductId(productId int64) (*model.Inventory, error)
 	GetAll() ([]*model.Inventory, error)
+}
+
+type IKeywordDataStore interface {
+	Add(keyword *model.Keyword) (int64, error)
+	GetById(id int64) (*model.Keyword, error)
+	GetAll() (map[string]*model.Keyword, error)
+}
+
+type IProductKeywordDataStore interface {
+	Add(productKeyword *model.ProductKeyword) (int64, error)
+	GetByProductId(productId int64) ([]*model.ProductKeyword, error)
+	GetByKeywordId(keywordId int64) ([]*model.ProductKeyword, error)
+	DeleteById(productId int64, keywordId int64) error
 }

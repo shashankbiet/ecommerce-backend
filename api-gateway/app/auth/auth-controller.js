@@ -8,12 +8,12 @@ const authController = {};
 
 authController.login = async (req, res, next) => {
     try {
-        const { email, phoneNumber, password } = req.body;
+        const { email, phone_number: phoneNumber, password } = req.body;
         const user = await axios.post(
             config.userService.target +
                 config.userService.authPath +
                 "/authenticate",
-            { email, phoneNumber, password },
+            { email, phone_number: phoneNumber, password },
             {
                 headers: {
                     "correlation-id": getCorrelationId(req),

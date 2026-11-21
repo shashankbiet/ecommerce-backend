@@ -24,6 +24,9 @@ func InitHttpServer() (*http.Server, error) {
 	router.Handle("/debug/pprof/symbol", http.HandlerFunc(pprof.Symbol))
 	router.Handle("/debug/pprof/trace", http.HandlerFunc(pprof.Trace))
 	router.Handle("/debug/pprof/{cmd}", http.HandlerFunc(pprof.Index))
+	if err := registerBrandHandler(router); err != nil {
+		return nil, err
+	}
 	if err := registerCategoryRoutes(router); err != nil {
 		return nil, err
 	}
@@ -34,6 +37,12 @@ func InitHttpServer() (*http.Server, error) {
 		return nil, err
 	}
 	if err := registerInventoryHandler(router); err != nil {
+		return nil, err
+	}
+	if err := registerKeywordHandler(router); err != nil {
+		return nil, err
+	}
+	if err := registerProductKeywordHandler(router); err != nil {
 		return nil, err
 	}
 

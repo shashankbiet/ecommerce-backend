@@ -53,9 +53,11 @@ Paths are served by this service. The gateway forwards them and enforces the bea
 | PUT | `/api/user/password` | Yes | Change password |
 | POST | `/api/user/address` | Yes | Add address |
 | GET | `/api/user/address` | Yes | List addresses |
-| GET | `/api/user/address/:addressId` | Yes | Get address |
-| PUT | `/api/user/address/:addressId` | Yes | Update address |
-| DELETE | `/api/user/address/:addressId` | Yes | Delete address |
+| GET | `/api/user/address/:address_id` | Yes | Get address |
+| PUT | `/api/user/address/:address_id` | Yes | Update address |
+| DELETE | `/api/user/address/:address_id` | Yes | Delete address |
+
+All request and response JSON fields use `snake_case`, including `phone_number`, `first_name`, `last_name`, `user_id`, `address_id`, `current_password`, and `new_password`. Legacy camelCase request fields are accepted and normalized at the service boundary; responses always use snake_case.
 
 ## Health and Metrics
 

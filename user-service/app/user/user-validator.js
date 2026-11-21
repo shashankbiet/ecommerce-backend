@@ -4,7 +4,7 @@ const userValidator = {};
 
 userValidator.register = () => {
     return [
-        body("phoneNumber")
+        body("phone_number")
             .isInt()
             .isLength({ max: 10, min: 10 })
             .withMessage("Phone number must be 10 digits long"),
@@ -21,24 +21,24 @@ userValidator.register = () => {
             .if(body("role").equals(userRoles.ADMIN))
             .notEmpty()
             .withMessage("Invalid Token"),
-        body("firstName").notEmpty().withMessage("Empty first name"),
-        body("lastName").notEmpty().withMessage("Empty last name"),
+        body("first_name").notEmpty().withMessage("Empty first name"),
+        body("last_name").notEmpty().withMessage("Empty last name"),
     ];
 };
 
 userValidator.update = () => {
     return [
-        body("firstName").notEmpty().withMessage("Empty first name"),
-        body("lastName").notEmpty().withMessage("Empty last name"),
+        body("first_name").notEmpty().withMessage("Empty first name"),
+        body("last_name").notEmpty().withMessage("Empty last name"),
     ];
 };
 
 userValidator.updatePassword = () => {
     return [
-        body("currentPassword")
+        body("current_password")
             .notEmpty()
             .withMessage("Current Password empty"),
-        body("newPassword")
+        body("new_password")
             .exists()
             .withMessage("New Password is required")
             .isString()

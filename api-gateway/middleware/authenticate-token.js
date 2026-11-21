@@ -14,7 +14,7 @@ const authenticateToken = (req, res, next) => {
         }
         jwt.verify(token, config.accessToken, (err, user) => {
             if (!err && user) {
-                req.headers["user-id"] = user.userId;
+                req.headers["user-id"] = user.user_id ?? user.userId;
                 req.headers["user-role"] = user.role;
                 return next();
             } else {

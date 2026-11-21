@@ -3,10 +3,12 @@ const router = require("./handler/router");
 const apiErrorHandler = require("./middleware/api-error-handler");
 const notFoundHandler = require("./middleware/not-found-handler");
 const { registerRestApiResponseTime } = require("./middleware/api-metrics");
+const normalizeContractFields = require("./middleware/normalize-contract-fields");
 const app = express();
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(normalizeContractFields);
 
 app.use(function (req, res, next) {
     //Remove headers

@@ -64,7 +64,7 @@ jobs:
             secrets/redis_password \
             secrets/grafana_admin_password \
             secrets/minio_root_user \
-            secrets/minio_root_password 
+            secrets/minio_root_password
       - run: python3 scripts/check_env_drift.py
 
   go:

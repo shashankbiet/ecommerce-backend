@@ -2,11 +2,18 @@ package service
 
 import (
 	model "inventory-service/app/models"
+	brandRequest "inventory-service/app/models/request/brand"
 	categoryRequest "inventory-service/app/models/request/category"
 	inventoryRequest "inventory-service/app/models/request/inventory"
+	keywordRequest "inventory-service/app/models/request/keyword"
 	productRequest "inventory-service/app/models/request/product"
+	productKeywordRequest "inventory-service/app/models/request/product_keyword"
 	subCategoryRequest "inventory-service/app/models/request/subcategory"
 )
+
+type IBrandService interface {
+	GetAll(request *brandRequest.GetAllRequest) ([]*model.Brand, error)
+}
 
 type ICategoryService interface {
 	Add(request *categoryRequest.AddRequest) (int16, error)
@@ -32,4 +39,17 @@ type IInventoryService interface {
 	Update(request *inventoryRequest.UpdateRequest) (bool, error)
 	GetByProductId(request *inventoryRequest.GetByIdRequest) (*model.Inventory, error)
 	GetAll(request *inventoryRequest.GetAllRequest) ([]*model.Inventory, error)
+}
+
+type IKeywordService interface {
+	Add(request *keywordRequest.AddRequest) (int64, error)
+	GetById(request *keywordRequest.GetByIdRequest) (*model.Keyword, error)
+	GetAll(request *keywordRequest.GetAllRequest) (map[string]*model.Keyword, error)
+}
+
+type IProductKeywordService interface {
+	Add(request *productKeywordRequest.AddRequest) (int64, error)
+	GetByProductId(request *productKeywordRequest.GetByProductIdRequest) ([]*model.ProductKeyword, error)
+	GetByKeywordId(request *productKeywordRequest.GetByKeywordIdRequest) ([]*model.ProductKeyword, error)
+	Delete(request *productKeywordRequest.DeleteRequest) error
 }

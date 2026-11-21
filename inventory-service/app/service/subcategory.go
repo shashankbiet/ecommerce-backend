@@ -18,7 +18,6 @@ func NewSubCategoryService(datastore dao.ISubCategoryDataStore) ISubCategoryServ
 
 func (s *SubCategoryService) Add(request *subCategoryRequest.AddRequest) (int16, error) {
 	normalizeName(&request.SubCategory.Name)
-	normalizeName(&request.SubCategory.Category)
 	id, err := s.datastore.Add(request.SubCategory)
 	if err != nil {
 		return 0, err

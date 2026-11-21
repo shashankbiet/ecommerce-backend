@@ -19,7 +19,7 @@ describe("authController.authenticate", () => {
     });
 
     it("returns 200 with the user when credentials are valid", async () => {
-        const user = { userId: 1, email: "a@b.com" };
+        const user = { user_id: 1, email: "a@b.com" };
         authService.authenticate.mockResolvedValue(user);
         const res = makeRes();
 
@@ -43,7 +43,7 @@ describe("authController.authenticate", () => {
         const res = makeRes();
 
         await authController.authenticate(
-            { body: { phoneNumber: "123", password: "bad" } },
+            { body: { phone_number: "123", password: "bad" } },
             res,
             jest.fn()
         );

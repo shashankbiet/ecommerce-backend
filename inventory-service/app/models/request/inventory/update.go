@@ -1,7 +1,6 @@
 package inventory
 
 import (
-	"encoding/json"
 	"fmt"
 	model "inventory-service/app/models"
 	"net/http"
@@ -16,7 +15,7 @@ func (c UpdateRequest) Validate(r *http.Request) (interface{}, error) {
 	var request UpdateRequest
 	errors := make([]string, 0)
 
-	if err := json.NewDecoder(r.Body).Decode(&request.Inventory); err != nil {
+	if err := model.DecodeJSON(r.Body, &request.Inventory); err != nil {
 		return nil, err
 	}
 	if request.Inventory == nil {
@@ -29,6 +28,10 @@ func (c UpdateRequest) Validate(r *http.Request) (interface{}, error) {
 
 	if request.Inventory.SKU < 0 {
 		errors = append(errors, "Invalid SKU")
+	}
+
+	if request.Inventory.MRP < 0 {
+		errors = append(errors, "Invalid MRP")
 	}
 
 	if request.Inventory.PurchasePrice < 0 {

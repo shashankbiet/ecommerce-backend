@@ -87,14 +87,14 @@ describe("userController", () => {
 
     describe("get", () => {
         it("looks up the user from the user-id header", async () => {
-            userService.get.mockResolvedValue({ userId: 5 });
+            userService.get.mockResolvedValue({ user_id: 5 });
             const res = makeRes();
 
             await userController.get(makeReq(), res, jest.fn());
 
             expect(userService.get).toHaveBeenCalledWith(5);
             expect(res.status).toHaveBeenCalledWith(200);
-            expect(res.send).toHaveBeenCalledWith({ userId: 5 });
+            expect(res.send).toHaveBeenCalledWith({ user_id: 5 });
         });
 
         it("returns 404 when the user does not exist", async () => {
@@ -113,13 +113,13 @@ describe("userController", () => {
             const res = makeRes();
 
             await userController.update(
-                makeReq({ body: { firstName: "A" } }),
+                makeReq({ body: { first_name: "A" } }),
                 res,
                 jest.fn()
             );
 
             expect(userService.update).toHaveBeenCalledWith(5, {
-                firstName: "A",
+                first_name: "A",
             });
             expect(res.status).toHaveBeenCalledWith(200);
         });
@@ -161,7 +161,7 @@ describe("userController", () => {
 
             await userController.updatePassword(
                 makeReq({
-                    body: { currentPassword: "same", newPassword: "same" },
+                    body: { current_password: "same", new_password: "same" },
                 }),
                 res,
                 jest.fn()
@@ -177,7 +177,7 @@ describe("userController", () => {
 
             await userController.updatePassword(
                 makeReq({
-                    body: { currentPassword: "old", newPassword: "new" },
+                    body: { current_password: "old", new_password: "new" },
                 }),
                 res,
                 jest.fn()
@@ -192,7 +192,7 @@ describe("userController", () => {
 
             await userController.updatePassword(
                 makeReq({
-                    body: { currentPassword: "old", newPassword: "new" },
+                    body: { current_password: "old", new_password: "new" },
                 }),
                 res,
                 jest.fn()
@@ -207,7 +207,7 @@ describe("userController", () => {
 
             await userController.updatePassword(
                 makeReq({
-                    body: { currentPassword: "old", newPassword: "new" },
+                    body: { current_password: "old", new_password: "new" },
                 }),
                 res,
                 jest.fn()

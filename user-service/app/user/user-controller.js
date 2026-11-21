@@ -69,7 +69,8 @@ userController.delete = async (req, res, next) => {
 };
 
 userController.updatePassword = async (req, res, next) => {
-    const { currentPassword, newPassword } = req.body;
+    const { current_password: currentPassword, new_password: newPassword } =
+        req.body;
     try {
         if (currentPassword == newPassword) {
             return res.status(apiStatus.BAD_REQUEST.status).send({

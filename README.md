@@ -42,7 +42,7 @@ done
 [ -s secrets/clickhouse_user ] || printf 'clickhouse\n' > secrets/clickhouse_user
 [ -s secrets/minio_root_user ] || printf 'minio\n' > secrets/minio_root_user
 chmod 644 secrets/*
-for svc in api-gateway user-service inventory-service search-service; do
+for svc in api-gateway user-service inventory-service search-service chatbot-service; do
   cp -n "$svc/.env.example" "$svc/.env"
 done
 if [ ! -f .env ]; then
@@ -74,7 +74,12 @@ Give the Podman machine at least **8 GiB** of memory; with less, containers such
 Elasticsearch are killed by the OOM killer.
 
 Published endpoints: API Gateway `localhost:3001`, Inventory `localhost:3003`,
-Search (gRPC) `localhost:9004`.
+Search (gRPC) `localhost:9004`, Chatbot `localhost:3004`.
+
+The chatbot API exposes `GET /health` and `POST /api/v1/chat`. Send a JSON body
+with a `message` and optionally a `conversation_id`; a new conversation ID is
+returned when one is not provided. Configure `OPENAI_BASE_URL` in
+`chatbot-service/.env` to point to a model endpoint reachable from the container.
 
 To run one service on the host instead of in a container:
 ```bash
@@ -86,13 +91,22 @@ make run
 ### Seed demo data (optional)
 Run after the stack is up (user-service and inventory-service must have started once):
 ```bash
+python3 scripts/seed/validate.py
 podman exec -e PGPASSWORD="$(cat secrets/sql_config_password)" -i postgres \
-  psql -U postgres_user -d postgres < scripts/seed/postgres.sql
-curl -H 'Content-Type: application/x-ndjson' -XPOST \
+  psql -v ON_ERROR_STOP=1 -U postgres_user -d postgres < scripts/seed/postgres.sql
+curl --fail-with-body -u "elastic:$(cat secrets/elastic_search_password)" \
+  -H 'Content-Type: application/x-ndjson' -XPOST \
   'http://localhost:9200/_bulk?refresh=true' \
   --data-binary @scripts/seed/elasticsearch.ndjson
 ```
-Creates 25 demo users (password `DemoPass123!`), one address for each of the 20 demo customers, 105 products, and their inventory. Local testing only.
+Confirm the bulk response has `"errors":false`.
+Creates 25 demo users (password `DemoPass123!`), one address for each of the 20
+demo customers, 105 products, their inventory, 71 category/subcategory keywords,
+and 210 product-keyword associations. Every product uses one shared placeholder
+image URL for local demos. Product references in both PostgreSQL and
+Elasticsearch use deterministic numeric IDs matching the current inventory and
+search service models. Brand IDs use their first appearance in the demo catalog
+because no brand entity currently exists. Local testing only.
 
 ### Monitoring (optional)
 Requires `secrets/grafana_admin_password` from step 1.

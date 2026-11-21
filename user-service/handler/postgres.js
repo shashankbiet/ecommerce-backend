@@ -27,8 +27,8 @@ const initializeSchema = async () => {
             role VARCHAR(32) NOT NULL,
             first_name VARCHAR(128) NOT NULL,
             last_name VARCHAR(128),
-            created_date TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-            last_modified_date TIMESTAMPTZ,
+            created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+            updated_at TIMESTAMPTZ,
             is_active BOOLEAN NOT NULL DEFAULT TRUE
         )
     `);
@@ -47,8 +47,8 @@ const initializeSchema = async () => {
             landmark VARCHAR(255) NOT NULL,
             state VARCHAR(128) NOT NULL,
             pincode INTEGER NOT NULL,
-            created_date TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-            last_modified_date TIMESTAMPTZ
+            created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+            updated_at TIMESTAMPTZ
         )
     `);
     await pool.query(`

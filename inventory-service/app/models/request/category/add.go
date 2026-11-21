@@ -1,7 +1,6 @@
 package category
 
 import (
-	"encoding/json"
 	"fmt"
 	model "inventory-service/app/models"
 	"net/http"
@@ -16,7 +15,7 @@ func (c AddRequest) Validate(r *http.Request) (interface{}, error) {
 	var request AddRequest
 	errors := make([]string, 0)
 
-	if err := json.NewDecoder(r.Body).Decode(&request.Category); err != nil {
+	if err := model.DecodeJSON(r.Body, &request.Category); err != nil {
 		return nil, err
 	}
 	if request.Category == nil {

@@ -2,6 +2,7 @@ package consumer
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"os/signal"
 	"search-service/app/dao"
@@ -9,7 +10,6 @@ import (
 	"search-service/pkg/config"
 	"search-service/pkg/db"
 	"search-service/pkg/logger"
-	searchpb "search-service/proto/search"
 	"syscall"
 
 	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
@@ -29,6 +29,10 @@ func NewProductConsumer() *ProductConsumer {
 	return &ProductConsumer{
 		datastore: datastore,
 	}
+}
+
+func NewProductConsumerWithDataStore(datastore dao.IProductDataStore) *ProductConsumer {
+	return &ProductConsumer{datastore: datastore}
 }
 
 func (pc *ProductConsumer) Consume() {
@@ -65,7 +69,9 @@ func (pc *ProductConsumer) Consume() {
 			ev := c.Poll(100)
 			switch e := ev.(type) {
 			case *kafka.Message:
-				pc.updateProduct(e.Value)
+				if err := pc.updateProduct(e.Value); err != nil {
+					logger.Error("failed to process product update", "error", err)
+				}
 			case kafka.Error:
 				if e.IsFatal() || e.Code() == kafka.ErrAllBrokersDown {
 					logger.Error("fatal Kafka consumer error", "error", e)
@@ -79,24 +85,23 @@ func (pc *ProductConsumer) Consume() {
 
 }
 
-func (pc *ProductConsumer) updateProduct(data []byte) {
-	var product model.Product
-	err := json.Unmarshal(data, &product)
+func (pc *ProductConsumer) updateProduct(data []byte) error {
+	normalized, err := model.NormalizeJSON(data)
 	if err != nil {
-		logger.Error("failed to decode product update", "error", err)
-		return
+		return fmt.Errorf("normalize product update: %w", err)
 	}
-
-	productPb := &searchpb.Product{
-		Id:          int32(product.Id),
-		Name:        product.Name,
-		Description: product.Description,
-		Brand:       product.Brand,
-		Category:    product.Category,
-		SubCategory: product.SubCategory,
+	var product model.Product
+	if err := json.Unmarshal(normalized, &product); err != nil {
+		return fmt.Errorf("decode product update: %w", err)
 	}
-
-	if err := pc.datastore.UpsertProduct(int(product.Id), productPb); err != nil {
-		logger.Error("failed to upsert product", "product_id", product.Id, "error", err)
+	if product.Id <= 0 {
+		return fmt.Errorf("invalid product id %d", product.Id)
 	}
+	if !product.Status.IsValid() {
+		return fmt.Errorf("invalid product status %d", product.Status)
+	}
+	if err := pc.datastore.UpsertProduct(product.Id, &product); err != nil {
+		return fmt.Errorf("upsert product %d: %w", product.Id, err)
+	}
+	return nil
 }
